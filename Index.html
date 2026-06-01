@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quizzer - Offline Master</title>
+<style>
+#btn-google-login:active { transform: scale(0.95); opacity: 0.9; }
+
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+  :root { --primary: #f29b46; --bg-top: #ffb870; --bg-bottom: #fff3e6; --orange: #f26b3e; --orange-light: #ffcc99; --text-dark: #333; --text-muted: #888; --correct-bg: #b6f3d5; --correct-text: #1b8a53; --card-bg: white; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+  /* LOCK VIEWPORT TO PREVENT SCROLL GLITCHES */
+  html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; }
+  
+  /* FLUID NATIVE APP RATIO FOR ALL PHONES */
+  #app { width: 100%; max-width: 100%; height: 100%; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 60%, var(--card-bg) 100%); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+  
+  /* DESKTOP / LARGE TABLET OVERRIDE (Only triggers if screen is both TALL and WIDE) */
+  @media (min-width: 600px) and (min-height: 750px) { 
+    #app { max-width: 400px; height: 90vh; max-height: 850px; border-radius: 40px; border: 10px solid #222; } 
+  }
+
+  /* PROFESSIONAL LANDSCAPE MOBILE OPTIMIZATION */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .screen { padding: 10px 20px; }
+    .header { margin-top: 5px; margin-bottom: 15px; }
+    .quiz-header { margin-top: 5px; margin-bottom: 10px; }
+    .question-card { min-height: 80px; padding: 15px; font-size: 16px; margin-bottom: 10px; }
+    .more-games { padding-bottom: 90px; } /* Stops bottom nav from hiding content */
+    #splash-screen { flex-direction: row; justify-content: space-evenly; align-items: center; }
+    .splash-content { margin-top: 0; text-align: left; }
+    .btn-splash { width: 40%; margin-bottom: 0; }
+  }
+
+  
+  /* AMOLED DARK MODE OVERRIDES */
+  #app.dark-theme { --bg-top: #000000; --bg-bottom: #000000; --text-dark: #ffffff; --text-muted: #aaaaaa; --card-bg: #000000; }
+  #app.dark-theme .category-btn, #app.dark-theme .game-card, #app.dark-theme .analytics-card, #app.dark-theme .option, #app.dark-theme .lb-tabs, #app.dark-theme .review-card, #app.dark-theme .settings-menu, #app.dark-theme .question-card, #app.dark-theme .coins { background: #0c0c0c; color: #fff; border: 1px solid #222; box-shadow: none; }
+  #app.dark-theme .input-group input { background: #111; border-color: #222; color: #fff; }
+  #app.dark-theme .bottom-nav { background: #000000; border-top: 1px solid #222; }
+  #app.dark-theme .lb-item { background: #0c0c0c; border-color: #222; }
+  #app.dark-theme .lb-item.active { background: var(--orange); border-color: var(--orange); }
+  #app.dark-theme .lb-item.active .lb-name { color: #fff; }
+  #app.dark-theme .lb-name { color: #fff; }
+  #app.dark-theme .menu-item { border-bottom-color: #222; }
+  #app.dark-theme .dt-icon { background: #1a1a1a; }
+  #app.dark-theme .daily-task { background: #0c0c0c; border: 1px solid #222; box-shadow: none; }
+  #app.dark-theme .header .profile-text span { background: #1a1a1a; color: #fff; }
+  #app.dark-theme .more-games .game-icon { background: #1a1a1a; }
+  #app.dark-theme .round-item { background: #0c0c0c; border: 1px solid #222; color: #fff; }
+  #app.dark-theme .modal-overlay .pop-animation { background: #050505 !important; border: 1px solid #222; }
+  #app.dark-theme .icon-btn { background: #0c0c0c; color: #fff; border: 1px solid #222; }
+  #app.dark-theme #about-box { background: #050505 !important; border: 1px solid #222; }
+
+  .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px; }
+  .screen::-webkit-scrollbar { display: none; }
+  .active-screen { display: flex; }
+  
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 20px;}
+  .profile { display: flex; align-items: center; gap: 10px; color: var(--text-dark); cursor: pointer;}
+  .avatar { width: 45px; height: 45px; border-radius: 50%; background: #ffd6b3; border: 2px solid white; display:flex; justify-content:center; align-items:center; overflow:hidden; font-size: 25px; position:relative;}
+  .avatar img { width: 100%; height: 100%; object-fit: cover; position:absolute; top:0; left:0;}
+  .profile-text h4 { font-size: 16px; margin-bottom: 2px; font-weight: 800;}
+  .profile-text span { background: rgba(0,0,0,0.05); padding: 2px 10px; border-radius: 12px; font-size: 11px; text-transform: capitalize; color: var(--text-dark); font-weight: 700;}
+  
+  .coins { background: white; color: var(--text-dark); padding: 5px 15px 5px 5px; border-radius: 25px; display: flex; align-items: center; gap: 8px; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
+  .coin-icon { background: var(--orange); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+
+  .daily-task { background: rgba(255,255,255,0.5); border-radius: 20px; padding: 20px; color: var(--text-dark); margin-bottom: 25px; position: relative; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;}
+  .daily-task:active { transform: scale(0.95); }
+  .dt-header { display: flex; justify-content: space-between; align-items: flex-start;}
+  .dt-icon { width: 60px; height: 60px; background: rgba(255,255,255,0.7); border-radius: 15px; display:flex; justify-content:center; align-items:center; font-size: 30px;}
+  .dt-info { flex: 1; margin-left: 15px;}
+  .dt-info h3 { font-size: 18px; margin-bottom: 5px; font-weight: 800;}
+  .dt-info p { font-size: 13px; opacity: 0.8; font-weight: 700;}
+  
+  .section-title { display: flex; justify-content: space-between; color: var(--text-dark); margin-bottom: 15px; align-items: center; font-weight: 800;}
+  .categories { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px;}
+  .categories::-webkit-scrollbar { display: none; }
+  .category-btn { min-width: 80px; background: rgba(255,255,255,0.5); border-radius: 20px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; border: none; color: var(--text-dark); font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+  .category-btn .c-icon { width: 50px; height: 50px; background: rgba(255,255,255,0.8); border-radius: 15px; display:flex; justify-content:center; align-items:center; font-size: 24px; margin-bottom: 10px;}
+  .more-games { display: flex; gap: 15px; padding-bottom: 80px;}
+  .game-card { flex: 1; background: white; border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;}
+  .game-card:active { transform: scale(0.95); }
+  .game-icon { width: 70px; height: 70px; background: #fff3e6; border-radius: 50%; margin: 0 auto 10px; display:flex; justify-content:center; align-items:center; font-size: 35px;}
+  
+  .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; display: flex; justify-content: space-around; padding: 15px 10px 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 10;}
+  .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; gap: 5px; cursor: pointer; font-weight: 700;}
+  .nav-item.active { color: var(--orange); }
+  .nav-icon { width: 45px; height: 45px; border-radius: 50%; display:flex; justify-content:center; align-items:center; font-size: 20px; transition: 0.3s;}
+  .nav-item.active .nav-icon { background: var(--orange); color: white; box-shadow: 0 5px 15px rgba(242, 107, 62, 0.4);}
+
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-dark); font-weight: 800; margin-bottom: 20px; margin-top: 20px;}
+  .icon-btn { width: 40px; height: 40px; background: white; color: var(--text-dark); border-radius: 50%; display:flex; justify-content:center; align-items:center; border: none; cursor: pointer; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+  .question-card { background: rgba(255,255,255,0.7); border-radius: 20px; padding: 25px 20px; text-align: center; color: var(--text-dark); font-size: 17px; font-weight: 800; margin-bottom: 20px; min-height: 120px; display:flex; align-items:center; justify-content:center; backdrop-filter: blur(10px); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+  .timer-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-weight: bold; color: var(--orange);}
+  .timer-bar-bg { flex: 1; height: 8px; background: rgba(242, 107, 62, 0.2); border-radius: 10px; overflow: hidden;}
+  .timer-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ffb74d, #f26b3e); transition: width 1s linear;}
+  
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option { background: white; border: none; padding: 15px; border-radius: 15px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
+  .opt-letter { width: 30px; font-weight: 800; color: var(--text-dark); text-align: left;}
+  .opt-text { flex: 1; text-align: center; color: var(--text-dark); font-weight: 700; font-size: 15px;}
+  .opt-icon { width: 30px; text-align: right; font-size: 18px; }
+  .option.correct { background: var(--correct-bg); } .option.correct .opt-text { color: var(--correct-text); }
+  .option.wrong { background: #ffebee; } .option.wrong .opt-text { color: #c62828; }
+  .option.disabled { opacity: 0.4; pointer-events: none; background: #f0f0f0; }
+
+  .lifeline-row { display: flex; justify-content: space-between; margin-top: 10px; gap: 8px;}
+  .lifeline { flex: 1; background: var(--orange-light); border-radius: 12px; padding: 10px 5px; text-align: center; color: var(--text-dark); font-size: 11px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+  .lifeline.used { background: #ccc; box-shadow: none; pointer-events: none; color: #888; }
+  .lifeline i { font-size: 16px; display: block; margin-bottom: 3px;}
+  .nav-row { margin-top: auto; padding-top: 15px; padding-bottom: 10px; }
+  .nav-btn { background: var(--orange); color: white; }
+
+  .result-card { background: white; border-radius: 30px; margin-top: 40px; padding: 40px 20px; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display:flex; flex-direction: column; align-items: center;}
+  .ribbon { background: var(--orange); color: white; padding: 20px; border-radius: 15px; width: 140px; margin-top: -70px; margin-bottom: 20px; position: relative;}
+  .ribbon::before, .ribbon::after { content: ''; position: absolute; top: 15px; width: 20px; height: 20px; background: #c24b27; z-index: -1; }
+  .ribbon::before { left: -10px; border-radius: 5px; } .ribbon::after { right: -10px; border-radius: 5px; }
+  .res-avatar { width: 70px; height: 70px; border-radius: 20px; background: #ffd6b3; border: 3px solid white; display:flex; justify-content:center; align-items:center; font-size: 40px; margin: 0 auto 10px; overflow:hidden; position:relative;}
+  .res-avatar img { width: 100%; height: 100%; object-fit: cover; position:absolute; top:0; left:0;}
+  .result-card h2 { color: var(--text-dark); margin-bottom: 10px; font-size: 22px; font-weight: 800;}
+  .primary-btn { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(242, 107, 62, 0.3); margin-top: 10px;}
+
+  #profile-screen { padding: 0; background: var(--card-bg); }
+  .profile-cover { height: 140px; background: linear-gradient(135deg, #ff9a44 0%, #fc6076 100%); padding: 20px; color: white; position: relative;}
+  .profile-cover .icon-btn { background: rgba(255,255,255,0.9); box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 35px; height: 35px; color: #333; }
+  .profile-form-area { padding: 60px 20px 80px; position: relative; display: flex; flex-direction: column; align-items: center;}
+  
+  .edit-avatar-wrap { width: 110px; height: 110px; border-radius: 50%; background: white; border: 5px solid white; position: absolute; top: -55px; left: 50%; transform: translateX(-50%); box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 50px; overflow: visible; background-color: #ffd6b3;}
+  .edit-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; top: 0; left: 0;}
+  .cam-badge { position: absolute; bottom: 0; right: 0; background: #f29b46; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; border: 3px solid white; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+  
+  .form-header { margin-bottom: 20px; color: var(--text-dark); text-align: center; font-size: 18px; font-weight: 800;}
+  .form-group-container { width: 100%; max-width: 350px; }
+  .input-group { margin-bottom: 18px; width: 100%; }
+  .input-group label { display: block; font-size: 11px; font-weight: 800; color: #a0a0a0; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;}
+  .input-group input { width: 100%; padding: 14px 15px; border: 1.5px solid #eaeaea; border-radius: 12px; font-size: 15px; font-family: inherit; color: var(--text-dark); outline: none; font-weight: 600; background: white; transition: border-color 0.2s;}
+  .input-group input:focus { border-color: var(--orange); }
+
+  .btn-save-settings { background: linear-gradient(135deg, #f26b3e 0%, #f05a28 100%); color: white; border: none; width: 100%; padding: 16px; border-radius: 15px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(242, 107, 62, 0.4); margin-bottom: 40px; margin-top: 5px; transition: 0.2s;}
+
+  .analytics-card { background: white; border-radius: 20px; padding: 25px 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); margin-bottom: 25px; width: 100%; max-width: 350px;}
+  .stat-row { margin-bottom: 18px; }
+  .stat-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px;}
+  .stat-bar-bg { width: 100%; height: 10px; background: #e0e0e0; border-radius: 10px; overflow: hidden;}
+  .stat-bar-fill { height: 100%; background: linear-gradient(90deg, #ffb74d, #f26b3e); border-radius: 10px; transition: 1s;}
+
+  .settings-menu { width: 100%; max-width: 350px; background: white; border-radius: 20px; padding: 5px 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); margin-bottom: 25px; }
+  .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 10px; border-bottom: 1px solid #f6f6f6; cursor: pointer; font-weight: 700; color: var(--text-dark); font-size: 15px;}
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item-left { display: flex; align-items: center; gap: 12px; }
+  .menu-icon { font-size: 18px; }
+
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 24px; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+  input:checked + .slider { background-color: var(--orange); }
+  input:checked + .slider:before { transform: translateX(20px); }
+
+  #leader-screen { background: var(--card-bg); padding-top: 10px;}
+  .lb-tabs { display: flex; justify-content: space-around; background: white; border-radius: 30px; padding: 6px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+  .lb-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 800; color: var(--text-muted); border-radius: 25px; cursor: pointer; transition: 0.3s; }
+  .lb-tab.active { background: var(--orange); color: white; }
+  .podium-wrap { display: flex; justify-content: center; align-items: flex-end; gap: 18px; margin-bottom: 35px; min-height: 160px;}
+  .podium-col { display: flex; flex-direction: column; align-items: center; }
+  .podium-avatar { border-radius: 50%; display: flex; justify-content: center; align-items: center; background: var(--orange); color: white; border: 4px solid white; position: relative; box-shadow: 0 5px 15px rgba(242, 107, 62, 0.3); overflow: hidden; background-color:#ffe5cc;}
+  .podium-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; position:absolute; top:0; left:0;}
+  .podium-1 .podium-avatar { width: 90px; height: 90px; font-size: 45px; border-color: #ffd700; margin-bottom: 5px;}
+  .podium-2 .podium-avatar, .podium-3 .podium-avatar { width: 70px; height: 70px; font-size: 35px; }
+  .podium-badge { position: absolute; bottom: -10px; width: 26px; height: 26px; border-radius: 50%; color: white; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: 800; border: 2px solid white; background: var(--orange); left:50%; transform:translateX(-50%); z-index:2;}
+  .crown { position: absolute; top: -35px; font-size: 35px; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.2)); z-index:2;}
+  .podium-name { margin-top: 18px; font-weight: 800; color: var(--text-dark); font-size: 14px; text-align: center; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .podium-pts { color: var(--orange); font-size: 12px; font-weight: 800; display:flex; align-items:center; gap:3px;}
+  .lb-list-header { display: flex; justify-content: space-between; padding: 0 20px; color: var(--text-muted); font-size: 13px; font-weight: 800; margin-bottom: 12px; }
+  .lb-item { display: flex; align-items: center; background: var(--bg-bottom); padding: 12px 20px; border-radius: 15px; margin-bottom: 10px; border: 1px solid rgba(242, 107, 62, 0.1); }
+  .lb-item.active { background: var(--orange); color: white; box-shadow: 0 5px 15px rgba(242, 107, 62, 0.3); border-color: var(--orange); }
+  .lb-item.active .lb-rank, .lb-item.active .lb-name, .lb-item.active .lb-pts { color: white; }
+  .lb-rank { width: 30px; font-weight: 800; color: var(--orange); font-size: 15px;}
+  .lb-avatar-small { width: 35px; height: 35px; border-radius: 50%; background: white; display: flex; justify-content: center; align-items: center; font-size: 18px; margin-right: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow:hidden; position:relative;}
+  .lb-avatar-small img { width:100%; height:100%; object-fit:cover; border-radius:50%; position:absolute; top:0; left:0;}
+  .lb-name { flex: 1; font-weight: 800; color: var(--text-dark); font-size: 14px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .lb-pts { font-weight: 800; color: var(--orange); font-size: 13px; }
+
+  .review-card { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;}
+  .review-q { color: var(--text-dark); font-weight: 800; font-size: 14px; margin-bottom: 10px;}
+  .review-opt { padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; margin-bottom: 5px;}
+  .r-correct { background: var(--correct-bg); color: var(--correct-text); }
+  .r-wrong { background: #ffebee; color: #c62828; }
+  .r-normal { background: rgba(255,255,255,0.5); color: var(--text-muted); border: 1px solid #ddd; }
+  
+  .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 100;}
+  .avatar-modal-box { background: #1a1a1a; width: 90%; border-radius: 35px; padding: 30px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);}
+  .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;}
+  .avatar-item { aspect-ratio: 1; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 35px; cursor: pointer; border: 3px solid transparent;}
+  .avatar-item.selected { border-color: var(--orange); transform: scale(1.05);}
+  .c-1 { background: #c3e6cb; } .c-2 { background: #f5c6cb; } .c-3 { background: #b8daff; } .c-4 { background: #ffeeba; }
+  .c-5 { background: #d6d8d9; } .c-6 { background: #e2d9f3; } .c-7 { background: #fce4ec; } .c-8 { background: #e0f2f1; }
+  .modal-actions { display: flex; gap: 15px; }
+  .btn-skip { flex: 1; background: transparent; border: 2px solid white; color: white; padding: 15px; border-radius: 30px; font-weight: bold; cursor: pointer;}
+  .btn-submit { flex: 1; background: white; border: 2px solid white; color: #1a1a1a; padding: 15px; border-radius: 30px; font-weight: bold; cursor: pointer;}
+  .pop-animation { animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+  @keyframes popUp { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  .tap-bounce { animation: bounceEffect 0.2s ease; }
+  @keyframes bounceEffect { 0% { transform: scale(1); } 50% { transform: scale(0.92); } 100% { transform: scale(1); } }
+  .round-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px; }
+  .round-item { background: #fff3e6; border-radius: 25px; padding: 20px 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-dark); font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.2s; border: 2px solid transparent;}
+  .round-item:active { transform: scale(0.9); border-color: var(--orange); }
+  .round-item .c-icon { font-size: 30px; margin-bottom: 8px; }
+  /* FULL SCREEN SPLASH ON STARTUP */
+  #splash-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #f29b46 0%, #f26b3e 100%); z-index: 2000; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 60px 20px; color: white; text-align: center; transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.6s ease; }
+  #splash-screen.hide { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+  .splash-content { margin-top: 15vh; }
+  .splash-icon { font-size: 80px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; display: inline-block; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); }
+  @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-12px); } 100% { transform: translateY(0px); } }
+  .splash-title { font-size: 42px; font-weight: 800; line-height: 1.1; margin-bottom: 15px; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+  .splash-text { font-size: 16px; font-weight: 700; opacity: 0.9; line-height: 1.5; }
+  .btn-splash { background: white; color: var(--orange); border: none; width: 90%; max-width: 300px; padding: 18px; border-radius: 25px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;}
+  .btn-splash:active { transform: scale(0.95); }
+
+  /* AMOLED THEME SPLASH */
+  #app.dark-theme #splash-screen { background: linear-gradient(135deg, #111 0%, #000 100%); }
+  #app.dark-theme .btn-splash { background: var(--orange); color: white; }
+
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YS36PFXEH8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-YS36PFXEH8'); 
+  </script>
+
+</head>
+<body>
+<div id="app">
+    <div id="splash-screen">
+    <div class="splash-content">
+      <div class="splash-icon">🪷</div>
+      <h1 class="splash-title">Welcome to<br>Quizzer<br>Master</h1>
+      <p class="splash-text">Your offline study engine.<br>for SSC.</p>
+    </div>
+    <button class="btn-splash" onclick="closeSplashScreen()">Enter App ➔</button>
+  </div>
+
+  <div id="home-screen" class="screen active-screen">
+    <div class="header">
+      <div class="profile" onclick="showScreen('profile-screen')">
+        <div class="avatar" id="home-avatar-wrap"><img id="home-avatar" src="" style="display:none;"><span id="home-avatar-emoji" style="position:relative; z-index:1;"></span></div>
+        <div class="profile-text"><h4 id="display-name">Guest Player</h4><span id="home-rank-badge">Bronze</span></div>
+      </div>
+      <div class="coins"><div class="coin-icon">⚡</div> <span id="home-coins">0</span></div>
+    </div>
+    
+    <div class="daily-task" id="dt-card">
+      <div class="dt-header">
+        <div class="dt-icon">🎁</div>
+        <div class="dt-info">
+          <h3 id="dt-title">Daily Task</h3>
+          <p>Mixed Trivia</p>
+        </div>
+        <div class="dt-action" style="color: var(--orange); font-weight:800; font-size:14px;">+200⚡</div>
+      </div>
+      <div class="dt-progress" style="margin-top:12px;">
+        <div class="timer-bar-bg" style="height:6px;"><div class="timer-bar-fill" id="dt-bar-fill" style="width:0%;"></div></div>
+        <p id="dt-prog-text" style="font-size:11px; margin-top:6px; font-weight:800; color:var(--text-dark);">0/10 Questions</p>
+      </div>
+    </div>
+
+    <div class="section-title"><h3>Quiz</h3><span onclick="openViewAllModal()" style="cursor:pointer; color:var(--orange);">View All</span></div>
+    <div class="categories">
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('Maths', 15)"><div class="c-icon">🧮</div>Maths</button>
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('Physics', 15)"><div class="c-icon">⚛️</div>Physics</button>
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('Chemistry', 15)"><div class="c-icon">🧪</div>Chem</button>
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('English', 15)"><div class="c-icon">📖</div>English</button>
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('Vocab', 15)"><div class="c-icon">📝</div>Vocab</button>
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('GAT', 15)"><div class="c-icon">🧠</div>GAT</button>
+    </div>
+    
+    <div class="section-title"><h3>More Games</h3><span onclick="openViewAllModal()" style="cursor:pointer; color:var(--orange);">View All</span></div>
+    <div class="more-games">
+      <div class="game-card" onclick="triggerBounce(this); startQuiz('English', 10)"><div class="game-icon">⚔️</div><h4>Language</h4><p>10 Questions</p></div>
+      <div class="game-card" onclick="triggerBounce(this); startExamQuiz()"><div class="game-icon">🧭</div><h4>Exam Quiz</h4><p>50 Questions</p></div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="showScreen('home-screen')"><div class="nav-icon">🏠</div>Explore</div>
+      <div class="nav-item" onclick="showScreen('leader-screen')"><div class="nav-icon">🏆</div>Leader</div>
+      <div class="nav-item" onclick="showScreen('saved-screen')"><div class="nav-icon">🔖</div>Saved</div>
+      <div class="nav-item" onclick="showScreen('profile-screen')"><div class="nav-icon">⚙️</div>Settings</div>
+    </div>
+  </div>
+
+  <div id="quiz-screen" class="screen">
+    <div class="quiz-header">
+      <button class="icon-btn" onclick="showScreen('home-screen')">←</button>
+      <span id="q-counter">Question 1/5</span>
+      <button class="icon-btn" id="btn-save-q" onclick="toggleSaveQuestion()">🔖</button>
+    </div>
+    <div class="question-card" id="question-text">Question text</div>
+    <div class="timer-container">
+      <span class="timer-label">Time</span>
+      <div class="timer-bar-bg"><div class="timer-bar-fill" id="timer-bar"></div></div>
+      <span id="timer-text">00:25</span>
+    </div>
+    <div class="options" id="options-container"></div>
+    
+    <div class="lifeline-row">
+      <button class="lifeline" id="ll-5050" onclick="use5050()"><i>50/50</i><span id="txt-5050">3 Left</span></button>
+      <button class="lifeline" id="ll-audience" onclick="useAudience()"><i>👥</i>Audience</button>
+      <button class="lifeline" id="ll-time" onclick="useAddTime()"><i>⏱️</i><span id="txt-time">3 Left</span></button>
+    </div>
+    <div class="lifeline-row nav-row">
+      <button class="lifeline nav-btn" onclick="prevQuestion()"><i>⬅️</i>Previous</button>
+      <button class="lifeline nav-btn" id="btn-next" onclick="nextQuestion()"><i>⏭️</i>Next / Skip</button>
+    </div>
+  </div>
+
+  <div id="result-screen" class="screen">
+    <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span id="res-header">Correct 0/0</span><div style="width:40px"></div></div>
+    <div class="result-card">
+      <div class="ribbon">
+        <div class="res-avatar" id="res-avatar-wrap"><img id="res-avatar-img" src="" style="display:none;"><span id="res-avatar-emoji" style="position:relative; z-index:1;"></span></div>
+        <h3 id="res-name">Guest</h3><p>Rank</p><h2 id="res-rank-text" style="font-size:18px; color:white; font-weight:800; margin-top:5px;">Bronze</h2>
+      </div>
+      <h2 id="res-message">Congratulations!</h2>
+      <p>You earned <b style="color:var(--orange)" id="res-coins">+0</b> points.</p>
+      
+      <button class="primary-btn" style="background: white; color: var(--orange); border: 2px solid var(--orange);" onclick="renderReview()">Review Answers</button>
+      <button class="primary-btn" onclick="showScreen('home-screen')">Explore More</button>
+    </div>
+  </div>
+
+  <div id="review-screen" class="screen">
+    <div class="quiz-header">
+      <button class="icon-btn" onclick="showScreen('result-screen')">←</button>
+      <span style="font-size: 18px;">Quiz Review</span>
+      <div style="width: 40px;"></div>
+    </div>
+    <div id="review-container" style="padding-bottom: 20px;"></div>
+  </div>
+  <div id="profile-screen" class="screen">
+    <div class="profile-cover">
+      <button class="icon-btn" onclick="showScreen('home-screen')" style="border:none; cursor:pointer; width:35px; height:35px; border-radius:50%; font-size:18px;">←</button>
+    </div>
+    <div class="profile-form-area">
+      <div class="edit-avatar-wrap" id="edit-avatar-wrap" onclick="openAvatarSelector()">
+        <img id="edit-avatar-img" src="" style="display:none;">
+        <span id="edit-avatar-emoji" style="position:relative; z-index:1;"></span>
+        <div class="cam-badge">📷</div>
+      </div>
+      
+      <div class="form-header">Account Details</div>
+      
+      <div class="form-group-container">
+          <div class="input-group"><label>Name</label><input type="text" id="inp-name" placeholder="Guest Player"></div>
+          <div class="input-group"><label>Username</label><input type="text" id="inp-username" placeholder="guest_user"></div>
+          <!-- ADD THIS BUTTON -->
+<button class="btn-save-settings" id="btn-google-login" style="background: #4285F4; color: white; margin-bottom: 10px; border: none; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer;">
+    with Google
+</button>
+<!-- LOGOUT BUTTON -->
+<button class="btn-save-settings" id="btn-google-logout" style="background: #ff4757; color: white; margin-bottom: 15px; border: none; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer;">
+    Sign Out
+</button>
+
+
+          <button class="btn-save-settings" onclick="saveProfile()">Save Settings</button>
+      </div>
+
+      <div class="form-header" style="margin-top: 0; margin-bottom:15px;">App Configurations</div>
+      <div class="settings-menu">
+          <div class="menu-item">
+              <div class="menu-item-left"><span class="menu-icon">🌙</span><span>AMOLED Dark Mode</span></div>
+              <label class="switch"><input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkTheme(this.checked)"><span class="slider"></span></label>
+          </div>
+          <div class="menu-item" onclick="startExamQuiz()">
+              <div class="menu-item-left"><span class="menu-icon">🧭</span><span>Test Series Mock (50 Qs)</span></div>
+              <span style="color:var(--orange)">➔</span>
+          </div>
+          <div class="menu-item" onclick="showScreen('saved-screen')">
+              <div class="menu-item-left"><span class="menu-icon">🔖</span><span>Personal Library Cards</span></div>
+              <span style="color:var(--orange)">➔</span>
+          </div>
+          <div class="menu-item" onclick="openAboutModal()">
+              <div class="menu-item-left"><span class="menu-icon">ℹ️</span><span>About Us Panel</span></div>
+              <span style="color:var(--orange)">➔</span>
+          </div>
+      </div>
+      
+      <div class="form-header" style="margin-top: 0;">Performance Analytics</div>
+      <div class="analytics-card" id="analytics-container"></div>
+    </div>
+  </div>
+
+  <div id="leader-screen" class="screen">
+    <div class="quiz-header" style="margin-top: 5px;">
+      <button class="icon-btn" style="box-shadow:none; background:transparent;" onclick="showScreen('home-screen')">←</button>
+      <span style="font-size: 20px;">Leaderboard</span>
+      <button class="icon-btn" style="box-shadow:none; background:transparent; font-size: 20px;">🔍</button>
+    </div>
+    <div class="lb-tabs"><div class="lb-tab active">Daily</div><div class="lb-tab">Monthly</div><div class="lb-tab">All time</div></div>
+    <div class="podium-wrap" id="podium-container"></div>
+    <div class="lb-list-header"><span style="flex: 0.5;">Rank</span><span style="flex: 2;">Player</span><span style="flex: 1; text-align:right;">Points</span></div>
+    <div id="leader-list-container" style="background: transparent; padding-bottom: 90px;"></div>
+  </div>
+
+  <div id="saved-screen" class="screen">
+    <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span style="font-size: 18px;">Saved Questions</span><div style="width: 40px;"></div></div>
+    <div id="saved-list-container" style="background: transparent; margin-top: 10px; display:flex; flex-direction:column; gap:12px; padding-bottom: 90px;"></div>
+  </div>
+
+  <div id="about-us-modal" class="modal-overlay">
+    <div id="about-box" class="pop-animation" style="background: var(--card-bg); color: var(--text-dark); width: 85%; border-radius: 30px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align:center;">
+       <h3 style="margin-bottom:12px; font-weight:800; font-size:20px;">About Quizzer</h3>
+       <p style="font-size:14px; opacity:0.8; margin-bottom:20px; font-weight:600; line-height:1.5;">Quizzer Offline Master is a highly robust engineering study client. Designed to support comprehensive exam mock cycles flawlessly across competitive formats entirely localized offline.</p>
+       <button class="primary-btn" onclick="closeAboutModal()" style="padding:12px 25px; font-size:14px; width:auto;">Close Panel</button>
+    </div>
+  </div>
+
+  <div id="view-all-modal" class="modal-overlay">
+    <div id="view-all-box" class="pop-animation" style="background: white; width: 90%; border-radius: 35px; padding: 30px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="color: var(--text-dark); margin: 0; font-size: 20px; font-weight: 800;">All Categories</h3>
+        <button onclick="closeViewAllModal()" style="background: var(--bg-bottom); width: 35px; height: 35px; border-radius: 50%; border: none; font-size: 16px; color: var(--text-dark); cursor: pointer; font-weight: bold;">✖</button>
+      </div>
+      <div class="round-grid">
+        <div class="round-item" onclick="startQuizFromModal('Physics')"><div class="c-icon">⚛️</div>Physics</div>
+        <div class="round-item" onclick="startQuizFromModal('Chemistry')"><div class="c-icon">🧪</div>Chem</div>
+        <div class="round-item" onclick="startQuizFromModal('Maths')"><div class="c-icon">🧮</div>Maths</div>
+        <div class="round-item" onclick="startQuizFromModal('English')"><div class="c-icon">📖</div>English</div>
+        <div class="round-item" onclick="startQuizFromModal('Vocab')"><div class="c-icon">📝</div>Vocab</div>
+        <div class="round-item" onclick="startQuizFromModal('GAT')"><div class="c-icon">🧠</div>GAT</div>
+        <div class="round-item" onclick="closeViewAllModal(); startQuiz('English', 10)"><div class="c-icon">⚔️</div>Language</div>
+        <div class="round-item" onclick="startExamQuizFromModal()"><div class="c-icon">🧭</div>Exam</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="avatar-modal" class="modal-overlay">
+    <div id="avatar-box" class="pop-animation avatar-modal-box">
+      <h3 style="color:white; margin-bottom: 15px; text-align: center;">Select Avatar</h3>
+      <button class="primary-btn" style="background: #4facfe; margin-bottom: 20px; font-size: 14px;" onclick="triggerImageUpload()">📷 Upload Reference Photo</button>
+      <input type="file" id="img-upload" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+      <div class="avatar-grid">
+        <div class="avatar-item c-1" onclick="selectAvatarPreset(this, '👨‍💼')">👨‍💼</div>
+        <div class="avatar-item c-2" onclick="selectAvatarPreset(this, '👩‍💼')">👩‍💼</div>
+        <div class="avatar-item c-3" onclick="selectAvatarPreset(this, '👨‍💻')">👨‍💻</div>
+        <div class="avatar-item c-4" onclick="selectAvatarPreset(this, '🤖')">🤖</div>
+        <div class="avatar-item c-5" onclick="selectAvatarPreset(this, '🧔')">🧔</div>
+        <div class="avatar-item c-6" onclick="selectAvatarPreset(this, '🧑‍🎓')">🧑‍🎓</div>
+        <div class="avatar-item c-7" onclick="selectAvatarPreset(this, '👩‍🔬')">👩‍🔬</div>
+        <div class="avatar-item c-8" onclick="selectAvatarPreset(this, '👽')">👽</div>
+      </div>
+      <div class="modal-actions"><button class="btn-skip" onclick="closeAvatarSelector()">Close</button><button class="btn-submit" onclick="confirmAvatarSelection()">Select</button></div>
+    </div>
+  </div>
+
+</div>
+<script type="module">
+  // 1. IMPORTS MUST BE AT THE VERY TOP
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // 2. YOUR FIREBASE CONFIGURATION (Paste your real keys back into this!)
+  const firebaseConfig = {
+  apiKey: "AIzaSyC8p8CLrr81dg3rMfEQRBH1bnDSHZu1WGk",
+  authDomain: "quizzer-master.firebaseapp.com",
+  projectId: "quizzer-master",
+  storageBucket: "quizzer-master.firebasestorage.app",
+  messagingSenderId: "724366966813",
+  appId: "1:724366966813:web:2a11ff63f2958f0f0c86f4",
+};
+
+  // 3. INITIALIZE VARIABLES (Creates the 'auth' and 'provider' tools)
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  // 4. THE BUTTON LOGIC (Now it knows what 'auth' and 'provider' are!)
+  // 4. THE UPGRADED DATABASE LOGIN LOGIC
+  document.getElementById('btn-google-login').addEventListener('click', async () => {
+      try {
+          // 1. Pop up the Google Login
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+          
+          // 2. Point to this specific user's private save file in your database
+          const userDocRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(userDocRef);
+
+          if (docSnap.exists()) {
+              // PLAYER EXISTS: Download their saved coins from the cloud!
+              const dbData = docSnap.data();
+              myData.coins = dbData.coins;
+              myData.name = dbData.name;
+              myData.avatarVal = dbData.avatarVal;
+              
+              alert("Welcome back, " + user.displayName + "! Coins loaded: " + myData.coins);
+          } else {
+              // NEW PLAYER: Create a fresh save file in the database!
+              await setDoc(userDocRef, {
+                  name: user.displayName,
+                  avatarVal: user.photoURL,
+                  coins: 0 // Starting coins for new players!
+              });
+              
+              myData.coins = 0;
+              myData.name = user.displayName;
+              myData.avatarVal = user.photoURL;
+              
+              alert("New account created for " + user.displayName + "!");
+          }
+
+          // 3. Update the local phone memory so the app doesn't crash
+          myData.avatarType = 'image';
+
+
+          // 4. Refresh the screen to show their specific coins and face
+          updateProfileUI();
+          
+          // If you have a function that updates the coin number at the top of the screen, run it here!
+          //updateCoins(); 
+
+      } catch (error) {
+          console.error(error);
+          alert("Login failed: " + error.message);
+      }
+  });
+    // 5. THE LOGOUT LOGIC
+  document.getElementById('btn-google-logout').addEventListener('click', () => {
+      signOut(auth).then(() => {
+          // 1. Wipe their data from the phone's temporary memory
+
+          
+          // 2. Reset the live game variables to Guest defaults
+          myData.name = "Guest Player";
+          myData.avatarVal = ""; 
+          myData.coins = 0;
+          
+          // 3. Refresh the screen
+          updateProfileUI();
+          // updateCoins(); // Uncomment this if you have a coin updating function
+          
+          alert("You have been securely signed out!");
+      }).catch((error) => {
+          alert("Error signing out: " + error.message);
+      });
+  });
+    // 7. AUTO-LOGIN LISTENER (Runs automatically when you open/refresh the app)
+  onAuthStateChanged(auth, async (user) => {
+      if (user) {
+          // Google remembers them! Instantly download their cloud save.
+          const userDocRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(userDocRef);
+
+          if (docSnap.exists()) {
+              const dbData = docSnap.data();
+              myData.coins = dbData.coins;
+              myData.name = dbData.name;
+              myData.avatarVal = dbData.avatarVal;
+              myData.avatarType = dbData.avatarType || 'image';
+              
+              // Refresh the screen automatically
+              updateProfileUI(); 
+              // updateCoins(); // Uncomment if you have a coin updater function
+          }
+      } else {
+          // Nobody is logged in. Reset to Guest.
+          myData.name = "Guest Player";
+          myData.coins = 0;
+          myData.avatarVal = "";
+          updateProfileUI();
+      }
+  });
+
+  // 6. THE CLOUD SYNC ENGINE (Pushes new data to Firebase)
+  window.syncToCloud = async function() {
+      // Check if a Google user is actually logged in
+      if (auth.currentUser) {
+          const userDocRef = doc(db, "users", auth.currentUser.uid);
+          try {
+              // { merge: true } means it only updates the new stuff without deleting the rest!
+              await setDoc(userDocRef, {
+                  name: myData.name,
+                  avatarType: myData.avatarType || 'image',
+                  avatarVal: myData.avatarVal,
+                  coins: myData.coins
+              }, { merge: true });
+              console.log("Successfully synced to Firebase Cloud!");
+          } catch (error) {
+              console.error("Cloud Sync Failed: ", error);
+          }
+      }
+  };
+
+
+</script>
+
+
+<script>
+  
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  let audioCtx;
+  function initAudio() { if(!audioCtx) { audioCtx = new AudioContext(); } }
+
+  function playSound(type) {
+      if(!audioCtx) initAudio(); if(audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
+      osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+      if (type === 'correct') {
+          osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+          gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+          osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+      } else if (type === 'wrong') {
+          osc.type = 'square'; osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+          gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+          osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+      } else if (type === 'victory') {
+          osc.type = 'sine'; osc.frequency.setValueAtTime(500, audioCtx.currentTime); osc.frequency.setValueAtTime(700, audioCtx.currentTime + 0.2);
+          gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+          osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+      }
+  }
+
+  let storedCoins = localStorage.getItem("qz_game_coins");
+  let defaultStats = { Maths: {p:0, c:0}, Physics: {p:0, c:0}, Chemistry: {p:0, c:0}, English: {p:0, c:0}, Vocab: {p:0, c:0}, GAT: {p:0, c:0} };
+  let storedStats = JSON.parse(localStorage.getItem("qz_stats"));
+  
+let myData = {
+    name: "Guest Player",
+    avatarType: "emoji",
+    avatarVal: "👨‍💼",
+    coins: 0,
+    stats: storedStats || defaultStats
+};
+  
+  if(myData.stats && !myData.stats.Vocab) myData.stats.Vocab = {p:0, c:0};
+  
+  function getRank(coins) {
+      if(coins <= 1000) return "Bronze"; if(coins <= 3000) return "Silver";
+      if(coins <= 6000) return "Gold"; if(coins <= 10000) return "Diamond"; return "Heroic";
+  }
+
+  let tempAvatarType = myData.avatarType; let tempAvatarVal = myData.avatarVal;
+  let currentQuiz = []; let currentQIndex = 0; 
+  let timeTotal = 25; let timeLeft = 25; let timerInterval; let isLocked = false;
+  let count5050 = 3; let countTime = 3; const labels = ['A', 'B', 'C', 'D'];
+  let savedQuestions = JSON.parse(localStorage.getItem("qz_saved_qs")) || [];
+  
+  let todayStr = new Date().toDateString(); let lastDailyDate = localStorage.getItem("qz_daily_date");
+  let isDailyComplete = localStorage.getItem("qz_daily_completed") === "true"; let isDailyTaskMode = false;
+  
+  if(lastDailyDate !== todayStr) { isDailyComplete = false; localStorage.setItem("qz_daily_date", todayStr); localStorage.setItem("qz_daily_completed", "false"); }
+  
+  const questionBank = [
+    { category: 'Maths', q: "A sum of money doubles itself in 5 years at simple interest. What is the rate of interest?", options: ["10%", "15%", "20%", "25%"], answer: 2 },
+    { category: 'Maths', q: "Successive discounts of 20% and 10% are equivalent to a single discount of:", options: ["25%", "28%", "30%", "32%"], answer: 1 },
+    { category: 'Maths', q: "If x + y = 10 and xy = 24, find the value of x² + y².", options: ["50", "52", "54", "56"], answer: 1 },
+    { category: 'Maths', q: "In a right-angled triangle ABC (∠B = 90°), if AB = 3 cm and BC = 4 cm, find AC.", options: ["4 cm", "5 cm", "6 cm", "7 cm"], answer: 1 },
+    { category: 'Maths', q: "What is the sum of the first 100 natural numbers?", options: ["5000", "5050", "5500", "5100"], answer: 1 },
+    { category: 'Maths', q: "Find the unit digit of 7^105.", options: ["1", "3", "7", "9"], answer: 2 },
+    { category: 'Maths', q: "If A : B = 3 : 4 and B : C = 8 : 9, then what is A : C?", options: ["1 : 2", "2 : 3", "3 : 2", "1 : 3"], answer: 1 },
+    { category: 'Maths', q: "15 men can complete a work in 20 days. How many men are required to complete it in 12 days?", options: ["20", "25", "30", "35"], answer: 1 },
+    { category: 'Maths', q: "The average of 5 consecutive numbers is A. If the next 2 numbers are included, the average increases by:", options: ["1", "1.5", "2", "0.5"], answer: 0 },
+    { category: 'Maths', q: "The value of sin 30° + cos 60° is:", options: ["1", "1.5", "2", "0"], answer: 0 },
+    { category: 'Maths', q: "A train 200m long is running at a speed of 72 km/h. How much time will it take to cross a pole?", options: ["8 sec", "10 sec", "12 sec", "15 sec"], answer: 1 },
+    { category: 'Maths', q: "The difference between Compound Interest and Simple Interest on Rs. 1000 for 2 years at 10% p.a. is:", options: ["Rs. 10", "Rs. 20", "Rs. 5", "Rs. 15"], answer: 0 },
+    { category: 'Maths', q: "The area of a circle is 154 sq cm. Its radius is (Take π = 22/7):", options: ["7 cm", "14 cm", "21 cm", "10.5 cm"], answer: 0 },
+    { category: 'Maths', q: "What is the volume of a perfect cube with a side length of 5 cm?", options: ["100 cm³", "125 cm³", "150 cm³", "25 cm³"], answer: 1 },
+    { category: 'Maths', q: "If 15% of x = 20% of y, then x : y is equal to:", options: ["3 : 4", "4 : 3", "5 : 4", "4 : 5"], answer: 1 },
+    { category: 'Maths', q: "What is the exact value of tan 45°?", options: ["1", "1/√3", "√3", "0"], answer: 0 },
+    { category: 'Maths', q: "The LCM of two prime numbers x and y (x > y) is 161. The value of 3y - x is:", options: ["-1", "-2", "1", "2"], answer: 1 },
+    { category: 'Maths', q: "The sum of all interior angles of a regular hexagon is:", options: ["360°", "540°", "720°", "900°"], answer: 2 },
+    { category: 'Maths', q: "If a/b = 2/3, then the value of (a+b)/(a-b) is:", options: ["-5", "5", "1/5", "-1/5"], answer: 0 },
+    { category: 'Maths', q: "A polygon has 9 diagonals. The total number of sides is:", options: ["5", "6", "7", "8"], answer: 1 },
+    { category: 'Maths', q: "The simple interest on Rs 500 at 5% per annum for 4 years is:", options: ["Rs 50", "Rs 100", "Rs 150", "Rs 200"], answer: 1 },
+    { category: 'Maths', q: "If 4a = 5b = 6c, then what is the ratio of a : b : c?", options: ["4 : 5 : 6", "15 : 12 : 10", "10 : 12 : 15", "6 : 5 : 4"], answer: 1 },
+    { category: 'Maths', q: "A man bought a watch for Rs 200 and sold it for Rs 250. His profit percentage is:", options: ["20%", "25%", "30%", "15%"], answer: 1 },
+    { category: 'Maths', q: "Two numbers are in the ratio 3:5. If 9 is subtracted from each, the new ratio becomes 12:23. The numbers are:", options: ["30, 50", "33, 55", "36, 60", "27, 45"], answer: 1 },
+    { category: 'Maths', q: "A boat running downstream covers 20 km in 2 hrs. Upstream it takes 4 hrs. What is the speed of the boat in still water?", options: ["5 km/h", "6.5 km/h", "7.5 km/h", "8 km/h"], answer: 2 },
+    { category: 'Maths', q: "Find the third proportional to 9 and 12.", options: ["15", "16", "18", "21"], answer: 1 },
+    { category: 'Maths', q: "What is the sum of the first 10 prime numbers?", options: ["100", "129", "131", "135"], answer: 1 },
+    { category: 'Maths', q: "The repeating decimal 0.333... expressed as a standard fraction is:", options: ["1/3", "3/10", "1/9", "3/100"], answer: 0 },
+    { category: 'Maths', q: "If x = 3 + √8, find the value of (x + 1/x).", options: ["6", "8", "3", "2√8"], answer: 0 },
+    { category: 'Maths', q: "What is the value of log10(1000)?", options: ["1", "2", "3", "4"], answer: 2 },
+    { category: 'Maths', q: "A sum becomes Rs 1352 in 2 years at 4% p.a. compound interest. What was the initial principal sum?", options: ["Rs 1200", "Rs 1250", "Rs 1300", "Rs 1150"], answer: 1 },
+    { category: 'Maths', q: "The length of the diagonal of a square with a side of 10 cm is:", options: ["10√2 cm", "20 cm", "10√3 cm", "15 cm"], answer: 0 },
+    { category: 'Maths', q: "What is the median of the data set: 2, 5, 8, 4, 9, 6?", options: ["5", "6", "5.5", "6.5"], answer: 2 },
+    { category: 'Maths', q: "If a + b = 5 and ab = 6, find the value of a³ + b³.", options: ["35", "40", "45", "50"], answer: 0 },
+    { category: 'Maths', q: "The volume of a sphere with a radius of 3 cm is:", options: ["18π cm³", "27π cm³", "36π cm³", "54π cm³"], answer: 2 },
+    { category: 'Maths', q: "Pipe A can fill a tank in 20 mins and Pipe B in 30 mins. Together, they will fill it in:", options: ["10 mins", "12 mins", "15 mins", "18 mins"], answer: 1 },
+    { category: 'Maths', q: "The ratio of incomes of A and B is 3:4 and their expenditures are 2:3. If each saves Rs 200, A's income is:", options: ["Rs 400", "Rs 600", "Rs 800", "Rs 1000"], answer: 1 },
+    { category: 'Maths', q: "According to trigonometric identities, sec²θ - tan²θ equals:", options: ["0", "1", "2", "-1"], answer: 1 },
+    { category: 'Maths', q: "The perimeter of a rectangle is 40m and its length is 12m. Its breadth is:", options: ["6m", "8m", "10m", "12m"], answer: 1 },
+    { category: 'Maths', q: "The number of trailing zeroes at the end of 100! (100 factorial) is:", options: ["20", "22", "24", "26"], answer: 2 },
+    { category: 'Maths', q: "The marked price of an article is Rs 500. It is sold at a 20% discount. The sale price is:", options: ["Rs 350", "Rs 400", "Rs 450", "Rs 480"], answer: 1 },
+    { category: 'Maths', q: "Simplify the algebraic expression: (a-b)² + 4ab", options: ["(a+b)²", "a²-b²", "2ab", "a²+b²"], answer: 0 },
+    { category: 'Maths', q: "What is the average of the first 5 multiples of 3?", options: ["6", "9", "12", "15"], answer: 1 },
+    { category: 'Maths', q: "A cone and a cylinder have the exact same base radius and height. What is the ratio of their volumes?", options: ["1 : 2", "1 : 3", "2 : 3", "3 : 1"], answer: 1 },
+    { category: 'Maths', q: "If 5tanθ = 4, then the value of (5sinθ - 3cosθ) / (5sinθ + 2cosθ) is:", options: ["1/6", "1/5", "1/3", "1/4"], answer: 0 },
+    { category: 'Maths', q: "The speed of a car is 54 km/h. Converted to meters per second, this is:", options: ["10 m/s", "12 m/s", "15 m/s", "18 m/s"], answer: 2 },
+    { category: 'Maths', q: "What is the principal square root of 625?", options: ["15", "25", "35", "45"], answer: 1 },
+    { category: 'Maths', q: "By selling an article for Rs 144, a man loses 10%. To gain 10%, he must sell it for:", options: ["Rs 158", "Rs 164", "Rs 176", "Rs 180"], answer: 2 },
+    { category: 'Maths', q: "At what rate of simple interest will a sum of money double itself in exactly 10 years?", options: ["5%", "8%", "10%", "12%"], answer: 2 },
+    { category: 'Maths', q: "Solve for x: If 2^(x+3) = 32, then x equals:", options: ["1", "2", "3", "4"], answer: 1 },
+    { category: 'Physics', q: "SI unit of force:", options: ["Joule", "Newton", "Watt", "Pascal"], answer: 1 },
+    { category: 'Physics', q: "Speed = ?", options: ["Distance × Time", "Distance / Time", "Time / Distance", "Mass / Time"], answer: 1 },
+    { category: 'Physics', q: "Unit of electric current:", options: ["Volt", "Ampere", "Ohm", "Watt"], answer: 1 },
+    { category: 'Physics', q: "Gravity on Earth is:", options: ["9.8 m/s²", "10 m/s", "8 m/s²", "5 m/s²"], answer: 0 },
+    { category: 'Physics', q: "Light travels in:", options: ["Sound", "Vacuum", "Water only", "Air only"], answer: 1 },
+    { category: 'Physics', q: "Mirror used in cars:", options: ["Plane", "Concave", "Convex", "None"], answer: 2 },
+    { category: 'Physics', q: "Work formula:", options: ["F×d", "m×a", "v×t", "m×g"], answer: 0 },
+    { category: 'Physics', q: "Device to measure current:", options: ["Voltmeter", "Ammeter", "Barometer", "Thermometer"], answer: 1 },
+    { category: 'Physics', q: "Unit of power:", options: ["Joule", "Watt", "Newton", "Pascal"], answer: 1 },
+    { category: 'Physics', q: "Sound needs:", options: ["Vacuum", "Medium", "Light", "Gravity"], answer: 1 },
+    { category: 'Physics', q: "Speed of light:", options: ["3×10⁸ m/s", "3×10⁶ m/s", "3×10⁵ m/s", "3×10⁷ m/s"], answer: 0 },
+    { category: 'Physics', q: "Lens used in microscope:", options: ["Convex", "Concave", "Flat", "None"], answer: 0 },
+    { category: 'Physics', q: "SI unit of energy:", options: ["Joule", "Watt", "Volt", "Ampere"], answer: 0 },
+    { category: 'Physics', q: "Electric resistance unit:", options: ["Ohm", "Watt", "Volt", "Ampere"], answer: 0 },
+    { category: 'Physics', q: "Force = mass × ?", options: ["speed", "velocity", "acceleration", "distance"], answer: 2 },
+    { category: 'Physics', q: "Newton’s first law is:", options: ["F=ma", "inertia", "action-reaction", "gravity"], answer: 1 },
+    { category: 'Physics', q: "Heat transfer by liquid:", options: ["Conduction", "Convection", "Radiation", "Reflection"], answer: 1 },
+    { category: 'Physics', q: "Image formed by convex lens:", options: ["Always virtual", "Always real", "Can be real or virtual", "None"], answer: 2 },
+    { category: 'Physics', q: "Unit of frequency:", options: ["Watt", "Hertz", "Joule", "Pascal"], answer: 1 },
+    { category: 'Physics', q: "Electricity flow is:", options: ["Protons", "Electrons", "Neutrons", "Atoms"], answer: 1 },
+    { category: 'Chemistry', q: "H2O is:", options: ["Oxygen", "Hydrogen", "Water", "Acid"], answer: 2 },
+    { category: 'Chemistry', q: "Atomic number of Hydrogen:", options: ["1", "2", "3", "4"], answer: 0 },
+    { category: 'Chemistry', q: "pH of neutral water:", options: ["5", "7", "9", "14"], answer: 1 },
+    { category: 'Chemistry', q: "NaCl is:", options: ["Acid", "Salt", "Base", "Gas"], answer: 1 },
+    { category: 'Chemistry', q: "Oxygen symbol:", options: ["Ox", "O", "Og", "On"], answer: 1 },
+    { category: 'Chemistry', q: "Gas in balloons:", options: ["Oxygen", "Hydrogen", "CO₂", "Nitrogen"], answer: 1 },
+    { category: 'Chemistry', q: "Water freezes at:", options: ["0°C", "10°C", "100°C", "-10°C"], answer: 0 },
+    { category: 'Chemistry', q: "Chemical formula of salt:", options: ["NaCl", "KCl", "CaCl", "HCl"], answer: 0 },
+    { category: 'Chemistry', q: "Acid taste:", options: ["Bitter", "Sour", "Sweet", "Salty"], answer: 1 },
+    { category: 'Chemistry', q: "Base example:", options: ["HCl", "NaOH", "H2O", "CO2"], answer: 1 },
+    { category: 'Chemistry', q: "Oxygen is needed for:", options: ["Burning", "Freezing", "Melting", "Condensation"], answer: 0 },
+    { category: 'Chemistry', q: "Iron symbol:", options: ["Ir", "Fe", "In", "Io"], answer: 1 },
+    { category: 'Chemistry', q: "Gas used in photosynthesis:", options: ["Oxygen", "CO₂", "Hydrogen", "Nitrogen"], answer: 1 },
+    { category: 'Chemistry', q: "Water formula:", options: ["H2O", "HO", "H2O2", "OH"], answer: 0 },
+    { category: 'Chemistry', q: "Noble gas:", options: ["Oxygen", "Nitrogen", "Helium", "Hydrogen"], answer: 2 },
+    { category: 'Chemistry', q: "Acid in lemon:", options: ["Acetic", "Citric", "Lactic", "Sulfuric"], answer: 1 },
+    { category: 'Chemistry', q: "LPG is:", options: ["Solid", "Liquid", "Gas", "Plasma"], answer: 2 },
+    { category: 'Chemistry', q: "Atom is:", options: ["Smallest particle", "Molecule", "Cell", "Compound"], answer: 0 },
+    { category: 'Chemistry', q: "Carbon dioxide formula:", options: ["CO", "CO2", "C2O", "C"], answer: 1 },
+    { category: 'Chemistry', q: "Metals are generally:", options: ["Brittle", "Conductors", "Gases", "Liquids"], answer: 1 },
+    { category: 'English', q: "Change to Passive Voice: 'The police arrested the thief.'", options: ["The thief is arrested by the police.", "The thief was arrested by the police.", "The thief has been arrested by the police.", "The thief had been arrested by the police."], answer: 1 },
+    { category: 'English', q: "Change to Passive Voice: 'She is reading a book.'", options: ["A book is read by her.", "A book was being read by her.", "A book is being read by her.", "A book has been read by her."], answer: 2 },
+    { category: 'English', q: "Change to Passive Voice: 'They have completed the project.'", options: ["The project was completed by them.", "The project is completed by them.", "The project had been completed by them.", "The project has been completed by them."], answer: 3 },
+    { category: 'English', q: "Change to Passive Voice: 'Did you write this letter?'", options: ["Is this letter written by you?", "Was this letter written by you?", "Has this letter been written by you?", "Had this letter been written by you?"], answer: 1 },
+    { category: 'English', q: "Change to Passive Voice: 'Open the door.'", options: ["The door should be opened.", "Let the door be opened.", "The door must be opened.", "Let the door opened."], answer: 1 },
+    { category: 'English', q: "Change to Passive Voice: 'People speak English all over the world.'", options: ["English is spoken all over the world.", "English was spoken all over the world.", "English has been spoken all over the world.", "English had been spoken all over the world."], answer: 0 },
+    { category: 'English', q: "Change to Passive Voice: 'Who broke the window?'", options: ["By whom the window broken?", "By whom was the window broken?", "By whom is the window broken?", "Whom was the window broken by?"], answer: 1 },
+    { category: 'English', q: "Change to Passive Voice: 'They will build a new bridge.'", options: ["A new bridge is built by them.", "A new bridge would be built by them.", "A new bridge will be built by them.", "A new bridge will have been built by them."], answer: 2 },
+    { category: 'English', q: "Change to Passive Voice: 'He was driving the car so fast.'", options: ["The car was driven so fast by him.", "The car has been driven so fast by him.", "The car was being driven so fast by him.", "The car is being driven so fast by him."], answer: 2 },
+    { category: 'English', q: "Change to Passive Voice: 'The teacher is correcting the papers.'", options: ["The papers are corrected by the teacher.", "The papers were being corrected by the teacher.", "The papers are being corrected by the teacher.", "The papers have been corrected by the teacher."], answer: 2 },
+    { category: 'English', q: "Change to Indirect Speech: He said, 'I am busy.'", options: ["He said that he is busy.", "He said that he was busy.", "He said that I am busy.", "He said that he has been busy."], answer: 1 },
+    { category: 'English', q: "Change to Indirect Speech: She said to me, 'Are you coming?'", options: ["She asked me if I am coming.", "She told me if I was coming.", "She asked me if I was coming.", "She asked me that if I was coming."], answer: 2 },
+    { category: 'English', q: "Change to Indirect Speech: He said, 'The sun rises in the east.'", options: ["He said that the sun rose in the east.", "He said that the sun rises in the east.", "He said that the sun had risen in the east.", "He told that the sun rises in the east."], answer: 1 },
+    { category: 'English', q: "Change to Indirect Speech: John said, 'I bought a car yesterday.'", options: ["John said that he bought a car yesterday.", "John said that he had bought a car yesterday.", "John said that he had bought a car the previous day.", "John said that he bought a car the previous day."], answer: 2 },
+    { category: 'English', q: "Change to Indirect Speech: 'Please help me,' she said to him.", options: ["She asked him to help her.", "She requested him to help her.", "She ordered him to help her.", "She told him please help her."], answer: 1 },
+    { category: 'English', q: "Change to Indirect Speech: He said, 'Alas! I am undone.'", options: ["He said alas he was undone.", "He exclaimed with sorrow that he was undone.", "He exclaimed that he is undone.", "He told with sorrow that he was undone."], answer: 1 },
+    { category: 'English', q: "Change to Indirect Speech: The teacher said to the boys, 'Do not make a noise.'", options: ["The teacher forbade the boys to make a noise.", "The teacher asked the boys not to make noise.", "The teacher ordered the boys do not make a noise.", "The teacher told the boys to not make a noise."], answer: 0 },
+    { category: 'English', q: "Change to Indirect Speech: She said, 'I have been waiting for two hours.'", options: ["She said that she has been waiting for two hours.", "She said that she had been waiting for two hours.", "She said that she was waiting for two hours.", "She told that she had been waiting for two hours."], answer: 1 },
+    { category: 'English', q: "Change to Indirect Speech: Ram said, 'I will play cricket tomorrow.'", options: ["Ram said that he would play cricket tomorrow.", "Ram said that he will play cricket the next day.", "Ram said that he would play cricket the next day.", "Ram said that he should play cricket tomorrow."], answer: 2 },
+    { category: 'English', q: "Change to Indirect Speech: Mother said to me, 'May you live long!'", options: ["Mother prayed that I might live long.", "Mother said that I may live long.", "Mother wished that you might live long.", "Mother prayed that I may live long."], answer: 0 },
+    { category: 'English', q: "Fill in the blank: Either he or his friends ___ mistaken.", options: ["is", "are", "has", "have"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: The jury ___ divided in their opinion.", options: ["was", "were", "is", "has"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: Neither of the two boys ___ done it.", options: ["have", "has", "are", "were"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: I have been living here ___ 2015.", options: ["from", "since", "for", "till"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: He is good ___ mathematics.", options: ["in", "at", "with", "on"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: She prefers tea ___ coffee.", options: ["than", "to", "over", "rather"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: Hardly had he left the house ___ it started raining.", options: ["than", "when", "then", "since"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: If I ___ a bird, I would fly.", options: ["am", "was", "were", "be"], answer: 2 },
+    { category: 'English', q: "Fill in the blank: One of the boys ___ missing.", options: ["is", "are", "have", "were"], answer: 0 },
+    { category: 'English', q: "Fill in the blank: The scenery of Kashmir ___ beautiful.", options: ["are", "is", "have", "has"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: I look forward to ___ from you.", options: ["hear", "hearing", "be hearing", "heard"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: Let you and ___ do it.", options: ["I", "me", "my", "mine"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: He is ___ European by birth.", options: ["a", "an", "the", "no article needed"], answer: 0 },
+    { category: 'English', q: "Fill in the blank: The number of students ___ increasing.", options: ["is", "are", "has", "have"], answer: 0 },
+    { category: 'English', q: "Fill in the blank: A number of students ___ present.", options: ["is", "are", "was", "has"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: Although he worked hard, ___ he failed.", options: ["but", "yet", "and", "so"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: He is the boy ___ won the prize.", options: ["whom", "which", "who", "whose"], answer: 2 },
+    { category: 'English', q: "Fill in the blank: This is the book ___ I was looking for.", options: ["who", "whom", "which", "what"], answer: 2 },
+    { category: 'English', q: "Fill in the blank: No sooner did the train arrive ___ the passengers rushed.", options: ["than", "when", "then", "but"], answer: 0 },
+    { category: 'English', q: "Fill in the blank: I am not accustomed ___ such treatment.", options: ["with", "to", "of", "for"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: By the time you reach there, he ___ left.", options: ["will have", "would", "will be", "has"], answer: 0 },
+    { category: 'English', q: "Fill in the blank: He told me that he ___ a letter to his father.", options: ["is writing", "was writing", "has written", "writes"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: We must abide ___ the rules of the institution.", options: ["with", "by", "to", "on"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: The cat jumped ___ the table.", options: ["on", "upon", "in", "into"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: The train ___ before we reached the station.", options: ["left", "had left", "has left", "will leave"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: She is angry ___ me.", options: ["on", "with", "upon", "at"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: I congratulate you ___ your success.", options: ["for", "on", "at", "about"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: He has been accused ___ murder.", options: ["for", "of", "with", "off"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: Beware ___ dogs.", options: ["from", "of", "with", "by"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: My friend is senior ___ me by two years.", options: ["than", "to", "over", "from"], answer: 1 },
+    { category: 'Vocab', q: "Synonym of 'Abundant':", options: ["Scarce", "Plentiful", "Rare", "Empty"], answer: 1 },
+    { category: 'Vocab', q: "Antonym of 'Obscure':", options: ["Hidden", "Clear", "Vague", "Dark"], answer: 1 },
+    { category: 'Vocab', q: "Meaning of 'Candid':", options: ["Timid", "Frank", "Deceitful", "Sly"], answer: 1 },
+    { category: 'Vocab', q: "Synonym of 'Diligent':", options: ["Lazy", "Hardworking", "Careless", "Slow"], answer: 1 },
+    { category: 'Vocab', q: "Antonym of 'Arrogant':", options: ["Haughty", "Proud", "Humble", "Conceited"], answer: 2 },
+    { category: 'Vocab', q: "Meaning of 'Inevitable':", options: ["Unavoidable", "Unlikely", "Doubtful", "Rare"], answer: 0 },
+    { category: 'Vocab', q: "Synonym of 'Lucid':", options: ["Confusing", "Clear", "Muddy", "Vague"], answer: 1 },
+    { category: 'Vocab', q: "Antonym of 'Frugal':", options: ["Thrifty", "Saving", "Extravagant", "Careful"], answer: 2 },
+    { category: 'Vocab', q: "Meaning of 'Frail':", options: ["Strong", "Fragile", "Solid", "Tough"], answer: 1 },
+    { category: 'Vocab', q: "Synonym of 'Ponder':", options: ["Ignore", "Think", "Forget", "Neglect"], answer: 1 },
+    { category: 'Vocab', q: "Antonym of 'Harmonious':", options: ["Peaceful", "Hostile", "Friendly", "Calm"], answer: 1 },
+    { category: 'Vocab', q: "Meaning of 'Bizarre':", options: ["Normal", "Weird", "Common", "Usual"], answer: 1 },
+    { category: 'Vocab', q: "Synonym of 'Meticulous':", options: ["Careful", "Sloppy", "Messy", "Hasty"], answer: 0 },
+    { category: 'Vocab', q: "Antonym of 'Despair':", options: ["Hope", "Misery", "Gloom", "Sadness"], answer: 0 },
+    { category: 'Vocab', q: "Meaning of 'Gargantuan':", options: ["Tiny", "Huge", "Small", "Mini"], answer: 1 },
+    { category: 'Vocab', q: "Synonym of 'Authentic':", options: ["Fake", "Genuine", "Copied", "Unreal"], answer: 1 },
+    { category: 'Vocab', q: "Antonym of 'Vanish':", options: ["Disappear", "Fade", "Appear", "Leave"], answer: 2 },
+    { category: 'Vocab', q: "Meaning of 'Pivotal':", options: ["Crucial", "Trivial", "Minor", "Useless"], answer: 0 },
+    { category: 'Vocab', q: "Synonym of 'Serene':", options: ["Noisy", "Calm", "Loud", "Chaotic"], answer: 1 },
+    { category: 'Vocab', q: "Antonym of 'Lethargic':", options: ["Active", "Sluggish", "Lazy", "Tired"], answer: 0 },
+    { category: 'GAT', q: "Which isotope is primarily utilized in radiocarbon dating to determine the age of organic materials?", options: ["Carbon-12", "Carbon-13", "Carbon-14", "Carbon-15"], answer: 2 },
+    { category: 'GAT', q: "Which chemical process is used to convert liquid vegetable oils into solid fats?", options: ["Saponification", "Hydrogenation", "Oxidation", "Esterification"], answer: 1 },
+    { category: 'GAT', q: "According to the Gibbs phase rule, what is the maximum number of phases that can coexist in thermodynamic phase equilibrium for a single-component system (like water at its triple point)?", options: ["1", "2", "3", "4"], answer: 2 },
+    { category: 'GAT', q: "What is the common name for Sodium Bicarbonate?", options: ["Baking Soda", "Washing Soda", "Bleaching Powder", "Plaster of Paris"], answer: 0 },
+    { category: 'GAT', q: "Which acid is present in tomato?", options: ["Citric Acid", "Tartaric Acid", "Oxalic Acid", "Lactic Acid"], answer: 2 },
+    { category: 'GAT', q: "The SI unit of electrical resistance is:", options: ["Ampere", "Volt", "Ohm", "Joule"], answer: 2 },
+    { category: 'GAT', q: "Which of the following is a non-metal that remains liquid at room temperature?", options: ["Mercury", "Bromine", "Chlorine", "Gallium"], answer: 1 },
+    { category: 'GAT', q: "What is the primary chemical component of natural gas?", options: ["Ethane", "Methane", "Propane", "Butane"], answer: 1 },
+    { category: 'GAT', q: "Scurvy is caused by the deficiency of which vitamin?", options: ["Vitamin A", "Vitamin B12", "Vitamin C", "Vitamin D"], answer: 2 },
+    { category: 'GAT', q: "The process of solid directly changing into a gas without becoming a liquid is called:", options: ["Condensation", "Evaporation", "Sublimation", "Deposition"], answer: 2 },
+    { category: 'GAT', q: "Which cell organelle is known as the 'powerhouse of the cell'?", options: ["Nucleus", "Mitochondria", "Ribosome", "Golgi apparatus"], answer: 1 },
+    { category: 'GAT', q: "What is the chemical formula for heavy water?", options: ["H2O2", "D2O", "H3O", "HO2"], answer: 1 },
+    { category: 'GAT', q: "Which of the following is the lightest metal?", options: ["Lead", "Silver", "Lithium", "Aluminum"], answer: 2 },
+    { category: 'GAT', q: "The filament of an electric bulb is made of:", options: ["Copper", "Aluminum", "Lead", "Tungsten"], answer: 3 },
+    { category: 'GAT', q: "Which lens is used to correct Myopia (short-sightedness)?", options: ["Convex lens", "Concave lens", "Cylindrical lens", "Bifocal lens"], answer: 1 },
+    { category: 'GAT', q: "The Article 32 of the Indian Constitution is related to:", options: ["Right to Equality", "Right to Constitutional Remedies", "Right to Freedom", "Right to Education"], answer: 1 },
+    { category: 'GAT', q: "Who was the first Governor-General of independent India?", options: ["C. Rajagopalachari", "Lord Mountbatten", "Rajendra Prasad", "Jawaharlal Nehru"], answer: 1 },
+    { category: 'GAT', q: "The Thar Desert, which extends through parts of Rajasthan, is also known as:", options: ["The Great Indian Desert", "The White Desert", "The Cold Desert", "The Deccan Desert"], answer: 0 },
+    { category: 'GAT', q: "Which Indian city is known as the 'Silicon Valley of India'?", options: ["Hyderabad", "Pune", "Bengaluru", "Chennai"], answer: 2 },
+    { category: 'GAT', q: "In the context of the Indian Premier League (IPL), which team won the inaugural season in 2008?", options: ["Chennai Super Kings", "Rajasthan Royals", "Mumbai Indians", "Kolkata Knight Riders"], answer: 1 },
+    { category: 'GAT', q: "Which river is known as the 'Sorrow of Bihar'?", options: ["Ganga", "Kosi", "Son", "Gandak"], answer: 1 },
+    { category: 'GAT', q: "Who wrote the national anthem of India, 'Jana Gana Mana'?", options: ["Bankim Chandra Chatterjee", "Rabindranath Tagore", "Sarojini Naidu", "Sri Aurobindo"], answer: 1 },
+    { category: 'GAT', q: "The term of a member of the Rajya Sabha is:", options: ["4 years", "5 years", "6 years", "Lifetime"], answer: 2 },
+    { category: 'GAT', q: "In which year did the Jallianwala Bagh massacre take place?", options: ["1917", "1919", "1921", "1923"], answer: 1 },
+    { category: 'GAT', q: "Which is the largest freshwater lake in India?", options: ["Dal Lake", "Wular Lake", "Chilika Lake", "Vembanad Lake"], answer: 1 },
+    { category: 'GAT', q: "Who is the ex-officio Chairman of the NITI Aayog?", options: ["President", "Finance Minister", "Prime Minister", "RBI Governor"], answer: 2 },
+    { category: 'GAT', q: "Which planet is known as the 'Red Planet'?", options: ["Venus", "Mars", "Jupiter", "Saturn"], answer: 1 },
+    { category: 'GAT', q: "The Central Arid Zone Research Institute (CAZRI) is located in which state?", options: ["Gujarat", "Punjab", "Haryana", "Rajasthan"], answer: 3 },
+    { category: 'GAT', q: "Which fundamental right was deleted by the 44th Amendment Act?", options: ["Right to Property", "Right to Education", "Right against Exploitation", "Right to Freedom of Religion"], answer: 0 },
+    { category: 'GAT', q: "The minimum age to become the President of India is:", options: ["25 years", "30 years", "35 years", "40 years"], answer: 2 },
+    { category: 'GAT', q: "Analogy: Smartphone is to Media as Console is to:", options: ["Screen", "Controller", "Gaming", "Battery"], answer: 2 },
+    { category: 'GAT', q: "Find the missing number in the series: 5, 10, 20, 40, ?", options: ["60", "70", "80", "100"], answer: 2 },
+    { category: 'GAT', q: "If 'CHEMISTRY' is coded as 'DIFNJTUSZ', how is 'PHYSICS' coded?", options: ["QIZTJDT", "QIZTJDR", "QIZTKDT", "QJZTJDT"], answer: 0 },
+    { category: 'GAT', q: "Pointing to a photograph of a boy, Suresh said, 'He is the son of the only son of my mother.' How is Suresh related to that boy?", options: ["Brother", "Uncle", "Cousin", "Father"], answer: 3 },
+    { category: 'GAT', q: "Select the odd one out:", options: ["Copper", "Zinc", "Brass", "Aluminum"], answer: 2 },
+    { category: 'GAT', q: "Which word cannot be formed using the letters of the word 'RECOMMENDATION'?", options: ["NATION", "COMMENT", "COMMON", "MEDICINE"], answer: 3 },
+    { category: 'GAT', q: "In a row of 40 students, Rahul is 14th from the left end. What is his position from the right end?", options: ["25th", "26th", "27th", "28th"], answer: 2 },
+    { category: 'GAT', q: "Statement: All books are blue. Some blue are pens. Conclusion: I. Some books are pens. II. Some pens are blue.", options: ["Only I follows", "Only II follows", "Both follow", "None follows"], answer: 1 },
+    { category: 'GAT', q: "If '+' means '-', '-' means '*', '*' means '/', and '/' means '+', what is the value of 10 * 5 / 3 - 2 + 3?", options: ["5", "11", "20", "10"], answer: 0 },
+    { category: 'GAT', q: "Arrange the following in a logical sequence: 1. Application 2. Selection 3. Exam 4. Interview 5. Advertisement", options: ["5, 1, 3, 4, 2", "5, 1, 4, 3, 2", "1, 5, 3, 4, 2", "5, 3, 1, 4, 2"], answer: 0 },
+    { category: 'GAT', q: "The HCF of two numbers is 11 and their LCM is 693. If one of the numbers is 77, find the other.", options: ["99", "66", "88", "110"], answer: 0 },
+    { category: 'GAT', q: "If 20% of A = 30% of B = 1/6 of C, then A : B : C is:", options: ["2 : 3 : 16", "3 : 2 : 16", "10 : 15 : 18", "15 : 10 : 18"], answer: 3 },
+    { category: 'GAT', q: "A train 150 meters long is running at a speed of 90 km/h. How long will it take to cross a railway signal?", options: ["4 seconds", "5 seconds", "6 seconds", "8 seconds"], answer: 2 },
+    { category: 'GAT', q: "The sum of the present ages of a father and his son is 60 years. Six years ago, father's age was five times the age of the son. After 6 years, son's age will be:", options: ["12 years", "14 years", "18 years", "20 years"], answer: 3 },
+    { category: 'GAT', q: "A shopkeeper sells an article at a loss of 12.5%. Had he sold it for Rs. 51.80 more, he would have earned a profit of 6%. The cost price of the article is:", options: ["Rs. 280", "Rs. 300", "Rs. 380", "Rs. 400"], answer: 0 },
+    { category: 'GAT', q: "If x + (1/x) = 4, find the value of x^2 + (1/x^2).", options: ["12", "14", "16", "18"], answer: 1 },
+    { category: 'GAT', q: "The simple interest on a sum of money for 3 years at 8% per annum is half the compound interest on Rs. 4000 for 2 years at 10% per annum. The sum placed on simple interest is:", options: ["Rs. 1550", "Rs. 1650", "Rs. 1750", "Rs. 1850"], answer: 2 },
+    { category: 'GAT', q: "A can do a piece of work in 12 days and B can do it in 15 days. They work together for 5 days and then B leaves. In how many days will A finish the remaining work?", options: ["3 days", "4 days", "5 days", "6 days"], answer: 0 },
+    { category: 'GAT', q: "The average of 5 consecutive odd numbers is 61. What is the difference between the highest and lowest numbers?", options: ["4", "6", "8", "10"], answer: 2 },
+    { category: 'GAT', q: "The radius of a cylinder is doubled and the height is halved. What is the ratio between the new volume and the previous volume?", options: ["1 : 1", "2 : 1", "1 : 2", "4 : 1"], answer: 1 }
+
+  ];
+  function helperSetAvatarContent(element, imageVal, type) {
+      if(!element) return; let img = element.querySelector('img');
+      let span = element.querySelector('span') || element.querySelector('.podium-badge') ? null : element.querySelector('span');
+      if(type === 'image') {
+          if(!img) { img = document.createElement('img'); element.appendChild(img); }
+          img.src = imageVal; img.style.display = 'block'; img.style.borderRadius = '50%'; if(span) span.style.display = 'none';
+      } else {
+          if(img) img.style.display = 'none';
+          let textNodeWrap = element.querySelector('.emoji-txt-node');
+          if(!textNodeWrap) { textNodeWrap = document.createElement('span'); textNodeWrap.className = 'emoji-txt-node'; textNodeWrap.style.position = 'relative'; textNodeWrap.style.zIndex = '1'; element.appendChild(textNodeWrap); }
+          textNodeWrap.innerText = imageVal; textNodeWrap.style.display = 'inline';
+      }
+  }
+
+  function toggleDarkTheme(isDark) {
+      const app = document.getElementById('app');
+      if(isDark) { app.classList.add('dark-theme'); localStorage.setItem("qz_dark_mode", "true"); } 
+      else { app.classList.remove('dark-theme'); localStorage.setItem("qz_dark_mode", "false"); }
+  }
+  if(localStorage.getItem("qz_dark_mode") === "true") {
+      document.getElementById('dark-mode-toggle').checked = true; toggleDarkTheme(true);
+  }
+
+  function openAboutModal() { document.getElementById('about-us-modal').style.display = 'flex'; }
+  function closeAboutModal() { document.getElementById('about-us-modal').style.display = 'none'; }
+
+  function updateProfileUI() {
+    document.getElementById('display-name').innerText = myData.name;
+    document.getElementById('home-coins').innerText = myData.coins; 
+    let homeWrap = document.getElementById('home-avatar-wrap');
+    if(homeWrap) {
+        let hImg = document.getElementById('home-avatar'); let hSl = document.getElementById('home-avatar-emoji');
+        if(myData.avatarType === 'image') { hImg.src = myData.avatarVal; hImg.style.display='block'; hSl.style.display='none'; }
+        else { hImg.style.display='none'; hSl.style.display='inline'; hSl.innerText = myData.avatarVal; }
+    }
+    let resWrap = document.getElementById('res-avatar-wrap');
+    if(resWrap) {
+        let rImg = document.getElementById('res-avatar-img'); let rSl = document.getElementById('res-avatar-emoji');
+        if(myData.avatarType === 'image') { rImg.src = myData.avatarVal; rImg.style.display='block'; rSl.style.display='none'; }
+        else { rImg.style.display='none'; rSl.style.display='inline'; rSl.innerText = myData.avatarVal; }
+    }
+    let editWrap = document.getElementById('edit-avatar-wrap');
+    if(editWrap) {
+        let eImg = document.getElementById('edit-avatar-img'); let eSl = document.getElementById('edit-avatar-emoji');
+        if(myData.avatarType === 'image') { eImg.src = myData.avatarVal; eImg.style.display='block'; eSl.style.display='none'; }
+        else { eImg.style.display='none'; eSl.style.display='inline'; eSl.innerText = myData.avatarVal; }
+    }
+    document.getElementById('res-name').innerText = myData.name.split(' ')[0]; 
+    document.getElementById('inp-name').value = myData.name; document.getElementById('inp-username').value = myData.username;
+    let currentRank = getRank(myData.coins);
+    document.getElementById('home-rank-badge').innerText = currentRank; document.getElementById('res-rank-text').innerText = currentRank;
+  }
+
+  function updateDailyTaskUI() {
+    let title = document.getElementById('dt-title'); let progText = document.getElementById('dt-prog-text');
+    let barFill = document.getElementById('dt-bar-fill'); let dtCard = document.getElementById('dt-card');
+    if(isDailyComplete) {
+        title.innerText = "Daily Task Completed!"; progText.innerText = "Check back tomorrow!"; barFill.style.width = "100%";
+        dtCard.onclick = null; dtCard.style.opacity = "0.7";
+    } else {
+        title.innerText = "Daily Task"; progText.innerText = "0/10 Questions"; barFill.style.width = "0%";
+        dtCard.onclick = startDailyTask; dtCard.style.opacity = "1";
+    }
+  }
+  
+  updateProfileUI(); updateDailyTaskUI();
+
+  function saveProfile() {
+    myData.name = document.getElementById('inp-name').value.trim() || "User"; 
+    myData.username = document.getElementById('inp-username').value.trim() || myData.username;
+
+    updateProfileUI(); showScreen('home-screen');     if (window.syncToCloud) window.syncToCloud();
+
+  alert("Profile Saved!");
+  }
+
+  function triggerImageUpload() { document.getElementById('img-upload').click(); }
+
+  function handleImageUpload(event) {
+      const file = event.target.files[0]; if (!file) return; const reader = new FileReader();
+      reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+              const canvas = document.createElement('canvas'); const MAX_SIZE = 150; 
+              let width = img.width; let height = img.height;
+              if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } 
+              else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+              canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height); const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+              tempAvatarType = 'image'; tempAvatarVal = compressedBase64;
+              document.querySelectorAll('.avatar-item').forEach(el => el.classList.remove('selected'));
+              confirmAvatarSelection();
+          }; img.src = e.target.result;
+      }; reader.readAsDataURL(file);
+  }
+
+  function triggerBounce(el) { el.classList.add('tap-bounce'); setTimeout(() => el.classList.remove('tap-bounce'), 200); }
+  function openViewAllModal() { let m=document.getElementById('view-all-modal'), b=document.getElementById('view-all-box'); m.style.display='flex'; b.style.animation='none'; setTimeout(()=>b.style.animation='', 10); }
+  function closeViewAllModal() { document.getElementById('view-all-modal').style.display = 'none'; }
+  function startQuizFromModal(subject) { closeViewAllModal(); startQuiz(subject); }
+  function startExamQuizFromModal() { closeViewAllModal(); startExamQuiz(); }
+  function openAvatarSelector() { let m=document.getElementById('avatar-modal'), b=document.getElementById('avatar-box'); m.style.display='flex'; b.style.animation='none'; setTimeout(()=>b.style.animation='', 10); }
+  function closeAvatarSelector() { document.getElementById('avatar-modal').style.display = 'none'; }
+  function selectAvatarPreset(el, str) { document.querySelectorAll('.avatar-item').forEach(e => e.classList.remove('selected')); el.classList.add('selected'); tempAvatarType = 'emoji'; tempAvatarVal = str; }
+  function confirmAvatarSelection() { myData.avatarType = tempAvatarType; myData.avatarVal = tempAvatarVal; localStorage.setItem("qz_avatar_type", myData.avatarType); localStorage.setItem("qz_avatar_val", myData.avatarVal); updateProfileUI(); closeAvatarSelector(); }
+
+  function toggleSaveQuestion() {
+    let q = currentQuiz[currentQIndex]; let index = savedQuestions.findIndex(sq => sq.q === q.q);
+    let btn = document.getElementById('btn-save-q'); triggerBounce(btn);
+    if(index > -1) { savedQuestions.splice(index, 1); btn.innerHTML = '🔖'; } else { savedQuestions.push(q); btn.innerHTML = '⭐'; }
+    localStorage.setItem("qz_saved_qs", JSON.stringify(savedQuestions));
+  }
+
+  function renderSavedQuestions() {
+    let container = document.getElementById('saved-list-container');
+    if(savedQuestions.length === 0) {
+        container.innerHTML = `<div style="background: var(--card-bg); border-radius: 20px; padding: 30px 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(242,107,62,0.1);"><div style="text-align: center; font-size: 40px; margin-bottom: 10px;">🔖</div><h3 style="text-align: center; color: var(--text-dark);">No Saved Questions</h3><p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 10px;">Tap the bookmark icon during a quiz to save tricky questions here for later review.</p></div>`; return;
+    }
+    let html = '';
+    savedQuestions.forEach((sq, i) => {
+        html += `<div style="background:var(--card-bg); padding:20px; border-radius:20px; text-align:left; position:relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(242,107,62,0.1);">
+            <span style="background:var(--orange); color:white; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:800;">${sq.category}</span>
+            <button onclick="removeSavedQuestion(${i})" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#c62828; font-size:18px; cursor:pointer;">✖</button>
+            <h4 style="margin:12px 0 8px; color:var(--text-dark); font-size:15px; font-weight:800;">${sq.q}</h4>
+            <p style="color:var(--correct-text); font-weight:800; font-size:14px;">✔ ${sq.options[sq.answer]}</p>
+        </div>`;
+    }); container.innerHTML = html;
+  }
+
+  function removeSavedQuestion(index) { savedQuestions.splice(index, 1); localStorage.setItem("qz_saved_qs", JSON.stringify(savedQuestions)); renderSavedQuestions(); }
+  function renderReview() {
+      let html = '';
+      currentQuiz.forEach((q, i) => {
+          let optsHtml = '';
+          q.options.forEach((opt, j) => {
+              let cls = 'r-normal'; let icon = '';
+              if(j === q.answer) { cls = 'r-correct'; icon = '✔ '; } else if(j === q.selectedOption && j !== q.answer) { cls = 'r-wrong'; icon = '✖ '; }
+              optsHtml += `<div class="review-opt ${cls}">${icon}${labels[j]}: ${opt}</div>`;
+          });
+          html += `<div class="review-card"><div class="review-q">Q${i+1}: ${q.q}</div>${optsHtml}</div>`;
+      });
+      document.getElementById('review-container').innerHTML = html; showScreen('review-screen');
+  }
+
+  function renderAnalytics() {
+      let html = '';
+      for(let cat in myData.stats) {
+          let d = myData.stats[cat]; let percent = d.p > 0 ? Math.round((d.c / d.p) * 100) : 0;
+          html += `<div class="stat-row">
+              <div class="stat-header"><span>${cat}</span><span>${percent}% (${d.c}/${d.p})</span></div>
+              <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${percent}%;"></div></div>
+          </div>`;
+      }
+      document.getElementById('analytics-container').innerHTML = html;
+  }
+
+  function renderLeaderboard() {
+      let players = [
+          { name: "Hasan Sajjad", coins: 1800, avatar: "👨‍💻", type: "emoji", isUser: false },
+          { name: "Masuma", coins: 1490, avatar: "👩‍💼", type: "emoji", isUser: false },
+          { name: "Tanvir", coins: 1208, avatar: "🧑‍🎓", type: "emoji", isUser: false },
+          { name: "Tanim", coins: 1000, avatar: "🧔", type: "emoji", isUser: false },
+          { name: "Sumaiya", coins: 900, avatar: "👩‍🔬", type: "emoji", isUser: false },
+          { name: "Dileep Roy", coins: 750, avatar: "👽", type: "emoji", isUser: false },
+          { name: "Nazir", coins: 720, avatar: "🤖", type: "emoji", isUser: false }
+      ];
+      let userObj = { name: myData.name.split(' ')[0] + " (You)", coins: myData.coins, avatar: myData.avatarVal, type: myData.avatarType, isUser: true };
+      players.push(userObj); players.sort((a, b) => b.coins - a.coins);
+      
+      let top1 = players[0]; let top2 = players[1] || { name: "-", coins: 0, avatar: "👤", type: "emoji" }; let top3 = players[2] || { name: "-", coins: 0, avatar: "👤", type: "emoji" };
+      let podiumHtml = `
+       <div class="podium-col podium-2">
+          <div class="podium-avatar" id="pod-2-avatar"><div class="podium-badge">2</div></div>
+          <div class="podium-name">${top2.name}</div>
+          <div class="podium-pts">👑 ${top2.coins} pts</div>
+       </div>
+       <div class="podium-col podium-1">
+          <div class="podium-avatar" id="pod-1-avatar"><div class="crown">👑</div><div class="podium-badge">1</div></div>
+          <div class="podium-name">${top1.name}</div>
+          <div class="podium-pts">👑 ${top1.coins} pts</div>
+       </div>
+       <div class="podium-col podium-3">
+          <div class="podium-avatar" id="pod-3-avatar"><div class="podium-badge">3</div></div>
+          <div class="podium-name">${top3.name}</div>
+          <div class="podium-pts">👑 ${top3.coins} pts</div>
+       </div>`;
+      
+      document.getElementById('podium-container').innerHTML = podiumHtml;
+      helperSetAvatarContent(document.getElementById('pod-1-avatar'), top1.avatar, top1.type);
+      helperSetAvatarContent(document.getElementById('pod-2-avatar'), top2.avatar, top2.type);
+      helperSetAvatarContent(document.getElementById('pod-3-avatar'), top3.avatar, top3.type);
+
+      let listHtml = '';
+      players.forEach((player, idx) => {
+          if (idx < 3) return;
+          let activeClass = player.isUser ? 'active' : '';
+          let avatarContent = player.type === 'image' ? `<img src="${player.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : `<span>${player.avatar}</span>`;
+          listHtml += `<div class="lb-item ${activeClass}"><div class="lb-rank">${idx + 1}</div><div class="lb-avatar-small">${avatarContent}</div><div class="lb-name">${player.name}</div><div class="lb-pts">${player.coins} points</div></div>`;
+      });
+      document.getElementById('leader-list-container').innerHTML = listHtml;
+  }
+
+  function showScreen(id) {
+    clearInterval(timerInterval); // <-- PREVENTS GHOST TIMER SOUND BUG
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen')); 
+    document.getElementById(id).classList.add('active-screen');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    
+    if(id === 'home-screen') document.querySelectorAll('.nav-item:nth-child(1)').forEach(n=>n.classList.add('active'));
+    else if (id === 'leader-screen') { document.querySelectorAll('.nav-item:nth-child(2)').forEach(n=>n.classList.add('active')); renderLeaderboard(); }
+    else if (id === 'saved-screen') { document.querySelectorAll('.nav-item:nth-child(3)').forEach(n=>n.classList.add('active')); renderSavedQuestions(); }
+    else if (id === 'profile-screen') { document.querySelectorAll('.nav-item:nth-child(4)').forEach(n=>n.classList.add('active')); renderAnalytics(); }
+  }
+
+  function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
+  function startQuiz(subject, numQs = 5) { initAudio(); isDailyTaskMode = false; let filtered = questionBank.filter(item => item.category === subject); if(filtered.length === 0) return alert("No questions available!"); setupQuiz(filtered, numQs); }
+  function startExamQuiz() { initAudio(); isDailyTaskMode = false; setupQuiz(questionBank, 50); }
+  function startDailyTask() { if(isDailyComplete) return; initAudio(); isDailyTaskMode = true; setupQuiz(questionBank, 10); }
+
+  function setupQuiz(pool, numQs) {
+    count5050 = 3; countTime = 3;
+    document.getElementById('ll-5050').classList.remove('used'); document.getElementById('txt-5050').innerText = "3 Left";
+    document.getElementById('ll-time').classList.remove('used'); document.getElementById('txt-time').innerText = "3 Left";
+    document.getElementById('ll-audience').classList.remove('used');
+    currentQuiz = JSON.parse(JSON.stringify(pool)); shuffleArray(currentQuiz);
+    if(currentQuiz.length > numQs) currentQuiz = currentQuiz.slice(0, numQs);
+    currentQuiz.forEach(q => { let correctAnsText = q.options[q.answer]; shuffleArray(q.options); q.answer = q.options.indexOf(correctAnsText); });
+    currentQIndex = 0; showScreen('quiz-screen'); loadQuestion();
+  }
+
+  function loadQuestion() {
+    clearInterval(timerInterval); let q = currentQuiz[currentQIndex];
+    document.getElementById('q-counter').innerText = `Question ${currentQIndex + 1}/${currentQuiz.length}`; 
+    document.getElementById('question-text').innerText = q.q;
+    let isSaved = savedQuestions.some(sq => sq.q === q.q); document.getElementById('btn-save-q').innerHTML = isSaved ? '⭐' : '🔖';
+    if(isDailyTaskMode) { document.getElementById('dt-prog-text').innerText = `${currentQIndex}/${currentQuiz.length} Questions`; document.getElementById('dt-bar-fill').style.width = ((currentQIndex) / currentQuiz.length * 100) + '%'; }
+    if (currentQIndex === currentQuiz.length - 1) { document.getElementById('btn-next').innerHTML = "<i>🏁</i>Finish"; } else { document.getElementById('btn-next').innerHTML = "<i>⏭️</i>Next / Skip"; }
+    if(q.selectedOption !== undefined) { isLocked = true; timeLeft = 0; updateTimerDisplay(); } else { isLocked = false; timeLeft = timeTotal; updateTimerDisplay(); startTimer(); }
+    let optionsHtml = ''; 
+    q.options.forEach((opt, i) => { 
+        let extraClass = ''; let iconHtml = '';
+        if (q.selectedOption !== undefined) {
+            if (i === q.answer) { extraClass = 'correct'; iconHtml = '✔'; } else if (i === q.selectedOption) { extraClass = 'wrong'; iconHtml = '✖'; } else { extraClass = 'disabled'; }
+        }
+        optionsHtml += `<button class="option ${extraClass}" id="opt-${i}" onclick="checkAnswer(${i}, this)"><div class="opt-letter">${labels[i]}</div><div class="opt-text">${opt}</div><div class="opt-icon">${iconHtml}</div></button>`; 
+    }); document.getElementById('options-container').innerHTML = optionsHtml; 
+  }
+
+  function startTimer() { 
+    timerInterval = setInterval(() => { 
+        timeLeft--; updateTimerDisplay(); 
+        if(timeLeft <= 0) { 
+            clearInterval(timerInterval); isLocked = true; currentQuiz[currentQIndex].selectedOption = -1;
+            let correctIndex = currentQuiz[currentQIndex].answer; let allBtns = document.querySelectorAll('.option');
+            playSound('wrong'); if(allBtns[correctIndex]) { allBtns[correctIndex].classList.add('correct'); allBtns[correctIndex].querySelector('.opt-icon').innerHTML = '✔'; }
+            setTimeout(() => { if(currentQIndex === currentQuiz.length - 1) showResult(); else nextQuestion(); }, 1200); 
+        } 
+    }, 1000); 
+  }
+  
+  function updateTimerDisplay() { let maxT = timeTotal > timeLeft ? timeTotal : timeLeft; let secs = timeLeft < 10 ? '0'+timeLeft : timeLeft; document.getElementById('timer-text').innerText = `00:${secs}`; document.getElementById('timer-bar').style.width = Math.min((timeLeft / maxT) * 100, 100) + '%'; }
+  function use5050() { let btn = document.getElementById('ll-5050'); if (btn.classList.contains('used') || isLocked || count5050 <= 0) return; let correctIndex = currentQuiz[currentQIndex].answer; let wrongIndices = [0, 1, 2, 3].filter(i => i !== correctIndex).sort(() => 0.5 - Math.random()); document.getElementById(`opt-${wrongIndices[0]}`).classList.add('disabled'); document.getElementById(`opt-${wrongIndices[1]}`).classList.add('disabled'); count5050--; document.getElementById('txt-5050').innerText = count5050 + " Left"; if(count5050 === 0) btn.classList.add('used'); }
+  function useAddTime() { let btn = document.getElementById('ll-time'); if (btn.classList.contains('used') || isLocked || countTime <= 0) return; timeLeft += 10; timeTotal = timeLeft; updateTimerDisplay(); countTime--; document.getElementById('txt-time').innerText = countTime + " Left"; if(countTime === 0) btn.classList.add('used'); }
+  function useAudience() { let btn = document.getElementById('ll-audience'); if (btn.classList.contains('used') || isLocked) return; let correctIndex = currentQuiz[currentQIndex].answer; alert("👥 The audience thinks option " + labels[correctIndex] + " is correct!"); btn.classList.add('used'); }
+
+  function checkAnswer(selectedIndex, btnElement) {
+    if(isLocked) return; triggerBounce(btnElement); isLocked = true; clearInterval(timerInterval); 
+    let q = currentQuiz[currentQIndex]; let correctIndex = q.answer; q.selectedOption = selectedIndex; let allBtns = document.querySelectorAll('.option');
+    if(selectedIndex === correctIndex) { playSound('correct'); btnElement.classList.add('correct'); btnElement.querySelector('.opt-icon').innerHTML = '✔'; } 
+    else { playSound('wrong'); btnElement.classList.add('wrong'); btnElement.querySelector('.opt-icon').innerHTML = '✖'; allBtns[correctIndex].classList.add('correct'); allBtns[correctIndex].querySelector('.opt-icon').innerHTML = '✔'; }
+    setTimeout(() => { if(currentQIndex === currentQuiz.length - 1) showResult(); else nextQuestion(); }, 1200);
+  }
+
+  function prevQuestion() { if(currentQIndex > 0) { currentQIndex--; loadQuestion(); } }
+  function nextQuestion() { if(currentQIndex < currentQuiz.length - 1) { currentQIndex++; loadQuestion(); } else { showResult(); } }
+
+  function showResult() {
+    clearInterval(timerInterval); playSound('victory');
+    let finalScore = currentQuiz.filter(q => q.selectedOption === q.answer).length;
+    document.getElementById('res-header').innerText = `Correct ${finalScore}/${currentQuiz.length}`;
+    currentQuiz.forEach(q => { if(!myData.stats[q.category]) myData.stats[q.category] = {p:0, c:0}; myData.stats[q.category].p += 1; if(q.selectedOption === q.answer) myData.stats[q.category].c += 1; }); localStorage.setItem("qz_stats", JSON.stringify(myData.stats));
+    let coinsEarned = finalScore * 50; if(isDailyTaskMode && !isDailyComplete) { isDailyComplete = true; localStorage.setItem("qz_daily_completed", "true"); coinsEarned += 200; updateDailyTaskUI(); }
+    myData.coins += coinsEarned; localStorage.setItem("qz_game_coins", myData.coins); 
+    document.getElementById('res-coins').innerText = `+${coinsEarned}`; if(isDailyTaskMode) document.getElementById('res-coins').innerText += ` (Bonus Included!)`;
+    let ratio = finalScore / currentQuiz.length; let shortName = myData.name.split(' ')[0]; let msg = `Keep Practicing, ${shortName}!`; if(ratio === 1) msg = `Perfect Score, ${shortName}!`; else if (ratio >= 0.6) msg = `Great Job, ${shortName}!`; document.getElementById('res-message').innerText = msg;
+    updateProfileUI(); showScreen('result-screen');
+  }
+
+  // SPLASH SCREEN LOGIC
+  function closeSplashScreen() {
+      let splash = document.getElementById('splash-screen');
+      if(splash) {
+          splash.classList.add('hide'); // Slides it up beautifully
+          setTimeout(() => { splash.style.display = 'none'; }, 600);
+      }
+  }
+
+  // Check if it's the first time opening the app today
+  let lastWelcome = localStorage.getItem("qz_last_welcome");
+  if (lastWelcome === todayStr) {
+      // If already opened today, hide it instantly
+      let splash = document.getElementById('splash-screen');
+      if(splash) splash.style.display = 'none';
+  } else {
+      // If it's the first time today, save the date!
+      localStorage.setItem("qz_last_welcome", todayStr);
+  }
+</script>
+</body>
+</html>
