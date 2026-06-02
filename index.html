@@ -344,7 +344,7 @@
   </div>
   <div id="profile-screen" class="screen">
     <div class="profile-cover">
-      <button class="icon-btn" onclick="showScreen('home-screen')" style="border:none; cursor:pointer; width:35px; height:35px; border-radius:50%; font-size:18px;">←</button>
+      <button class="icon-btn" onclick="saveProfile()" style="border:none; cursor:pointer; width:35px; height:35px; border-radius:50%; font-size:18px;">←</button>
     </div>
     <div class="profile-form-area">
       <div class="edit-avatar-wrap" id="edit-avatar-wrap" onclick="openAvatarSelector()">
@@ -368,7 +368,6 @@
 </button>
 
 
-          <button class="btn-save-settings" onclick="saveProfile()">Save Settings</button>
       </div>
 
       <div class="form-header" style="margin-top: 0; margin-bottom:15px;">App Configurations</div>
@@ -902,7 +901,6 @@ let myData = {
 
     updateProfileUI(); showScreen('home-screen');     if (window.syncToCloud) window.syncToCloud();
 
-  alert("Profile Saved!");
   }
 
   function triggerImageUpload() { document.getElementById('img-upload').click(); }
@@ -1112,6 +1110,12 @@ let myData = {
     currentQuiz.forEach(q => { if(!myData.stats[q.category]) myData.stats[q.category] = {p:0, c:0}; myData.stats[q.category].p += 1; if(q.selectedOption === q.answer) myData.stats[q.category].c += 1; }); localStorage.setItem("qz_stats", JSON.stringify(myData.stats));
     let coinsEarned = finalScore * 50; if(isDailyTaskMode && !isDailyComplete) { isDailyComplete = true; localStorage.setItem("qz_daily_completed", "true"); coinsEarned += 200; updateDailyTaskUI(); }
     myData.coins += coinsEarned; localStorage.setItem("qz_game_coins", myData.coins); 
+    
+    // INSTANT CLOUD SAVE FOR COINS!
+    if (window.syncToCloud) window.syncToCloud();
+    
+    document.getElementById('res-coins').innerText = `+${coinsEarned}`;
+
     document.getElementById('res-coins').innerText = `+${coinsEarned}`; if(isDailyTaskMode) document.getElementById('res-coins').innerText += ` (Bonus Included!)`;
     let ratio = finalScore / currentQuiz.length; let shortName = myData.name.split(' ')[0]; let msg = `Keep Practicing, ${shortName}!`; if(ratio === 1) msg = `Perfect Score, ${shortName}!`; else if (ratio >= 0.6) msg = `Great Job, ${shortName}!`; document.getElementById('res-message').innerText = msg;
     updateProfileUI(); showScreen('result-screen');
