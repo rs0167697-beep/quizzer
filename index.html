@@ -460,128 +460,111 @@
 
 </div>
 <script type="module">
-  // 1. IMPORTS MUST BE AT THE VERY TOP
+  // 1. IMPORTS
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
+  import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // 2. YOUR FIREBASE CONFIGURATION (Paste your real keys back into this!)
+  // 2. CONFIG
   const firebaseConfig = {
-  apiKey: "AIzaSyC8p8CLrr81dg3rMfEQRBH1bnDSHZu1WGk",
-  authDomain: "quizzer-master.firebaseapp.com",
-  projectId: "quizzer-master",
-  storageBucket: "quizzer-master.firebasestorage.app",
-  messagingSenderId: "724366966813",
-  appId: "1:724366966813:web:2a11ff63f2958f0f0c86f4",
-};
+      apiKey: "AIzaSyC8p8CLrr81dg3rMfEQRBH1bnDSHZu1WGk",
+      authDomain: "quizzer-master.firebaseapp.com",
+      projectId: "quizzer-master",
+      storageBucket: "quizzer-master.firebasestorage.app",
+      messagingSenderId: "724366966813",
+      appId: "1:724366966813:web:2a11ff63f2958f0f0c86f4"
+  };
 
-  // 3. INITIALIZE VARIABLES (Creates the 'auth' and 'provider' tools)
+  // 3. INITIALIZE
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
+  
+  // Forces Google to ask WHICH account to use every time!
+  provider.setCustomParameters({ prompt: 'select_account' }); 
 
-  // 4. THE BUTTON LOGIC (Now it knows what 'auth' and 'provider' are!)
-  // 4. THE APK-FRIENDLY LOGIN LOGIC
+  // Catches any weird browser redirect errors
+  getRedirectResult(auth).catch((error) => {
+      alert("Login Redirect Error: " + error.message);
+  });
+
+  // 4. LOGIN BUTTON
   document.getElementById('btn-google-login').addEventListener('click', () => {
-      // This sends the whole app to the Google login screen instead of a popup
       signInWithRedirect(auth, provider); 
   });
 
-    // 5. THE LOGOUT LOGIC
+  // 5. LOGOUT BUTTON
   document.getElementById('btn-google-logout').addEventListener('click', () => {
       signOut(auth).then(() => {
-          // 1. Wipe their data from the phone's temporary memory
-
-          
-          // 2. Reset the live game variables to Guest defaults
           myData.name = "Guest Player";
           myData.avatarVal = ""; 
           myData.coins = 0;
-          
-          // 3. Refresh the screen
+          localStorage.setItem("qz_game_coins", 0); // Wipes local memory too
           updateProfileUI();
-          // updateCoins(); // Uncomment this if you have a coin updating function
-          
           alert("You have been securely signed out!");
       }).catch((error) => {
           alert("Error signing out: " + error.message);
       });
   });
-  // 6. THE CLOUD SYNC ENGINE (UPLOADER)
+
+  // 6. UPLOADER
   window.syncToCloud = async function() {
       if (auth.currentUser) {
           const userDocRef = doc(db, "users", auth.currentUser.uid);
           try {
-              // Pushes the exact current data to the Google Cloud Vault
               await setDoc(userDocRef, {
                   name: myData.name,
                   avatarType: myData.avatarType || 'image',
                   avatarVal: myData.avatarVal,
                   coins: myData.coins
               }, { merge: true });
-              console.log("Cloud Save Successful!");
           } catch (error) {
               console.error("Cloud Sync Failed: ", error);
           }
       }
   };
 
-  // 7. AUTO-LOGIN LISTENER (DOWNLOADER)
+  // 7. DOWNLOADER (Now with anti-crash protection)
   onAuthStateChanged(auth, async (user) => {
       if (user) {
-          // Google remembers them! Go find their save file in the cloud.
-          const userDocRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(userDocRef);
+          try {
+              const userDocRef = doc(db, "users", user.uid);
+              const docSnap = await getDoc(userDocRef);
 
-          if (docSnap.exists()) {
-              // 🟢 OLD PLAYER: Download their saved data!
-              const dbData = docSnap.data();
+              if (docSnap.exists()) {
+                  const dbData = docSnap.data();
+                  myData.coins = dbData.coins || 0;
+                  myData.name = dbData.name || user.displayName;
+                  myData.avatarVal = dbData.avatarVal || user.photoURL;
+                  myData.avatarType = dbData.avatarType || 'image';
+              } else {
+                  await setDoc(userDocRef, {
+                      name: user.displayName,
+                      avatarVal: user.photoURL,
+                      avatarType: 'image',
+                      coins: 0
+                  });
+                  myData.name = user.displayName;
+                  myData.avatarVal = user.photoURL;
+                  myData.avatarType = 'image';
+                  myData.coins = 0;
+              }
               
-              // Load cloud data into the app
-              myData.coins = dbData.coins || 0;
-              myData.name = dbData.name || user.displayName;
-              myData.avatarVal = dbData.avatarVal || user.photoURL;
-              myData.avatarType = dbData.avatarType || 'image';
-              
-              // Lock it into the phone's local storage so it doesn't get erased
               localStorage.setItem("qz_game_coins", myData.coins);
               localStorage.setItem("qz_avatar_type", myData.avatarType);
               localStorage.setItem("qz_avatar_val", myData.avatarVal);
-              
               updateProfileUI(); 
-              console.log("Cloud Save Loaded!");
-              
-          } else {
-              // 🔵 BRAND NEW PLAYER: Create their very first Cloud Save!
-              await setDoc(userDocRef, {
-                  name: user.displayName,
-                  avatarVal: user.photoURL,
-                  avatarType: 'image',
-                  coins: 0
-              });
-              
-              // Set the live game variables
-              myData.name = user.displayName;
-              myData.avatarVal = user.photoURL;
-              myData.avatarType = 'image';
-              myData.coins = 0;
-              
-              // Lock it into the phone's local storage
-              localStorage.setItem("qz_game_coins", 0);
-              
-              updateProfileUI();
-              console.log("New Cloud Save Created!");
+
+          } catch (error) {
+              // THIS ALERTS YOU IF YOUR FIREBASE RULES ARE BLOCKING THE LOGIN
+              console.error("Database Error:", error);
+              alert("Logged in, but couldn't load save data! Check Firebase Database Rules.");
           }
       } else {
-          // 🔴 NOBODY LOGGED IN: Do nothing, just leave the screen as is
           console.log("User is signed out.");
       }
   });
-
-
-
 </script>
 
 
@@ -618,9 +601,10 @@ let myData = {
     name: "Guest Player",
     avatarType: "emoji",
     avatarVal: "👨‍💼",
-    coins: 0,
+    coins: storedCoins ? parseInt(storedCoins) : 0,  // <--- CHANGE THIS LINE!
     stats: storedStats || defaultStats
 };
+
   
   if(myData.stats && !myData.stats.Vocab) myData.stats.Vocab = {p:0, c:0};
   
