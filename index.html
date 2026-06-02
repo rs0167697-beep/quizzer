@@ -509,52 +509,77 @@
           alert("Error signing out: " + error.message);
       });
   });
-    // 7. AUTO-LOGIN LISTENER (Runs automatically when you open/refresh the app)
-  onAuthStateChanged(auth, async (user) => {
-      if (user) {
-          // Google remembers them! Instantly download their cloud save.
-          const userDocRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(userDocRef);
-
-          if (docSnap.exists()) {
-              const dbData = docSnap.data();
-              myData.coins = dbData.coins;
-              myData.name = dbData.name;
-              myData.avatarVal = dbData.avatarVal;
-              myData.avatarType = dbData.avatarType || 'image';
-              
-              // Refresh the screen automatically
-              updateProfileUI(); 
-              // updateCoins(); // Uncomment if you have a coin updater function
-          }
-      } else {
-          // Nobody is logged in. Reset to Guest.
-          myData.name = "Guest Player";
-          myData.coins = 0;
-          myData.avatarVal = "";
-          updateProfileUI();
-      }
-  });
-
-  // 6. THE CLOUD SYNC ENGINE (Pushes new data to Firebase)
+  // 6. THE CLOUD SYNC ENGINE (UPLOADER)
   window.syncToCloud = async function() {
-      // Check if a Google user is actually logged in
       if (auth.currentUser) {
           const userDocRef = doc(db, "users", auth.currentUser.uid);
           try {
-              // { merge: true } means it only updates the new stuff without deleting the rest!
+              // Pushes the exact current data to the Google Cloud Vault
               await setDoc(userDocRef, {
                   name: myData.name,
                   avatarType: myData.avatarType || 'image',
                   avatarVal: myData.avatarVal,
                   coins: myData.coins
               }, { merge: true });
-              console.log("Successfully synced to Firebase Cloud!");
+              console.log("Cloud Save Successful!");
           } catch (error) {
               console.error("Cloud Sync Failed: ", error);
           }
       }
   };
+
+  // 7. AUTO-LOGIN LISTENER (DOWNLOADER)
+  onAuthStateChanged(auth, async (user) => {
+      if (user) {
+          // Google remembers them! Go find their save file in the cloud.
+          const userDocRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(userDocRef);
+
+          if (docSnap.exists()) {
+              // 🟢 OLD PLAYER: Download their saved data!
+              const dbData = docSnap.data();
+              
+              // Load cloud data into the app
+              myData.coins = dbData.coins || 0;
+              myData.name = dbData.name || user.displayName;
+              myData.avatarVal = dbData.avatarVal || user.photoURL;
+              myData.avatarType = dbData.avatarType || 'image';
+              
+              // Lock it into the phone's local storage so it doesn't get erased
+              localStorage.setItem("qz_game_coins", myData.coins);
+              localStorage.setItem("qz_avatar_type", myData.avatarType);
+              localStorage.setItem("qz_avatar_val", myData.avatarVal);
+              
+              updateProfileUI(); 
+              console.log("Cloud Save Loaded!");
+              
+          } else {
+              // 🔵 BRAND NEW PLAYER: Create their very first Cloud Save!
+              await setDoc(userDocRef, {
+                  name: user.displayName,
+                  avatarVal: user.photoURL,
+                  avatarType: 'image',
+                  coins: 0
+              });
+              
+              // Set the live game variables
+              myData.name = user.displayName;
+              myData.avatarVal = user.photoURL;
+              myData.avatarType = 'image';
+              myData.coins = 0;
+              
+              // Lock it into the phone's local storage
+              localStorage.setItem("qz_game_coins", 0);
+              
+              updateProfileUI();
+              console.log("New Cloud Save Created!");
+          }
+      } else {
+          // 🔴 NOBODY LOGGED IN: Do nothing, just leave the screen as is
+          console.log("User is signed out.");
+      }
+  });
+
 
 
 </script>
