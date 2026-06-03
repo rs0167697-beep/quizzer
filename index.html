@@ -45,7 +45,6 @@
   .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px; }
   .screen::-webkit-scrollbar { display: none; }
   
-  /* EVERY TIME A SCREEN IS ACTIVE, IT WILL PLAY THE ANIMATION */
   .active-screen { display: flex; animation: screenTransition 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
   
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 20px;}
@@ -57,7 +56,8 @@
   
   .coins { background: white; color: var(--text-dark); padding: 5px 15px 5px 5px; border-radius: 25px; display: flex; align-items: center; gap: 8px; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
   .coin-icon { background: var(--orange); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
-    .daily-task { background: rgba(255,255,255,0.5); border-radius: 20px; padding: 20px; color: var(--text-dark); margin-bottom: 25px; position: relative; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;}
+
+  .daily-task { background: rgba(255,255,255,0.5); border-radius: 20px; padding: 20px; color: var(--text-dark); margin-bottom: 25px; position: relative; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;}
   .daily-task:active { transform: scale(0.95); }
   .dt-header { display: flex; justify-content: space-between; align-items: flex-start;}
   .dt-icon { width: 60px; height: 60px; background: rgba(255,255,255,0.7); border-radius: 15px; display:flex; justify-content:center; align-items:center; font-size: 30px;}
@@ -120,7 +120,7 @@
   
   .edit-avatar-wrap { width: 110px; height: 110px; border-radius: 50%; background: white; border: 5px solid white; position: absolute; top: -55px; left: 50%; transform: translateX(-50%); box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 50px; overflow: visible; background-color: #ffd6b3;}
   .edit-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; top: 0; left: 0;}
-  .cam-badge { position: absolute; bottom: 0; right: 0; background: #f29b46; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; border: 3px solid white; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+    .cam-badge { position: absolute; bottom: 0; right: 0; background: #f29b46; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; border: 3px solid white; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
   
   .form-header { margin-bottom: 20px; color: var(--text-dark); text-align: center; font-size: 18px; font-weight: 800;}
   .form-group-container { width: 100%; max-width: 350px; }
@@ -173,7 +173,8 @@
   .lb-avatar-small img { width:100%; height:100%; object-fit:cover; border-radius:50%; position:absolute; top:0; left:0;}
   .lb-name { flex: 1; font-weight: 800; color: var(--text-dark); font-size: 14px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .lb-pts { font-weight: 800; color: var(--orange); font-size: 13px; }
-    .review-card { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;}
+
+  .review-card { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;}
   .review-q { color: var(--text-dark); font-weight: 800; font-size: 14px; margin-bottom: 10px;}
   .review-opt { padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; margin-bottom: 5px;}
   .r-correct { background: var(--correct-bg); color: var(--correct-text); }
@@ -199,7 +200,7 @@
   .round-item:active { transform: scale(0.9); border-color: var(--orange); }
   .round-item .c-icon { font-size: 30px; margin-bottom: 8px; }
   
-  /* FULL SCREEN SPLASH ON STARTUP (Sits perfectly on top of auth wall) */
+  /* FULL SCREEN SPLASH ON STARTUP */
   #splash-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #f29b46 0%, #f26b3e 100%); z-index: 3000; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 60px 20px; color: white; text-align: center; transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.6s ease; }
   #splash-screen.hide { transform: translateY(-100%); opacity: 0; pointer-events: none; }
   .splash-content { margin-top: 15vh; }
@@ -209,8 +210,6 @@
   .splash-text { font-size: 16px; font-weight: 700; opacity: 0.9; line-height: 1.5; }
   .btn-splash { background: white; color: var(--orange); border: none; width: 90%; max-width: 300px; padding: 18px; border-radius: 25px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;}
   .btn-splash:active { transform: scale(0.95); }
-  
-  #btn-google-login:active { transform: scale(0.95); opacity: 0.9; }
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YS36PFXEH8"></script>
   <script>
@@ -264,8 +263,7 @@
       <button class="category-btn" onclick="triggerBounce(this); startQuiz('Vocab', 15)"><div class="c-icon">📝</div>Vocab</button>
       <button class="category-btn" onclick="triggerBounce(this); startQuiz('GAT', 15)"><div class="c-icon">🧠</div>GAT</button>
     </div>
-    
-    <div class="section-title"><h3>More Games</h3><span onclick="openViewAllModal()" style="cursor:pointer; color:var(--orange);">View All</span></div>
+        <div class="section-title"><h3>More Games</h3><span onclick="openViewAllModal()" style="cursor:pointer; color:var(--orange);">View All</span></div>
     <div class="more-games">
       <div class="game-card" onclick="triggerBounce(this); startQuiz('English', 10)"><div class="game-icon">⚔️</div><h4>Language</h4><p>10 Questions</p></div>
       <div class="game-card" onclick="triggerBounce(this); startExamQuiz()"><div class="game-icon">🧭</div><h4>Exam Quiz</h4><p>50 Questions</p></div>
@@ -303,7 +301,8 @@
       <button class="lifeline nav-btn" id="btn-next" onclick="nextQuestion()"><i>⏭️</i>Next / Skip</button>
     </div>
   </div>
-    <div id="result-screen" class="screen">
+
+  <div id="result-screen" class="screen">
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span id="res-header">Correct 0/0</span><div style="width:40px"></div></div>
     <div class="result-card">
       <div class="ribbon">
@@ -437,39 +436,22 @@
     </div>
   </div>
 
+  <!-- CLEAN CLEAN MANDATORY AUTH MODAL (Google Only + Guest Mode) -->
   <div id="auth-modal" class="modal-overlay" style="z-index: 2500; background: var(--bg-top); display: none;">
-      <div class="pop-animation" style="background: var(--card-bg); width: 90%; max-width: 400px; border-radius: 35px; padding: 35px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); text-align: center;">
+      <div class="pop-animation" style="background: var(--card-bg); width: 90%; max-width: 400px; border-radius: 35px; padding: 40px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); text-align: center;">
           <div style="font-size: 50px; margin-bottom: 10px; animation: float 3s ease-in-out infinite;">🪷</div>
           <h2 style="color: var(--text-dark); font-weight: 800; margin-bottom: 5px;">Welcome to Quizzer</h2>
-          <p style="color: var(--text-muted); font-size: 14px; font-weight: 700; margin-bottom: 25px;">Login to save your progress securely!</p>
+          <p style="color: var(--text-muted); font-size: 14px; font-weight: 700; margin-bottom: 30px;">Log in to secure your cloud score & sync features.</p>
 
-          <div style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.05); text-align: left;">
-              <div class="input-group" style="margin-bottom: 10px;">
-                  <label style="color: var(--text-muted);">Phone Number</label>
-                  <input type="tel" id="inp-phone" placeholder="+91 9876543210" style="background: var(--card-bg); border: 1px solid rgba(0,0,0,0.1); color: var(--text-dark);">
-              </div>
-              <div id="recaptcha-container" style="margin-bottom: 10px;"></div>
-              
-              <button class="btn-save-settings" id="btn-send-otp" style="background: #34A853; color: white; margin-bottom: 0; border: none; padding: 12px; border-radius: 15px; font-weight: 700; width: 100%; cursor: pointer;">
-                  Send OTP Code
-              </button>
-
-              <div id="otp-box" style="display: none; margin-top: 15px;">
-                  <div class="input-group" style="margin-bottom: 10px;">
-                      <label style="color: var(--text-muted);">Enter 6-Digit Code</label>
-                      <input type="number" id="inp-otp" placeholder="123 456" style="background: var(--card-bg); border: 1px solid rgba(0,0,0,0.1); color: var(--text-dark); letter-spacing: 5px; text-align: center;">
-                  </div>
-                  <button class="btn-save-settings" id="btn-verify-otp" style="background: #f29b46; color: white; margin-bottom: 0; border: none; padding: 12px; border-radius: 15px; font-weight: 700; width: 100%; cursor: pointer;">
-                      Verify & Login
-                  </button>
-              </div>
-          </div>
+          <!-- PREMIUM GOOGLE LOGIN BUTTON -->
+          <button class="btn-save-settings" id="btn-google-login" style="background: #4285F4; color: white; margin-bottom: 15px; border: none; padding: 16px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3);">
+              <span style="background: white; border-radius: 50%; padding: 2px; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; color: #4285F4; font-size: 13px; font-weight: 900;">G</span>
+              Login with Google Account
+          </button>
           
-          <p style="color: var(--text-muted); font-size: 12px; font-weight: 800; margin-bottom: 15px;">OR</p>
-
-          <button class="btn-save-settings" id="btn-google-login" style="background: #4285F4; color: white; margin-bottom: 0px; border: none; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;">
-              <span style="background: white; border-radius: 50%; padding: 2px; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; color: #4285F4; font-size: 14px; font-weight: 900;">G</span>
-              Login with Google
+          <!-- SLEEK GUEST MODE BUTTON -->
+          <button class="btn-save-settings" id="btn-guest-continue" style="background: transparent; color: var(--orange); border: 2.5px solid var(--orange); margin-bottom: 0px; padding: 14px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer; box-shadow: none;">
+              Continue as Guest Player
           </button>
       </div>
   </div>
@@ -477,8 +459,7 @@
 </div>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -489,75 +470,28 @@
       messagingSenderId: "724366966813",
       appId: "1:724366966813:web:2a11ff63f2958f0f0c86f4"
   };
-
-  const app = initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  // ------------------------------------
-  // GOOGLE LOGIN LOGIC
-  // ------------------------------------
   const provider = new GoogleAuthProvider();
+  
   provider.setCustomParameters({ prompt: 'select_account' }); 
 
+  // GOOGLE CALL MODAL TRIGGER
   document.getElementById('btn-google-login').addEventListener('click', () => {
-      // Using Popup stops the page from reloading and losing the login cookie!
       signInWithPopup(auth, provider).catch((error) => {
           console.error("Login Error: ", error);
           alert("Login Error: " + error.message);
       });
   });
 
-  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      'size': 'invisible', 
-      'callback': (response) => {
-          console.log("Recaptcha solved!");
-      }
+  // GUEST CONTINUITY DISMISSER
+  document.getElementById('btn-guest-continue').addEventListener('click', () => {
+      const authModal = document.getElementById('auth-modal');
+      if(authModal) authModal.style.display = 'none';
   });
 
-  document.getElementById('btn-send-otp').addEventListener('click', () => {
-      const phoneNumber = document.getElementById('inp-phone').value.trim();
-      
-      if(!phoneNumber.startsWith("+")) {
-          alert("Please include your country code (like +91)");
-          return;
-      }
-
-      const appVerifier = window.recaptchaVerifier;
-      
-      signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-          .then((confirmationResult) => {
-              window.confirmationResult = confirmationResult;
-              document.getElementById('btn-send-otp').style.display = 'none';
-              document.getElementById('otp-box').style.display = 'block';
-              alert("SMS Code Sent! Check your messages.");
-          }).catch((error) => {
-              alert("Error sending SMS: " + error.message);
-              window.recaptchaVerifier.render().then(function(widgetId) {
-                  grecaptcha.reset(widgetId);
-              });
-          });
-  });
-
-  document.getElementById('btn-verify-otp').addEventListener('click', () => {
-      const code = document.getElementById('inp-otp').value.trim();
-      
-      if(code.length < 6) {
-          alert("Please enter the 6-digit code.");
-          return;
-      }
-
-      window.confirmationResult.confirm(code).then((result) => {
-          alert("Phone Login Successful!");
-          document.getElementById('otp-box').style.display = 'none';
-          document.getElementById('btn-send-otp').style.display = 'block';
-          document.getElementById('inp-phone').value = "";
-          document.getElementById('inp-otp').value = "";
-          
-      }).catch((error) => {
-          alert("Incorrect Code. Please try again.");
-      });
-  });
-
+  // LOGOUT MECHANISM
   document.getElementById('btn-google-logout').addEventListener('click', () => {
       signOut(auth).then(() => {
           myData.name = "Guest Player";
@@ -571,6 +505,7 @@
       });
   });
 
+  // FIREBASE BACKUP SYNC
   window.syncToCloud = async function() {
       if (auth.currentUser) {
           const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -587,12 +522,11 @@
       }
   };
 
+  // SESSION STATUS TRACKER
   onAuthStateChanged(auth, async (user) => {
+      const authModal = document.getElementById('auth-modal');
       if (user) {
-          // THEY ARE LOGGED IN: HIDE THE LOGIN WALL!
-          const authModal = document.getElementById('auth-modal');
           if(authModal) authModal.style.display = 'none';
-          
           try {
               const userDocRef = doc(db, "users", user.uid);
               const docSnap = await getDoc(userDocRef);
@@ -626,9 +560,7 @@
               alert("Logged in, but couldn't load save data! Check Firebase Database Rules.");
           }
       } else {
-          // THEY ARE NOT LOGGED IN: SHOW THE WALL SO THEY HAVE TO LOGIN!
           console.log("User is signed out.");
-          const authModal = document.getElementById('auth-modal');
           if(authModal) authModal.style.display = 'flex';
       }
   });
@@ -742,7 +674,7 @@
     { category: 'Maths', q: "Solve for x: If 2^(x+3) = 32, then x equals:", options: ["1", "2", "3", "4"], answer: 1 },
     { category: 'Physics', q: "SI unit of force:", options: ["Joule", "Newton", "Watt", "Pascal"], answer: 1 },
     { category: 'Physics', q: "Speed = ?", options: ["Distance × Time", "Distance / Time", "Time / Distance", "Mass / Time"], answer: 1 },
-        { category: 'Physics', q: "Unit of electric current:", options: ["Volt", "Ampere", "Ohm", "Watt"], answer: 1 },
+    { category: 'Physics', q: "Unit of electric current:", options: ["Volt", "Ampere", "Ohm", "Watt"], answer: 1 },
     { category: 'Physics', q: "Gravity on Earth is:", options: ["9.8 m/s²", "10 m/s", "8 m/s²", "5 m/s²"], answer: 0 },
     { category: 'Physics', q: "Light travels in:", options: ["Sound", "Vacuum", "Water only", "Air only"], answer: 1 },
     { category: 'Physics', q: "Mirror used in cars:", options: ["Plane", "Concave", "chintu", "None"], answer: 2 },
@@ -784,7 +716,7 @@
     { category: 'English', q: "Change to Passive Voice: 'She is reading a book.'", options: ["A book is read by her.", "A book was being read by her.", "A book is being read by her.", "A book has been read by her."], answer: 2 },
     { category: 'English', q: "Change to Passive Voice: 'They have completed the project.'", options: ["The project was completed by them.", "The project is completed by them.", "The project had been completed by them.", "The project has been completed by them."], answer: 3 },
     { category: 'English', q: "Change to Passive Voice: 'Did you write this letter?'", options: ["Is this letter written by you?", "Was this letter written by you?", "Has this letter been written by you?", "Had this letter been written by you?"], answer: 1 },
-    { category: 'English', q: "Change to Passive Voice: 'Open the door.'", options: ["The door should be opened.", "Let the door be opened.", "The door must be opened.", "Let the door opened."], answer: 1 },
+        { category: 'English', q: "Change to Passive Voice: 'Open the door.'", options: ["The door should be opened.", "Let the door be opened.", "The door must be opened.", "Let the door opened."], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'People speak English all over the world.'", options: ["English is spoken all over the world.", "English was spoken all over the world.", "English has been spoken all over the world.", "English had been spoken all over the world."], answer: 0 },
     { category: 'English', q: "Change to Passive Voice: 'Who broke the window?'", options: ["By whom the window broken?", "By whom was the window broken?", "By whom is the window broken?", "Whom was the window broken by?"], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'They will build a new bridge.'", options: ["A new bridge is built by them.", "A new bridge would be built by them.", "A new bridge will be built by them.", "A new bridge will have been built by them."], answer: 2 },
@@ -818,7 +750,6 @@
     { category: 'English', q: "Fill in the blank: Although he worked hard, ___ he failed.", options: ["but", "yet", "and", "so"], answer: 1 },
     { category: 'English', q: "Fill in the blank: He is the boy ___ won the prize.", options: ["whom", "which", "who", "whose"], answer: 2 },
     { category: 'English', q: "Fill in the blank: This is the book ___ I was looking for.", options: ["who", "whom", "which", "what"], answer: 2 },
-        { category: 'English', q: "Fill in the blank: This is the book ___ I was looking for.", options: ["who", "whom", "which", "what"], answer: 2 },
     { category: 'English', q: "Fill in the blank: No sooner did the train arrive ___ the passengers rushed.", options: ["than", "when", "then", "but"], answer: 0 },
     { category: 'English', q: "Fill in the blank: I am not accustomed ___ such treatment.", options: ["with", "to", "of", "for"], answer: 1 },
     { category: 'English', q: "Fill in the blank: By the time you reach there, he ___ left.", options: ["will have", "would", "will be", "has"], answer: 0 },
@@ -869,7 +800,7 @@
     { category: 'GAT', q: "The Article 32 of the Indian Constitution is related to:", options: ["Right to Equality", "Right to Constitutional Remedies", "Right to Freedom", "Right to Education"], answer: 1 },
     { category: 'GAT', q: "Who was the first Governor-General of independent India?", options: ["C. Rajagopalachari", "Lord Mountbatten", "Rajendra Prasad", "Jawaharlal Nehru"], answer: 1 },
     { category: 'GAT', q: "The Thar Desert, which extends through parts of Rajasthan, is also known as:", options: ["The Great Indian Desert", "The White Desert", "The Cold Desert", "The Deccan Desert"], answer: 0 },
-    { category: 'GAT', q: "Which Indian city is known as the 'Silicon Valley of India'?", options: ["Hyderabad", "Pune", "Bengaluru", "Chennai"], answer: 2 },
+    { category: 'GAT', city_context: "Bengaluru, India", q: "Which Indian city is known as the 'Silicon Valley of India'?", options: ["Hyderabad", "Pune", "Bengaluru", "Chennai"], answer: 2 },
     { category: 'GAT', q: "In the context of the Indian Premier League (IPL), which team won the inaugural season in 2008?", options: ["Chennai Super Kings", "Rajasthan Royals", "Mumbai Indians", "Kolkata Knight Riders"], answer: 1 },
     { category: 'GAT', q: "Which river is known as the 'Sorrow of Bihar'?", options: ["Ganga", "Kosi", "Son", "Gandak"], answer: 1 },
     { category: 'GAT', q: "Who wrote the national anthem of India, 'Jana Gana Mana'?", options: ["Bankim Chandra Chatterjee", "Rabindranath Tagore", "Sarojini Naidu", "Sri Aurobindo"], answer: 1 },
@@ -899,10 +830,10 @@
     { category: 'GAT', q: "If x + (1/x) = 4, find the value of x^2 + (1/x^2).", options: ["12", "14", "16", "18"], answer: 1 },
     { category: 'GAT', q: "The simple interest on a sum of money for 3 years at 8% per annum is half the compound interest on Rs. 4000 for 2 years at 10% per annum. The sum placed on simple interest is:", options: ["Rs. 1550", "Rs. 1650", "Rs. 1750", "Rs. 1850"], answer: 2 },
     { category: 'GAT', q: "A can do a piece of work in 12 days and B can do it in 15 days. They work together for 5 days and then B leaves. In how many days will A finish the remaining work?", options: ["3 days", "4 days", "5 days", "6 days"], answer: 0 },
-    { category: 'GAT', q: "The average of 5 consecutive odd numbers is 61. What is the difference between the highest and lowest numbers?", options: ["4", "6", "8", "10"], answer: 2 },
+        { category: 'GAT', q: "The average of 5 consecutive odd numbers is 61. What is the difference between the highest and lowest numbers?", options: ["4", "6", "8", "10"], answer: 2 },
     { category: 'GAT', q: "The radius of a cylinder is doubled and the height is halved. What is the ratio between the new volume and the previous volume?", options: ["1 : 1", "2 : 1", "1 : 2", "4 : 1"], answer: 1 }
-
   ];
+
   function helperSetAvatarContent(element, imageVal, type) {
       if(!element) return; let img = element.querySelector('img');
       let span = element.querySelector('span') || element.querySelector('.podium-badge') ? null : element.querySelector('span');
@@ -928,7 +859,8 @@
 
   function openAboutModal() { document.getElementById('about-us-modal').style.display = 'flex'; }
   function closeAboutModal() { document.getElementById('about-us-modal').style.display = 'none'; }
-    function updateProfileUI() {
+
+  function updateProfileUI() {
     document.getElementById('display-name').innerText = myData.name;
     document.getElementById('home-coins').innerText = myData.coins; 
     let homeWrap = document.getElementById('home-avatar-wrap');
@@ -966,15 +898,14 @@
         dtCard.onclick = startDailyTask; dtCard.style.opacity = "1";
     }
   }
-  
-  updateProfileUI(); updateDailyTaskUI();
+    updateProfileUI(); updateDailyTaskUI();
 
   function saveProfile() {
     myData.name = document.getElementById('inp-name').value.trim() || "User"; 
     myData.username = document.getElementById('inp-username').value.trim() || myData.username;
 
-    updateProfileUI(); showScreen('home-screen');     if (window.syncToCloud) window.syncToCloud();
-
+    updateProfileUI(); showScreen('home-screen');     
+    if (window.syncToCloud) window.syncToCloud();
   }
 
   function triggerImageUpload() { document.getElementById('img-upload').click(); }
@@ -1044,8 +975,7 @@
       });
       document.getElementById('review-container').innerHTML = html; showScreen('review-screen');
   }
-
-  function renderAnalytics() {
+    function renderAnalytics() {
       let html = '';
       for(let cat in myData.stats) {
           let d = myData.stats[cat]; let percent = d.p > 0 ? Math.round((d.c / d.p) * 100) : 0;
@@ -1087,7 +1017,8 @@
           <div class="podium-name">${top3.name}</div>
           <div class="podium-pts">👑 ${top3.coins} pts</div>
        </div>`;
-             document.getElementById('podium-container').innerHTML = podiumHtml;
+      
+      document.getElementById('podium-container').innerHTML = podiumHtml;
       helperSetAvatarContent(document.getElementById('pod-1-avatar'), top1.avatar, top1.type);
       helperSetAvatarContent(document.getElementById('pod-2-avatar'), top2.avatar, top2.type);
       helperSetAvatarContent(document.getElementById('pod-3-avatar'), top3.avatar, top3.type);
@@ -1103,12 +1034,9 @@
   }
 
   function showScreen(id) {
-    clearInterval(timerInterval); // <-- PREVENTS GHOST TIMER SOUND BUG
-    
-    // Remount screens for clean animations
+    clearInterval(timerInterval); 
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen')); 
     
-    // Slight timeout allows CSS to reset and trigger animation perfectly
     setTimeout(() => {
         document.getElementById(id).classList.add('active-screen');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1153,8 +1081,7 @@
         optionsHtml += `<button class="option ${extraClass}" id="opt-${i}" onclick="checkAnswer(${i}, this)"><div class="opt-letter">${labels[i]}</div><div class="opt-text">${opt}</div><div class="opt-icon">${iconHtml}</div></button>`; 
     }); document.getElementById('options-container').innerHTML = optionsHtml; 
   }
-
-  function startTimer() { 
+    function startTimer() { 
     timerInterval = setInterval(() => { 
         timeLeft--; updateTimerDisplay(); 
         if(timeLeft <= 0) { 
@@ -1190,12 +1117,10 @@
     let coinsEarned = finalScore * 50; if(isDailyTaskMode && !isDailyComplete) { isDailyComplete = true; localStorage.setItem("qz_daily_completed", "true"); coinsEarned += 200; updateDailyTaskUI(); }
     myData.coins += coinsEarned; localStorage.setItem("qz_game_coins", myData.coins); 
     
-    // INSTANT CLOUD SAVE FOR COINS!
     if (window.syncToCloud) window.syncToCloud();
     
     document.getElementById('res-coins').innerText = `+${coinsEarned}`;
-
-    document.getElementById('res-coins').innerText = `+${coinsEarned}`; if(isDailyTaskMode) document.getElementById('res-coins').innerText += ` (Bonus Included!)`;
+    if(isDailyTaskMode) document.getElementById('res-coins').innerText += ` (Bonus Included!)`;
     let ratio = finalScore / currentQuiz.length; let shortName = myData.name.split(' ')[0]; let msg = `Keep Practicing, ${shortName}!`; if(ratio === 1) msg = `Perfect Score, ${shortName}!`; else if (ratio >= 0.6) msg = `Great Job, ${shortName}!`; document.getElementById('res-message').innerText = msg;
     updateProfileUI(); showScreen('result-screen');
   }
@@ -1204,19 +1129,16 @@
   function closeSplashScreen() {
       let splash = document.getElementById('splash-screen');
       if(splash) {
-          splash.classList.add('hide'); // Slides it up beautifully
+          splash.classList.add('hide'); 
           setTimeout(() => { splash.style.display = 'none'; }, 600);
       }
   }
 
-  // Check if it's the first time opening the app today
   let lastWelcome = localStorage.getItem("qz_last_welcome");
   if (lastWelcome === todayStr) {
-      // If already opened today, hide it instantly
       let splash = document.getElementById('splash-screen');
       if(splash) splash.style.display = 'none';
   } else {
-      // If it's the first time today, save the date!
       localStorage.setItem("qz_last_welcome", todayStr);
   }
 </script>
