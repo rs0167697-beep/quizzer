@@ -7,8 +7,11 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
   :root { --primary: #f29b46; --bg-top: #ffb870; --bg-bottom: #fff3e6; --orange: #f26b3e; --orange-light: #ffcc99; --text-dark: #333; --text-muted: #888; --correct-bg: #b6f3d5; --correct-text: #1b8a53; --card-bg: white; }
+  
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; overscroll-behavior-y: none; }
+  
+  /* STRICT OVERSCROLL REMOVAL ON HTML/BODY */
+  html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; overscroll-behavior: none; touch-action: pan-y; }
   
   #app { width: 100%; max-width: 100%; height: 100%; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 60%, var(--card-bg) 100%); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
   
@@ -42,7 +45,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
       100% { opacity: 1; transform: scale(1) translateY(0); } 
   }
 
-.screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px; overscroll-behavior-y: contain; }
+  /* ADDED OVERSCROLL-BEHAVIOR: NONE HERE TOO */
+  .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px; overscroll-behavior: none; }
   .screen::-webkit-scrollbar { display: none; }
   
   .active-screen { display: flex; animation: screenTransition 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
@@ -112,15 +116,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
   .res-avatar img { width: 100%; height: 100%; object-fit: cover; position:absolute; top:0; left:0;}
   .result-card h2 { color: var(--text-dark); margin-bottom: 10px; font-size: 22px; font-weight: 800;}
   .primary-btn { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(242, 107, 62, 0.3); margin-top: 10px;}
-
-  #profile-screen { padding: 0; background: var(--card-bg); }
+    #profile-screen { padding: 0; background: var(--card-bg); }
   .profile-cover { height: 140px; background: linear-gradient(135deg, #ff9a44 0%, #fc6076 100%); padding: 20px; color: white; position: relative;}
   .profile-cover .icon-btn { background: rgba(255,255,255,0.9); box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 35px; height: 35px; color: #333; }
   .profile-form-area { padding: 60px 20px 80px; position: relative; display: flex; flex-direction: column; align-items: center;}
   
   .edit-avatar-wrap { width: 110px; height: 110px; border-radius: 50%; background: white; border: 5px solid white; position: absolute; top: -55px; left: 50%; transform: translateX(-50%); box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 50px; overflow: visible; background-color: #ffd6b3;}
   .edit-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; top: 0; left: 0;}
-    .cam-badge { position: absolute; bottom: 0; right: 0; background: #f29b46; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; border: 3px solid white; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+  .cam-badge { position: absolute; bottom: 0; right: 0; background: #f29b46; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; border: 3px solid white; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
   
   .form-header { margin-bottom: 20px; color: var(--text-dark); text-align: center; font-size: 18px; font-weight: 800;}
   .form-group-container { width: 100%; max-width: 350px; }
@@ -173,8 +176,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
   .lb-avatar-small img { width:100%; height:100%; object-fit:cover; border-radius:50%; position:absolute; top:0; left:0;}
   .lb-name { flex: 1; font-weight: 800; color: var(--text-dark); font-size: 14px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .lb-pts { font-weight: 800; color: var(--orange); font-size: 13px; }
-
-  .review-card { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;}
+    .review-card { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;}
   .review-q { color: var(--text-dark); font-weight: 800; font-size: 14px; margin-bottom: 10px;}
   .review-opt { padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; margin-bottom: 5px;}
   .r-correct { background: var(--correct-bg); color: var(--correct-text); }
@@ -276,8 +278,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
       <div class="nav-item" onclick="showScreen('profile-screen')"><div class="nav-icon">⚙️</div>Settings</div>
     </div>
   </div>
-
-  <div id="quiz-screen" class="screen">
+    <div id="quiz-screen" class="screen">
     <div class="quiz-header">
       <button class="icon-btn" onclick="showScreen('home-screen')">←</button>
       <span id="q-counter">Question 1/5</span>
@@ -389,8 +390,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span style="font-size: 18px;">Saved Questions</span><div style="width: 40px;"></div></div>
     <div id="saved-list-container" style="background: transparent; margin-top: 10px; display:flex; flex-direction:column; gap:12px; padding-bottom: 90px;"></div>
   </div>
-
-  <div id="about-us-modal" class="modal-overlay">
+    <div id="about-us-modal" class="modal-overlay">
     <div id="about-box" class="pop-animation" style="background: var(--card-bg); color: var(--text-dark); width: 85%; border-radius: 30px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align:center;">
        <h3 style="margin-bottom:12px; font-weight:800; font-size:20px;">About Quizzer</h3>
        <p style="font-size:14px; opacity:0.8; margin-bottom:20px; font-weight:600; line-height:1.5;">Quizzer Offline Master is a highly robust engineering study client. Designed to support comprehensive exam mock cycles flawlessly across competitive formats entirely localized offline.</p>
@@ -436,20 +436,17 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
     </div>
   </div>
 
-  <!-- CLEAN CLEAN MANDATORY AUTH MODAL (Google Only + Guest Mode) -->
   <div id="auth-modal" class="modal-overlay" style="z-index: 2500; background: var(--bg-top); display: none;">
       <div class="pop-animation" style="background: var(--card-bg); width: 90%; max-width: 400px; border-radius: 35px; padding: 40px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); text-align: center;">
           <div style="font-size: 50px; margin-bottom: 10px; animation: float 3s ease-in-out infinite;">🪷</div>
           <h2 style="color: var(--text-dark); font-weight: 800; margin-bottom: 5px;">Welcome to Quizzer</h2>
           <p style="color: var(--text-muted); font-size: 14px; font-weight: 700; margin-bottom: 30px;">Log in to secure your cloud score & sync features.</p>
 
-          <!-- PREMIUM GOOGLE LOGIN BUTTON -->
           <button class="btn-save-settings" id="btn-google-login" style="background: #4285F4; color: white; margin-bottom: 15px; border: none; padding: 16px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3);">
               <span style="background: white; border-radius: 50%; padding: 2px; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; color: #4285F4; font-size: 13px; font-weight: 900;">G</span>
               Login with Google Account
           </button>
           
-          <!-- SLEEK GUEST MODE BUTTON -->
           <button class="btn-save-settings" id="btn-guest-continue" style="background: transparent; color: var(--orange); border: 2.5px solid var(--orange); margin-bottom: 0px; padding: 14px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer; box-shadow: none;">
               Continue as Guest Player
           </button>
@@ -457,6 +454,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
   </div>
 
 </div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -470,7 +468,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
       messagingSenderId: "724366966813",
       appId: "1:724366966813:web:2a11ff63f2958f0f0c86f4"
   };
-    const app = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
@@ -484,8 +482,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
           alert("Login Error: " + error.message);
       });
   });
-
-  // GUEST CONTINUITY DISMISSER
+    // GUEST CONTINUITY DISMISSER
   document.getElementById('btn-guest-continue').addEventListener('click', () => {
       const authModal = document.getElementById('auth-modal');
       if(authModal) authModal.style.display = 'none';
@@ -566,8 +563,27 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
   });
 </script>
 
-
 <script>
+  // ==========================================
+  // KILL NATIVE PULL-TO-REFRESH ON ANDROID
+  // ==========================================
+  let _touchStartY = 0;
+  document.addEventListener('touchstart', e => { 
+      _touchStartY = e.touches[0].clientY; 
+  }, { passive: false });
+
+  document.addEventListener('touchmove', e => {
+      const screen = e.target.closest('.screen');
+      const touchY = e.touches[0].clientY;
+      const isSwipingDown = (touchY - _touchStartY) > 0;
+      
+      // If we are at the top of the container and swiping down, block the native refresh!
+      if (screen && screen.scrollTop <= 0 && isSwipingDown) {
+          e.preventDefault();
+      }
+  }, { passive: false });
+  // ==========================================
+
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   let audioCtx;
   function initAudio() { if(!audioCtx) { audioCtx = new AudioContext(); } }
@@ -620,8 +636,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
   let isDailyComplete = localStorage.getItem("qz_daily_completed") === "true"; let isDailyTaskMode = false;
   
   if(lastDailyDate !== todayStr) { isDailyComplete = false; localStorage.setItem("qz_daily_date", todayStr); localStorage.setItem("qz_daily_completed", "false"); }
-  
-  const questionBank = [
+    const questionBank = [
     { category: 'Maths', q: "A sum of money doubles itself in 5 years at simple interest. What the rate of interest?", options: ["10%", "15%", "20%", "25%"], answer: 2 },
     { category: 'Maths', q: "Successive discounts of 20% and 10% are equivalent to a single discount of:", options: ["25%", "28%", "30%", "32%"], answer: 1 },
     { category: 'Maths', q: "If x + y = 10 and xy = 24, find the value of x² + y².", options: ["50", "52", "54", "56"], answer: 1 },
@@ -712,11 +727,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
     { category: 'Chemistry', q: "Atom is:", options: ["Smallest particle", "Molecule", "Cell", "Compound"], answer: 0 },
     { category: 'Chemistry', q: "Carbon dioxide formula:", options: ["CO", "CO2", "C2O", "C"], answer: 1 },
     { category: 'Chemistry', q: "Metals are generally:", options: ["Brittle", "Conductors", "Gases", "Liquids"], answer: 1 },
-    { category: 'English', q: "Change to Passive Voice: 'The police arrested the thief.'", options: ["The thief is arrested by the police.", "The thief was arrested by the police.", "The thief has been arrested by the police.", "The thief had been arrested by the police."], answer: 1 },
+        { category: 'English', q: "Change to Passive Voice: 'The police arrested the thief.'", options: ["The thief is arrested by the police.", "The thief was arrested by the police.", "The thief has been arrested by the police.", "The thief had been arrested by the police."], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'She is reading a book.'", options: ["A book is read by her.", "A book was being read by her.", "A book is being read by her.", "A book has been read by her."], answer: 2 },
     { category: 'English', q: "Change to Passive Voice: 'They have completed the project.'", options: ["The project was completed by them.", "The project is completed by them.", "The project had been completed by them.", "The project has been completed by them."], answer: 3 },
     { category: 'English', q: "Change to Passive Voice: 'Did you write this letter?'", options: ["Is this letter written by you?", "Was this letter written by you?", "Has this letter been written by you?", "Had this letter been written by you?"], answer: 1 },
-        { category: 'English', q: "Change to Passive Voice: 'Open the door.'", options: ["The door should be opened.", "Let the door be opened.", "The door must be opened.", "Let the door opened."], answer: 1 },
+    { category: 'English', q: "Change to Passive Voice: 'Open the door.'", options: ["The door should be opened.", "Let the door be opened.", "The door must be opened.", "Let the door opened."], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'People speak English all over the world.'", options: ["English is spoken all over the world.", "English was spoken all over the world.", "English has been spoken all over the world.", "English had been spoken all over the world."], answer: 0 },
     { category: 'English', q: "Change to Passive Voice: 'Who broke the window?'", options: ["By whom the window broken?", "By whom was the window broken?", "By whom is the window broken?", "Whom was the window broken by?"], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'They will build a new bridge.'", options: ["A new bridge is built by them.", "A new bridge would be built by them.", "A new bridge will be built by them.", "A new bridge will have been built by them."], answer: 2 },
@@ -782,7 +797,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
     { category: 'Vocab', q: "Meaning of 'Pivotal':", options: ["Crucial", "Trivial", "Minor", "Useless"], answer: 0 },
     { category: 'Vocab', q: "Synonym of 'Serene':", options: ["Noisy", "Calm", "Loud", "Chaotic"], answer: 1 },
     { category: 'Vocab', q: "Antonym of 'Lethargic':", options: ["Active", "Sluggish", "Lazy", "Tired"], answer: 0 },
-    { category: 'GAT', q: "Which isotope is primarily utilized in radiocarbon dating to determine the age of organic materials?", options: ["Carbon-12", "Carbon-13", "Carbon-14", "Carbon-15"], answer: 2 },
+        { category: 'GAT', q: "Which isotope is primarily utilized in radiocarbon dating to determine the age of organic materials?", options: ["Carbon-12", "Carbon-13", "Carbon-14", "Carbon-15"], answer: 2 },
     { category: 'GAT', q: "Which chemical process is used to convert liquid vegetable oils into solid fats?", options: ["Saponification", "Hydrogenation", "Oxidation", "Esterification"], answer: 1 },
     { category: 'GAT', q: "According to the Gibbs phase rule, what is the maximum number of phases that can coexist in thermodynamic phase equilibrium for a single-component system (like water at its triple point)?", options: ["1", "2", "3", "4"], answer: 2 },
     { category: 'GAT', q: "What is the common name for Sodium Bicarbonate?", options: ["Baking Soda", "Washing Soda", "Bleaching Powder", "Plaster of Paris"], answer: 0 },
@@ -898,7 +913,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
         dtCard.onclick = startDailyTask; dtCard.style.opacity = "1";
     }
   }
-    updateProfileUI(); updateDailyTaskUI();
+  updateProfileUI(); updateDailyTaskUI();
 
   function saveProfile() {
     myData.name = document.getElementById('inp-name').value.trim() || "User"; 
@@ -960,8 +975,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
         </div>`;
     }); container.innerHTML = html;
   }
-
-  function removeSavedQuestion(index) { savedQuestions.splice(index, 1); localStorage.setItem("qz_saved_qs", JSON.stringify(savedQuestions)); renderSavedQuestions(); }
+    function removeSavedQuestion(index) { savedQuestions.splice(index, 1); localStorage.setItem("qz_saved_qs", JSON.stringify(savedQuestions)); renderSavedQuestions(); }
   function renderReview() {
       let html = '';
       currentQuiz.forEach((q, i) => {
@@ -975,7 +989,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
       });
       document.getElementById('review-container').innerHTML = html; showScreen('review-screen');
   }
-    function renderAnalytics() {
+
+  function renderAnalytics() {
       let html = '';
       for(let cat in myData.stats) {
           let d = myData.stats[cat]; let percent = d.p > 0 ? Math.round((d.c / d.p) * 100) : 0;
@@ -1081,7 +1096,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
         optionsHtml += `<button class="option ${extraClass}" id="opt-${i}" onclick="checkAnswer(${i}, this)"><div class="opt-letter">${labels[i]}</div><div class="opt-text">${opt}</div><div class="opt-icon">${iconHtml}</div></button>`; 
     }); document.getElementById('options-container').innerHTML = optionsHtml; 
   }
-    function startTimer() { 
+
+  function startTimer() { 
     timerInterval = setInterval(() => { 
         timeLeft--; updateTimerDisplay(); 
         if(timeLeft <= 0) { 
@@ -1092,8 +1108,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;
         } 
     }, 1000); 
   }
-  
-  function updateTimerDisplay() { let maxT = timeTotal > timeLeft ? timeTotal : timeLeft; let secs = timeLeft < 10 ? '0'+timeLeft : timeLeft; document.getElementById('timer-text').innerText = `00:${secs}`; document.getElementById('timer-bar').style.width = Math.min((timeLeft / maxT) * 100, 100) + '%'; }
+    function updateTimerDisplay() { let maxT = timeTotal > timeLeft ? timeTotal : timeLeft; let secs = timeLeft < 10 ? '0'+timeLeft : timeLeft; document.getElementById('timer-text').innerText = `00:${secs}`; document.getElementById('timer-bar').style.width = Math.min((timeLeft / maxT) * 100, 100) + '%'; }
   function use5050() { let btn = document.getElementById('ll-5050'); if (btn.classList.contains('used') || isLocked || count5050 <= 0) return; let correctIndex = currentQuiz[currentQIndex].answer; let wrongIndices = [0, 1, 2, 3].filter(i => i !== correctIndex).sort(() => 0.5 - Math.random()); document.getElementById(`opt-${wrongIndices[0]}`).classList.add('disabled'); document.getElementById(`opt-${wrongIndices[1]}`).classList.add('disabled'); count5050--; document.getElementById('txt-5050').innerText = count5050 + " Left"; if(count5050 === 0) btn.classList.add('used'); }
   function useAddTime() { let btn = document.getElementById('ll-time'); if (btn.classList.contains('used') || isLocked || countTime <= 0) return; timeLeft += 10; timeTotal = timeLeft; updateTimerDisplay(); countTime--; document.getElementById('txt-time').innerText = countTime + " Left"; if(countTime === 0) btn.classList.add('used'); }
   function useAudience() { let btn = document.getElementById('ll-audience'); if (btn.classList.contains('used') || isLocked) return; let correctIndex = currentQuiz[currentQIndex].answer; alert("👥 The audience thinks option " + labels[correctIndex] + " is correct!"); btn.classList.add('used'); }
