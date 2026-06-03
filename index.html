@@ -7,11 +7,8 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
   :root { --primary: #f29b46; --bg-top: #ffb870; --bg-bottom: #fff3e6; --orange: #f26b3e; --orange-light: #ffcc99; --text-dark: #333; --text-muted: #888; --correct-bg: #b6f3d5; --correct-text: #1b8a53; --card-bg: white; }
-  
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-  
-  /* STRICT OVERSCROLL REMOVAL ON HTML/BODY */
-  html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; overscroll-behavior: none; touch-action: pan-y; }
+html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; overscroll-behavior-y: none; }
   
   #app { width: 100%; max-width: 100%; height: 100%; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 60%, var(--card-bg) 100%); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
   
@@ -45,7 +42,7 @@
       100% { opacity: 1; transform: scale(1) translateY(0); } 
   }
 
-  .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px; overscroll-behavior: none; }
+.screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px; overscroll-behavior-y: contain; }
   .screen::-webkit-scrollbar { display: none; }
   
   .active-screen { display: flex; animation: screenTransition 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
@@ -77,7 +74,8 @@
   .game-card { flex: 1; background: white; border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;}
   .game-card:active { transform: scale(0.95); }
   .game-icon { width: 70px; height: 70px; background: #fff3e6; border-radius: 50%; margin: 0 auto 10px; display:flex; justify-content:center; align-items:center; font-size: 35px;}
-    .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; display: flex; justify-content: space-around; padding: 15px 10px 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 10;}
+  
+  .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; display: flex; justify-content: space-around; padding: 15px 10px 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 10;}
   .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; gap: 5px; cursor: pointer; font-weight: 700;}
   .nav-item.active { color: var(--orange); }
   .nav-icon { width: 45px; height: 45px; border-radius: 50%; display:flex; justify-content:center; align-items:center; font-size: 20px; transition: 0.3s;}
@@ -122,7 +120,7 @@
   
   .edit-avatar-wrap { width: 110px; height: 110px; border-radius: 50%; background: white; border: 5px solid white; position: absolute; top: -55px; left: 50%; transform: translateX(-50%); box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 50px; overflow: visible; background-color: #ffd6b3;}
   .edit-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; top: 0; left: 0;}
-  .cam-badge { position: absolute; bottom: 0; right: 0; background: #f29b46; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; border: 3px solid white; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+    .cam-badge { position: absolute; bottom: 0; right: 0; background: #f29b46; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; border: 3px solid white; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
   
   .form-header { margin-bottom: 20px; color: var(--text-dark); text-align: center; font-size: 18px; font-weight: 800;}
   .form-group-container { width: 100%; max-width: 350px; }
@@ -151,7 +149,8 @@
   .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
   input:checked + .slider { background-color: var(--orange); }
   input:checked + .slider:before { transform: translateX(20px); }
-    #leader-screen { background: var(--card-bg); padding-top: 10px;}
+
+  #leader-screen { background: var(--card-bg); padding-top: 10px;}
   .lb-tabs { display: flex; justify-content: space-around; background: white; border-radius: 30px; padding: 6px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
   .lb-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 800; color: var(--text-muted); border-radius: 25px; cursor: pointer; transition: 0.3s; }
   .lb-tab.active { background: var(--orange); color: white; }
@@ -302,7 +301,8 @@
       <button class="lifeline nav-btn" id="btn-next" onclick="nextQuestion()"><i>⏭️</i>Next / Skip</button>
     </div>
   </div>
-    <div id="result-screen" class="screen">
+
+  <div id="result-screen" class="screen">
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span id="res-header">Correct 0/0</span><div style="width:40px"></div></div>
     <div class="result-card">
       <div class="ribbon">
@@ -416,7 +416,8 @@
       </div>
     </div>
   </div>
-    <div id="avatar-modal" class="modal-overlay">
+
+  <div id="avatar-modal" class="modal-overlay">
     <div id="avatar-box" class="pop-animation avatar-modal-box">
       <h3 style="color:white; margin-bottom: 15px; text-align: center;">Select Avatar</h3>
       <button class="primary-btn" style="background: #4facfe; margin-bottom: 20px; font-size: 14px;" onclick="triggerImageUpload()">📷 Upload Reference Photo</button>
@@ -456,10 +457,9 @@
   </div>
 
 </div>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -470,16 +470,19 @@
       messagingSenderId: "724366966813",
       appId: "1:724366966813:web:2a11ff63f2958f0f0c86f4"
   };
-  const app = initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
   
   provider.setCustomParameters({ prompt: 'select_account' }); 
 
-  // CHANGED TO REDIRECT: Popups crash Web-to-APK converters!
+  // GOOGLE CALL MODAL TRIGGER
   document.getElementById('btn-google-login').addEventListener('click', () => {
-      signInWithRedirect(auth, provider);
+      signInWithPopup(auth, provider).catch((error) => {
+          console.error("Login Error: ", error);
+          alert("Login Error: " + error.message);
+      });
   });
 
   // GUEST CONTINUITY DISMISSER
@@ -563,43 +566,8 @@
   });
 </script>
 
+
 <script>
-  // ==========================================
-  // NUCLEAR PULL-TO-REFRESH KILLER
-  // ==========================================
-  let _touchStartY = 0;
-  window.addEventListener('touchstart', e => { 
-      _touchStartY = e.touches[0].clientY; 
-  }, { passive: false });
-
-  window.addEventListener('touchmove', e => {
-      // Allow pinch-to-zoom if user uses two fingers
-      if(e.touches.length > 1) return;
-      
-      let el = e.target;
-      let isScrollable = false;
-      let touchY = e.touches[0].clientY;
-      
-      // Look up the DOM tree to see if we are touching a scrolling screen
-      while(el && el !== document.body) {
-          if(el.classList && el.classList.contains('screen')) {
-              isScrollable = true;
-              // If we are at the very top and pulling DOWN, cancel the Android refresh
-              if(el.scrollTop <= 0 && touchY > _touchStartY) {
-                  e.preventDefault();
-              }
-              break;
-          }
-          el = el.parentNode;
-      }
-      
-      // If we touch the background or a non-scrolling element, block it entirely
-      if(!isScrollable) {
-          e.preventDefault();
-      }
-  }, { passive: false });
-  // ==========================================
-
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   let audioCtx;
   function initAudio() { if(!audioCtx) { audioCtx = new AudioContext(); } }
@@ -622,7 +590,8 @@
           osc.start(); osc.stop(audioCtx.currentTime + 0.4);
       }
   }
-    let storedCoins = localStorage.getItem("qz_game_coins");
+
+  let storedCoins = localStorage.getItem("qz_game_coins");
   let defaultStats = { Maths: {p:0, c:0}, Physics: {p:0, c:0}, Chemistry: {p:0, c:0}, English: {p:0, c:0}, Vocab: {p:0, c:0}, GAT: {p:0, c:0} };
   let storedStats = JSON.parse(localStorage.getItem("qz_stats"));
   
@@ -829,7 +798,7 @@
     { category: 'GAT', q: "The filament of an electric bulb is made of:", options: ["Copper", "Aluminum", "Lead", "Tungsten"], answer: 3 },
     { category: 'GAT', q: "Which lens is used to correct Myopia (short-sightedness)?", options: ["Convex lens", "Concave lens", "Cylindrical lens", "Bifocal lens"], answer: 1 },
     { category: 'GAT', q: "The Article 32 of the Indian Constitution is related to:", options: ["Right to Equality", "Right to Constitutional Remedies", "Right to Freedom", "Right to Education"], answer: 1 },
-        { category: 'GAT', q: "Who was the first Governor-General of independent India?", options: ["C. Rajagopalachari", "Lord Mountbatten", "Rajendra Prasad", "Jawaharlal Nehru"], answer: 1 },
+    { category: 'GAT', q: "Who was the first Governor-General of independent India?", options: ["C. Rajagopalachari", "Lord Mountbatten", "Rajendra Prasad", "Jawaharlal Nehru"], answer: 1 },
     { category: 'GAT', q: "The Thar Desert, which extends through parts of Rajasthan, is also known as:", options: ["The Great Indian Desert", "The White Desert", "The Cold Desert", "The Deccan Desert"], answer: 0 },
     { category: 'GAT', city_context: "Bengaluru, India", q: "Which Indian city is known as the 'Silicon Valley of India'?", options: ["Hyderabad", "Pune", "Bengaluru", "Chennai"], answer: 2 },
     { category: 'GAT', q: "In the context of the Indian Premier League (IPL), which team won the inaugural season in 2008?", options: ["Chennai Super Kings", "Rajasthan Royals", "Mumbai Indians", "Kolkata Knight Riders"], answer: 1 },
@@ -887,7 +856,8 @@
   if(localStorage.getItem("qz_dark_mode") === "true") {
       document.getElementById('dark-mode-toggle').checked = true; toggleDarkTheme(true);
   }
-    function openAboutModal() { document.getElementById('about-us-modal').style.display = 'flex'; }
+
+  function openAboutModal() { document.getElementById('about-us-modal').style.display = 'flex'; }
   function closeAboutModal() { document.getElementById('about-us-modal').style.display = 'none'; }
 
   function updateProfileUI() {
@@ -928,7 +898,7 @@
         dtCard.onclick = startDailyTask; dtCard.style.opacity = "1";
     }
   }
-  updateProfileUI(); updateDailyTaskUI();
+    updateProfileUI(); updateDailyTaskUI();
 
   function saveProfile() {
     myData.name = document.getElementById('inp-name').value.trim() || "User"; 
@@ -990,7 +960,8 @@
         </div>`;
     }); container.innerHTML = html;
   }
-    function removeSavedQuestion(index) { savedQuestions.splice(index, 1); localStorage.setItem("qz_saved_qs", JSON.stringify(savedQuestions)); renderSavedQuestions(); }
+
+  function removeSavedQuestion(index) { savedQuestions.splice(index, 1); localStorage.setItem("qz_saved_qs", JSON.stringify(savedQuestions)); renderSavedQuestions(); }
   function renderReview() {
       let html = '';
       currentQuiz.forEach((q, i) => {
@@ -1004,8 +975,7 @@
       });
       document.getElementById('review-container').innerHTML = html; showScreen('review-screen');
   }
-
-  function renderAnalytics() {
+    function renderAnalytics() {
       let html = '';
       for(let cat in myData.stats) {
           let d = myData.stats[cat]; let percent = d.p > 0 ? Math.round((d.c / d.p) * 100) : 0;
