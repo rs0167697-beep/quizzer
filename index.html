@@ -5,35 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Quizzer - Offline Master</title>
 <style>
-#btn-google-login:active { transform: scale(0.95); opacity: 0.9; }
-
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
   :root { --primary: #f29b46; --bg-top: #ffb870; --bg-bottom: #fff3e6; --orange: #f26b3e; --orange-light: #ffcc99; --text-dark: #333; --text-muted: #888; --correct-bg: #b6f3d5; --correct-text: #1b8a53; --card-bg: white; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-  /* LOCK VIEWPORT TO PREVENT SCROLL GLITCHES */
   html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; }
   
-  /* FLUID NATIVE APP RATIO FOR ALL PHONES */
   #app { width: 100%; max-width: 100%; height: 100%; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 60%, var(--card-bg) 100%); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
   
-  /* DESKTOP / LARGE TABLET OVERRIDE (Only triggers if screen is both TALL and WIDE) */
   @media (min-width: 600px) and (min-height: 750px) { 
     #app { max-width: 400px; height: 90vh; max-height: 850px; border-radius: 40px; border: 10px solid #222; } 
   }
 
-  /* PROFESSIONAL LANDSCAPE MOBILE OPTIMIZATION */
-  @media (orientation: landscape) and (max-height: 500px) {
-    .screen { padding: 10px 20px; }
-    .header { margin-top: 5px; margin-bottom: 15px; }
-    .quiz-header { margin-top: 5px; margin-bottom: 10px; }
-    .question-card { min-height: 80px; padding: 15px; font-size: 16px; margin-bottom: 10px; }
-    .more-games { padding-bottom: 90px; } /* Stops bottom nav from hiding content */
-    #splash-screen { flex-direction: row; justify-content: space-evenly; align-items: center; }
-    .splash-content { margin-top: 0; text-align: left; }
-    .btn-splash { width: 40%; margin-bottom: 0; }
-  }
-
-  
   /* AMOLED DARK MODE OVERRIDES */
   #app.dark-theme { --bg-top: #000000; --bg-bottom: #000000; --text-dark: #ffffff; --text-muted: #aaaaaa; --card-bg: #000000; }
   #app.dark-theme .category-btn, #app.dark-theme .game-card, #app.dark-theme .analytics-card, #app.dark-theme .option, #app.dark-theme .lb-tabs, #app.dark-theme .review-card, #app.dark-theme .settings-menu, #app.dark-theme .question-card, #app.dark-theme .coins { background: #0c0c0c; color: #fff; border: 1px solid #222; box-shadow: none; }
@@ -52,10 +34,19 @@
   #app.dark-theme .modal-overlay .pop-animation { background: #050505 !important; border: 1px solid #222; }
   #app.dark-theme .icon-btn { background: #0c0c0c; color: #fff; border: 1px solid #222; }
   #app.dark-theme #about-box { background: #050505 !important; border: 1px solid #222; }
+  #app.dark-theme #auth-modal { background: rgba(0,0,0,0.95) !important; }
+
+  /* APP-WIDE SCREEN TRANSITION ANIMATION */
+  @keyframes screenTransition { 
+      0% { opacity: 0; transform: scale(0.97) translateY(15px); } 
+      100% { opacity: 1; transform: scale(1) translateY(0); } 
+  }
 
   .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px; }
   .screen::-webkit-scrollbar { display: none; }
-  .active-screen { display: flex; }
+  
+  /* EVERY TIME A SCREEN IS ACTIVE, IT WILL PLAY THE ANIMATION */
+  .active-screen { display: flex; animation: screenTransition 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
   
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 20px;}
   .profile { display: flex; align-items: center; gap: 10px; color: var(--text-dark); cursor: pointer;}
@@ -66,8 +57,7 @@
   
   .coins { background: white; color: var(--text-dark); padding: 5px 15px 5px 5px; border-radius: 25px; display: flex; align-items: center; gap: 8px; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
   .coin-icon { background: var(--orange); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
-
-  .daily-task { background: rgba(255,255,255,0.5); border-radius: 20px; padding: 20px; color: var(--text-dark); margin-bottom: 25px; position: relative; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;}
+    .daily-task { background: rgba(255,255,255,0.5); border-radius: 20px; padding: 20px; color: var(--text-dark); margin-bottom: 25px; position: relative; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;}
   .daily-task:active { transform: scale(0.95); }
   .dt-header { display: flex; justify-content: space-between; align-items: flex-start;}
   .dt-icon { width: 60px; height: 60px; background: rgba(255,255,255,0.7); border-radius: 15px; display:flex; justify-content:center; align-items:center; font-size: 30px;}
@@ -183,8 +173,7 @@
   .lb-avatar-small img { width:100%; height:100%; object-fit:cover; border-radius:50%; position:absolute; top:0; left:0;}
   .lb-name { flex: 1; font-weight: 800; color: var(--text-dark); font-size: 14px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .lb-pts { font-weight: 800; color: var(--orange); font-size: 13px; }
-
-  .review-card { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;}
+    .review-card { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;}
   .review-q { color: var(--text-dark); font-weight: 800; font-size: 14px; margin-bottom: 10px;}
   .review-opt { padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; margin-bottom: 5px;}
   .r-correct { background: var(--correct-bg); color: var(--correct-text); }
@@ -209,8 +198,9 @@
   .round-item { background: #fff3e6; border-radius: 25px; padding: 20px 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-dark); font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.2s; border: 2px solid transparent;}
   .round-item:active { transform: scale(0.9); border-color: var(--orange); }
   .round-item .c-icon { font-size: 30px; margin-bottom: 8px; }
-  /* FULL SCREEN SPLASH ON STARTUP */
-  #splash-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #f29b46 0%, #f26b3e 100%); z-index: 2000; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 60px 20px; color: white; text-align: center; transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.6s ease; }
+  
+  /* FULL SCREEN SPLASH ON STARTUP (Sits perfectly on top of auth wall) */
+  #splash-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #f29b46 0%, #f26b3e 100%); z-index: 3000; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 60px 20px; color: white; text-align: center; transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.6s ease; }
   #splash-screen.hide { transform: translateY(-100%); opacity: 0; pointer-events: none; }
   .splash-content { margin-top: 15vh; }
   .splash-icon { font-size: 80px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; display: inline-block; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); }
@@ -219,21 +209,16 @@
   .splash-text { font-size: 16px; font-weight: 700; opacity: 0.9; line-height: 1.5; }
   .btn-splash { background: white; color: var(--orange); border: none; width: 90%; max-width: 300px; padding: 18px; border-radius: 25px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px;}
   .btn-splash:active { transform: scale(0.95); }
-
-  /* AMOLED THEME SPLASH */
-  #app.dark-theme #splash-screen { background: linear-gradient(135deg, #111 0%, #000 100%); }
-  #app.dark-theme .btn-splash { background: var(--orange); color: white; }
-
+  
+  #btn-google-login:active { transform: scale(0.95); opacity: 0.9; }
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YS36PFXEH8"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-YS36PFXEH8'); 
   </script>
-
 </head>
 <body>
 <div id="app">
@@ -318,8 +303,7 @@
       <button class="lifeline nav-btn" id="btn-next" onclick="nextQuestion()"><i>⏭️</i>Next / Skip</button>
     </div>
   </div>
-
-  <div id="result-screen" class="screen">
+    <div id="result-screen" class="screen">
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span id="res-header">Correct 0/0</span><div style="width:40px"></div></div>
     <div class="result-card">
       <div class="ribbon">
@@ -342,6 +326,7 @@
     </div>
     <div id="review-container" style="padding-bottom: 20px;"></div>
   </div>
+
   <div id="profile-screen" class="screen">
     <div class="profile-cover">
       <button class="icon-btn" onclick="saveProfile()" style="border:none; cursor:pointer; width:35px; height:35px; border-radius:50%; font-size:18px;">←</button>
@@ -358,16 +343,10 @@
       <div class="form-group-container">
           <div class="input-group"><label>Name</label><input type="text" id="inp-name" placeholder="Guest Player"></div>
           <div class="input-group"><label>Username</label><input type="text" id="inp-username" placeholder="guest_user"></div>
-          <!-- ADD THIS BUTTON -->
-<button class="btn-save-settings" id="btn-google-login" style="background: #4285F4; color: white; margin-bottom: 10px; border: none; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer;">
-    with Google
-</button>
-<!-- LOGOUT BUTTON -->
-<button class="btn-save-settings" id="btn-google-logout" style="background: #ff4757; color: white; margin-bottom: 15px; border: none; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer;">
-    Sign Out
-</button>
-
-
+          
+          <button class="btn-save-settings" id="btn-google-logout" style="background: #ff4757; color: white; margin-bottom: 15px; border: none; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer;">
+              Sign Out
+          </button>
       </div>
 
       <div class="form-header" style="margin-top: 0; margin-bottom:15px;">App Configurations</div>
@@ -458,14 +437,49 @@
     </div>
   </div>
 
+  <div id="auth-modal" class="modal-overlay" style="z-index: 2500; background: var(--bg-top); display: none;">
+      <div class="pop-animation" style="background: var(--card-bg); width: 90%; max-width: 400px; border-radius: 35px; padding: 35px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); text-align: center;">
+          <div style="font-size: 50px; margin-bottom: 10px; animation: float 3s ease-in-out infinite;">🪷</div>
+          <h2 style="color: var(--text-dark); font-weight: 800; margin-bottom: 5px;">Welcome to Quizzer</h2>
+          <p style="color: var(--text-muted); font-size: 14px; font-weight: 700; margin-bottom: 25px;">Login to save your progress securely!</p>
+
+          <div style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.05); text-align: left;">
+              <div class="input-group" style="margin-bottom: 10px;">
+                  <label style="color: var(--text-muted);">Phone Number</label>
+                  <input type="tel" id="inp-phone" placeholder="+91 9876543210" style="background: var(--card-bg); border: 1px solid rgba(0,0,0,0.1); color: var(--text-dark);">
+              </div>
+              <div id="recaptcha-container" style="margin-bottom: 10px;"></div>
+              
+              <button class="btn-save-settings" id="btn-send-otp" style="background: #34A853; color: white; margin-bottom: 0; border: none; padding: 12px; border-radius: 15px; font-weight: 700; width: 100%; cursor: pointer;">
+                  Send OTP Code
+              </button>
+
+              <div id="otp-box" style="display: none; margin-top: 15px;">
+                  <div class="input-group" style="margin-bottom: 10px;">
+                      <label style="color: var(--text-muted);">Enter 6-Digit Code</label>
+                      <input type="number" id="inp-otp" placeholder="123 456" style="background: var(--card-bg); border: 1px solid rgba(0,0,0,0.1); color: var(--text-dark); letter-spacing: 5px; text-align: center;">
+                  </div>
+                  <button class="btn-save-settings" id="btn-verify-otp" style="background: #f29b46; color: white; margin-bottom: 0; border: none; padding: 12px; border-radius: 15px; font-weight: 700; width: 100%; cursor: pointer;">
+                      Verify & Login
+                  </button>
+              </div>
+          </div>
+          
+          <p style="color: var(--text-muted); font-size: 12px; font-weight: 800; margin-bottom: 15px;">OR</p>
+
+          <button class="btn-save-settings" id="btn-google-login" style="background: #4285F4; color: white; margin-bottom: 0px; border: none; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;">
+              <span style="background: white; border-radius: 50%; padding: 2px; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; color: #4285F4; font-size: 14px; font-weight: 900;">G</span>
+              Login with Google
+          </button>
+      </div>
+  </div>
+
 </div>
 <script type="module">
-  // 1. IMPORTS
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // 2. CONFIG
   const firebaseConfig = {
       apiKey: "AIzaSyC8p8CLrr81dg3rMfEQRBH1bnDSHZu1WGk",
       authDomain: "quizzer-master.firebaseapp.com",
@@ -475,32 +489,78 @@
       appId: "1:724366966813:web:2a11ff63f2958f0f0c86f4"
   };
 
-  // 3. INITIALIZE
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
   
-  // Forces Google to ask WHICH account to use every time!
   provider.setCustomParameters({ prompt: 'select_account' }); 
 
-  // Catches any weird browser redirect errors
   getRedirectResult(auth).catch((error) => {
       alert("Login Redirect Error: " + error.message);
   });
 
-  // 4. LOGIN BUTTON
   document.getElementById('btn-google-login').addEventListener('click', () => {
       signInWithRedirect(auth, provider); 
   });
+  
+  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      'size': 'invisible', 
+      'callback': (response) => {
+          console.log("Recaptcha solved!");
+      }
+  });
 
-  // 5. LOGOUT BUTTON
+  document.getElementById('btn-send-otp').addEventListener('click', () => {
+      const phoneNumber = document.getElementById('inp-phone').value.trim();
+      
+      if(!phoneNumber.startsWith("+")) {
+          alert("Please include your country code (like +91)");
+          return;
+      }
+
+      const appVerifier = window.recaptchaVerifier;
+      
+      signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+          .then((confirmationResult) => {
+              window.confirmationResult = confirmationResult;
+              document.getElementById('btn-send-otp').style.display = 'none';
+              document.getElementById('otp-box').style.display = 'block';
+              alert("SMS Code Sent! Check your messages.");
+          }).catch((error) => {
+              alert("Error sending SMS: " + error.message);
+              window.recaptchaVerifier.render().then(function(widgetId) {
+                  grecaptcha.reset(widgetId);
+              });
+          });
+  });
+
+  document.getElementById('btn-verify-otp').addEventListener('click', () => {
+      const code = document.getElementById('inp-otp').value.trim();
+      
+      if(code.length < 6) {
+          alert("Please enter the 6-digit code.");
+          return;
+      }
+
+      window.confirmationResult.confirm(code).then((result) => {
+          alert("Phone Login Successful!");
+          document.getElementById('otp-box').style.display = 'none';
+          document.getElementById('btn-send-otp').style.display = 'block';
+          document.getElementById('inp-phone').value = "";
+          document.getElementById('inp-otp').value = "";
+          
+      }).catch((error) => {
+          alert("Incorrect Code. Please try again.");
+      });
+  });
+
   document.getElementById('btn-google-logout').addEventListener('click', () => {
       signOut(auth).then(() => {
           myData.name = "Guest Player";
           myData.avatarVal = ""; 
           myData.coins = 0;
-          localStorage.setItem("qz_game_coins", 0); // Wipes local memory too
+          localStorage.setItem("qz_game_coins", 0); 
           updateProfileUI();
           alert("You have been securely signed out!");
       }).catch((error) => {
@@ -508,7 +568,6 @@
       });
   });
 
-  // 6. UPLOADER
   window.syncToCloud = async function() {
       if (auth.currentUser) {
           const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -525,9 +584,12 @@
       }
   };
 
-  // 7. DOWNLOADER (Now with anti-crash protection)
   onAuthStateChanged(auth, async (user) => {
       if (user) {
+          // THEY ARE LOGGED IN: HIDE THE LOGIN WALL!
+          const authModal = document.getElementById('auth-modal');
+          if(authModal) authModal.style.display = 'none';
+          
           try {
               const userDocRef = doc(db, "users", user.uid);
               const docSnap = await getDoc(userDocRef);
@@ -557,19 +619,20 @@
               updateProfileUI(); 
 
           } catch (error) {
-              // THIS ALERTS YOU IF YOUR FIREBASE RULES ARE BLOCKING THE LOGIN
               console.error("Database Error:", error);
               alert("Logged in, but couldn't load save data! Check Firebase Database Rules.");
           }
       } else {
+          // THEY ARE NOT LOGGED IN: SHOW THE WALL SO THEY HAVE TO LOGIN!
           console.log("User is signed out.");
+          const authModal = document.getElementById('auth-modal');
+          if(authModal) authModal.style.display = 'flex';
       }
   });
 </script>
 
 
 <script>
-  
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   let audioCtx;
   function initAudio() { if(!audioCtx) { audioCtx = new AudioContext(); } }
@@ -597,15 +660,14 @@
   let defaultStats = { Maths: {p:0, c:0}, Physics: {p:0, c:0}, Chemistry: {p:0, c:0}, English: {p:0, c:0}, Vocab: {p:0, c:0}, GAT: {p:0, c:0} };
   let storedStats = JSON.parse(localStorage.getItem("qz_stats"));
   
-let myData = {
-    name: "Guest Player",
-    avatarType: "emoji",
-    avatarVal: "👨‍💼",
-    coins: storedCoins ? parseInt(storedCoins) : 0,  // <--- CHANGE THIS LINE!
-    stats: storedStats || defaultStats
-};
+  let myData = {
+      name: "Guest Player",
+      avatarType: "emoji",
+      avatarVal: "👨‍💼",
+      coins: storedCoins ? parseInt(storedCoins) : 0, 
+      stats: storedStats || defaultStats
+  };
 
-  
   if(myData.stats && !myData.stats.Vocab) myData.stats.Vocab = {p:0, c:0};
   
   function getRank(coins) {
@@ -677,7 +739,7 @@ let myData = {
     { category: 'Maths', q: "Solve for x: If 2^(x+3) = 32, then x equals:", options: ["1", "2", "3", "4"], answer: 1 },
     { category: 'Physics', q: "SI unit of force:", options: ["Joule", "Newton", "Watt", "Pascal"], answer: 1 },
     { category: 'Physics', q: "Speed = ?", options: ["Distance × Time", "Distance / Time", "Time / Distance", "Mass / Time"], answer: 1 },
-    { category: 'Physics', q: "Unit of electric current:", options: ["Volt", "Ampere", "Ohm", "Watt"], answer: 1 },
+        { category: 'Physics', q: "Unit of electric current:", options: ["Volt", "Ampere", "Ohm", "Watt"], answer: 1 },
     { category: 'Physics', q: "Gravity on Earth is:", options: ["9.8 m/s²", "10 m/s", "8 m/s²", "5 m/s²"], answer: 0 },
     { category: 'Physics', q: "Light travels in:", options: ["Sound", "Vacuum", "Water only", "Air only"], answer: 1 },
     { category: 'Physics', q: "Mirror used in cars:", options: ["Plane", "Concave", "chintu", "None"], answer: 2 },
@@ -753,6 +815,7 @@ let myData = {
     { category: 'English', q: "Fill in the blank: Although he worked hard, ___ he failed.", options: ["but", "yet", "and", "so"], answer: 1 },
     { category: 'English', q: "Fill in the blank: He is the boy ___ won the prize.", options: ["whom", "which", "who", "whose"], answer: 2 },
     { category: 'English', q: "Fill in the blank: This is the book ___ I was looking for.", options: ["who", "whom", "which", "what"], answer: 2 },
+        { category: 'English', q: "Fill in the blank: This is the book ___ I was looking for.", options: ["who", "whom", "which", "what"], answer: 2 },
     { category: 'English', q: "Fill in the blank: No sooner did the train arrive ___ the passengers rushed.", options: ["than", "when", "then", "but"], answer: 0 },
     { category: 'English', q: "Fill in the blank: I am not accustomed ___ such treatment.", options: ["with", "to", "of", "for"], answer: 1 },
     { category: 'English', q: "Fill in the blank: By the time you reach there, he ___ left.", options: ["will have", "would", "will be", "has"], answer: 0 },
@@ -862,8 +925,7 @@ let myData = {
 
   function openAboutModal() { document.getElementById('about-us-modal').style.display = 'flex'; }
   function closeAboutModal() { document.getElementById('about-us-modal').style.display = 'none'; }
-
-  function updateProfileUI() {
+    function updateProfileUI() {
     document.getElementById('display-name').innerText = myData.name;
     document.getElementById('home-coins').innerText = myData.coins; 
     let homeWrap = document.getElementById('home-avatar-wrap');
@@ -885,7 +947,7 @@ let myData = {
         else { eImg.style.display='none'; eSl.style.display='inline'; eSl.innerText = myData.avatarVal; }
     }
     document.getElementById('res-name').innerText = myData.name.split(' ')[0]; 
-    document.getElementById('inp-name').value = myData.name; document.getElementById('inp-username').value = myData.username;
+    document.getElementById('inp-name').value = myData.name; document.getElementById('inp-username').value = myData.username || "";
     let currentRank = getRank(myData.coins);
     document.getElementById('home-rank-badge').innerText = currentRank; document.getElementById('res-rank-text').innerText = currentRank;
   }
@@ -1022,8 +1084,7 @@ let myData = {
           <div class="podium-name">${top3.name}</div>
           <div class="podium-pts">👑 ${top3.coins} pts</div>
        </div>`;
-      
-      document.getElementById('podium-container').innerHTML = podiumHtml;
+             document.getElementById('podium-container').innerHTML = podiumHtml;
       helperSetAvatarContent(document.getElementById('pod-1-avatar'), top1.avatar, top1.type);
       helperSetAvatarContent(document.getElementById('pod-2-avatar'), top2.avatar, top2.type);
       helperSetAvatarContent(document.getElementById('pod-3-avatar'), top3.avatar, top3.type);
@@ -1040,14 +1101,20 @@ let myData = {
 
   function showScreen(id) {
     clearInterval(timerInterval); // <-- PREVENTS GHOST TIMER SOUND BUG
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen')); 
-    document.getElementById(id).classList.add('active-screen');
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     
-    if(id === 'home-screen') document.querySelectorAll('.nav-item:nth-child(1)').forEach(n=>n.classList.add('active'));
-    else if (id === 'leader-screen') { document.querySelectorAll('.nav-item:nth-child(2)').forEach(n=>n.classList.add('active')); renderLeaderboard(); }
-    else if (id === 'saved-screen') { document.querySelectorAll('.nav-item:nth-child(3)').forEach(n=>n.classList.add('active')); renderSavedQuestions(); }
-    else if (id === 'profile-screen') { document.querySelectorAll('.nav-item:nth-child(4)').forEach(n=>n.classList.add('active')); renderAnalytics(); }
+    // Remount screens for clean animations
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen')); 
+    
+    // Slight timeout allows CSS to reset and trigger animation perfectly
+    setTimeout(() => {
+        document.getElementById(id).classList.add('active-screen');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        
+        if(id === 'home-screen') document.querySelectorAll('.nav-item:nth-child(1)').forEach(n=>n.classList.add('active'));
+        else if (id === 'leader-screen') { document.querySelectorAll('.nav-item:nth-child(2)').forEach(n=>n.classList.add('active')); renderLeaderboard(); }
+        else if (id === 'saved-screen') { document.querySelectorAll('.nav-item:nth-child(3)').forEach(n=>n.classList.add('active')); renderSavedQuestions(); }
+        else if (id === 'profile-screen') { document.querySelectorAll('.nav-item:nth-child(4)').forEach(n=>n.classList.add('active')); renderAnalytics(); }
+    }, 10);
   }
 
   function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
