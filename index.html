@@ -45,7 +45,6 @@
       100% { opacity: 1; transform: scale(1) translateY(0); } 
   }
 
-  /* ADDED OVERSCROLL-BEHAVIOR: NONE HERE TOO */
   .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px; overscroll-behavior: none; }
   .screen::-webkit-scrollbar { display: none; }
   
@@ -78,8 +77,7 @@
   .game-card { flex: 1; background: white; border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s;}
   .game-card:active { transform: scale(0.95); }
   .game-icon { width: 70px; height: 70px; background: #fff3e6; border-radius: 50%; margin: 0 auto 10px; display:flex; justify-content:center; align-items:center; font-size: 35px;}
-  
-  .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; display: flex; justify-content: space-around; padding: 15px 10px 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 10;}
+    .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; display: flex; justify-content: space-around; padding: 15px 10px 25px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 10;}
   .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; gap: 5px; cursor: pointer; font-weight: 700;}
   .nav-item.active { color: var(--orange); }
   .nav-icon { width: 45px; height: 45px; border-radius: 50%; display:flex; justify-content:center; align-items:center; font-size: 20px; transition: 0.3s;}
@@ -116,7 +114,8 @@
   .res-avatar img { width: 100%; height: 100%; object-fit: cover; position:absolute; top:0; left:0;}
   .result-card h2 { color: var(--text-dark); margin-bottom: 10px; font-size: 22px; font-weight: 800;}
   .primary-btn { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(242, 107, 62, 0.3); margin-top: 10px;}
-    #profile-screen { padding: 0; background: var(--card-bg); }
+
+  #profile-screen { padding: 0; background: var(--card-bg); }
   .profile-cover { height: 140px; background: linear-gradient(135deg, #ff9a44 0%, #fc6076 100%); padding: 20px; color: white; position: relative;}
   .profile-cover .icon-btn { background: rgba(255,255,255,0.9); box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 35px; height: 35px; color: #333; }
   .profile-form-area { padding: 60px 20px 80px; position: relative; display: flex; flex-direction: column; align-items: center;}
@@ -152,8 +151,7 @@
   .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
   input:checked + .slider { background-color: var(--orange); }
   input:checked + .slider:before { transform: translateX(20px); }
-
-  #leader-screen { background: var(--card-bg); padding-top: 10px;}
+    #leader-screen { background: var(--card-bg); padding-top: 10px;}
   .lb-tabs { display: flex; justify-content: space-around; background: white; border-radius: 30px; padding: 6px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
   .lb-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 800; color: var(--text-muted); border-radius: 25px; cursor: pointer; transition: 0.3s; }
   .lb-tab.active { background: var(--orange); color: white; }
@@ -176,7 +174,8 @@
   .lb-avatar-small img { width:100%; height:100%; object-fit:cover; border-radius:50%; position:absolute; top:0; left:0;}
   .lb-name { flex: 1; font-weight: 800; color: var(--text-dark); font-size: 14px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .lb-pts { font-weight: 800; color: var(--orange); font-size: 13px; }
-    .review-card { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;}
+
+  .review-card { background: rgba(255,255,255,0.8); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: left;}
   .review-q { color: var(--text-dark); font-weight: 800; font-size: 14px; margin-bottom: 10px;}
   .review-opt { padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; margin-bottom: 5px;}
   .r-correct { background: var(--correct-bg); color: var(--correct-text); }
@@ -278,7 +277,8 @@
       <div class="nav-item" onclick="showScreen('profile-screen')"><div class="nav-icon">⚙️</div>Settings</div>
     </div>
   </div>
-    <div id="quiz-screen" class="screen">
+
+  <div id="quiz-screen" class="screen">
     <div class="quiz-header">
       <button class="icon-btn" onclick="showScreen('home-screen')">←</button>
       <span id="q-counter">Question 1/5</span>
@@ -302,8 +302,7 @@
       <button class="lifeline nav-btn" id="btn-next" onclick="nextQuestion()"><i>⏭️</i>Next / Skip</button>
     </div>
   </div>
-
-  <div id="result-screen" class="screen">
+    <div id="result-screen" class="screen">
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span id="res-header">Correct 0/0</span><div style="width:40px"></div></div>
     <div class="result-card">
       <div class="ribbon">
@@ -390,7 +389,8 @@
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span style="font-size: 18px;">Saved Questions</span><div style="width: 40px;"></div></div>
     <div id="saved-list-container" style="background: transparent; margin-top: 10px; display:flex; flex-direction:column; gap:12px; padding-bottom: 90px;"></div>
   </div>
-    <div id="about-us-modal" class="modal-overlay">
+
+  <div id="about-us-modal" class="modal-overlay">
     <div id="about-box" class="pop-animation" style="background: var(--card-bg); color: var(--text-dark); width: 85%; border-radius: 30px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align:center;">
        <h3 style="margin-bottom:12px; font-weight:800; font-size:20px;">About Quizzer</h3>
        <p style="font-size:14px; opacity:0.8; margin-bottom:20px; font-weight:600; line-height:1.5;">Quizzer Offline Master is a highly robust engineering study client. Designed to support comprehensive exam mock cycles flawlessly across competitive formats entirely localized offline.</p>
@@ -416,8 +416,7 @@
       </div>
     </div>
   </div>
-
-  <div id="avatar-modal" class="modal-overlay">
+    <div id="avatar-modal" class="modal-overlay">
     <div id="avatar-box" class="pop-animation avatar-modal-box">
       <h3 style="color:white; margin-bottom: 15px; text-align: center;">Select Avatar</h3>
       <button class="primary-btn" style="background: #4facfe; margin-bottom: 20px; font-size: 14px;" onclick="triggerImageUpload()">📷 Upload Reference Photo</button>
@@ -436,17 +435,20 @@
     </div>
   </div>
 
+  <!-- CLEAN CLEAN MANDATORY AUTH MODAL (Google Only + Guest Mode) -->
   <div id="auth-modal" class="modal-overlay" style="z-index: 2500; background: var(--bg-top); display: none;">
       <div class="pop-animation" style="background: var(--card-bg); width: 90%; max-width: 400px; border-radius: 35px; padding: 40px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); text-align: center;">
           <div style="font-size: 50px; margin-bottom: 10px; animation: float 3s ease-in-out infinite;">🪷</div>
           <h2 style="color: var(--text-dark); font-weight: 800; margin-bottom: 5px;">Welcome to Quizzer</h2>
           <p style="color: var(--text-muted); font-size: 14px; font-weight: 700; margin-bottom: 30px;">Log in to secure your cloud score & sync features.</p>
 
+          <!-- PREMIUM GOOGLE LOGIN BUTTON -->
           <button class="btn-save-settings" id="btn-google-login" style="background: #4285F4; color: white; margin-bottom: 15px; border: none; padding: 16px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3);">
               <span style="background: white; border-radius: 50%; padding: 2px; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; color: #4285F4; font-size: 13px; font-weight: 900;">G</span>
               Login with Google Account
           </button>
           
+          <!-- SLEEK GUEST MODE BUTTON -->
           <button class="btn-save-settings" id="btn-guest-continue" style="background: transparent; color: var(--orange); border: 2.5px solid var(--orange); margin-bottom: 0px; padding: 14px; border-radius: 20px; font-weight: 700; width: 100%; cursor: pointer; box-shadow: none;">
               Continue as Guest Player
           </button>
@@ -457,7 +459,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, GoogleAuthProvider, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -475,14 +477,12 @@
   
   provider.setCustomParameters({ prompt: 'select_account' }); 
 
-  // GOOGLE CALL MODAL TRIGGER
+  // CHANGED TO REDIRECT: Popups crash Web-to-APK converters!
   document.getElementById('btn-google-login').addEventListener('click', () => {
-      signInWithPopup(auth, provider).catch((error) => {
-          console.error("Login Error: ", error);
-          alert("Login Error: " + error.message);
-      });
+      signInWithRedirect(auth, provider);
   });
-    // GUEST CONTINUITY DISMISSER
+
+  // GUEST CONTINUITY DISMISSER
   document.getElementById('btn-guest-continue').addEventListener('click', () => {
       const authModal = document.getElementById('auth-modal');
       if(authModal) authModal.style.display = 'none';
@@ -565,20 +565,36 @@
 
 <script>
   // ==========================================
-  // KILL NATIVE PULL-TO-REFRESH ON ANDROID
+  // NUCLEAR PULL-TO-REFRESH KILLER
   // ==========================================
   let _touchStartY = 0;
-  document.addEventListener('touchstart', e => { 
+  window.addEventListener('touchstart', e => { 
       _touchStartY = e.touches[0].clientY; 
   }, { passive: false });
 
-  document.addEventListener('touchmove', e => {
-      const screen = e.target.closest('.screen');
-      const touchY = e.touches[0].clientY;
-      const isSwipingDown = (touchY - _touchStartY) > 0;
+  window.addEventListener('touchmove', e => {
+      // Allow pinch-to-zoom if user uses two fingers
+      if(e.touches.length > 1) return;
       
-      // If we are at the top of the container and swiping down, block the native refresh!
-      if (screen && screen.scrollTop <= 0 && isSwipingDown) {
+      let el = e.target;
+      let isScrollable = false;
+      let touchY = e.touches[0].clientY;
+      
+      // Look up the DOM tree to see if we are touching a scrolling screen
+      while(el && el !== document.body) {
+          if(el.classList && el.classList.contains('screen')) {
+              isScrollable = true;
+              // If we are at the very top and pulling DOWN, cancel the Android refresh
+              if(el.scrollTop <= 0 && touchY > _touchStartY) {
+                  e.preventDefault();
+              }
+              break;
+          }
+          el = el.parentNode;
+      }
+      
+      // If we touch the background or a non-scrolling element, block it entirely
+      if(!isScrollable) {
           e.preventDefault();
       }
   }, { passive: false });
@@ -606,8 +622,7 @@
           osc.start(); osc.stop(audioCtx.currentTime + 0.4);
       }
   }
-
-  let storedCoins = localStorage.getItem("qz_game_coins");
+    let storedCoins = localStorage.getItem("qz_game_coins");
   let defaultStats = { Maths: {p:0, c:0}, Physics: {p:0, c:0}, Chemistry: {p:0, c:0}, English: {p:0, c:0}, Vocab: {p:0, c:0}, GAT: {p:0, c:0} };
   let storedStats = JSON.parse(localStorage.getItem("qz_stats"));
   
@@ -636,7 +651,8 @@
   let isDailyComplete = localStorage.getItem("qz_daily_completed") === "true"; let isDailyTaskMode = false;
   
   if(lastDailyDate !== todayStr) { isDailyComplete = false; localStorage.setItem("qz_daily_date", todayStr); localStorage.setItem("qz_daily_completed", "false"); }
-    const questionBank = [
+  
+  const questionBank = [
     { category: 'Maths', q: "A sum of money doubles itself in 5 years at simple interest. What the rate of interest?", options: ["10%", "15%", "20%", "25%"], answer: 2 },
     { category: 'Maths', q: "Successive discounts of 20% and 10% are equivalent to a single discount of:", options: ["25%", "28%", "30%", "32%"], answer: 1 },
     { category: 'Maths', q: "If x + y = 10 and xy = 24, find the value of x² + y².", options: ["50", "52", "54", "56"], answer: 1 },
@@ -727,11 +743,11 @@
     { category: 'Chemistry', q: "Atom is:", options: ["Smallest particle", "Molecule", "Cell", "Compound"], answer: 0 },
     { category: 'Chemistry', q: "Carbon dioxide formula:", options: ["CO", "CO2", "C2O", "C"], answer: 1 },
     { category: 'Chemistry', q: "Metals are generally:", options: ["Brittle", "Conductors", "Gases", "Liquids"], answer: 1 },
-        { category: 'English', q: "Change to Passive Voice: 'The police arrested the thief.'", options: ["The thief is arrested by the police.", "The thief was arrested by the police.", "The thief has been arrested by the police.", "The thief had been arrested by the police."], answer: 1 },
+    { category: 'English', q: "Change to Passive Voice: 'The police arrested the thief.'", options: ["The thief is arrested by the police.", "The thief was arrested by the police.", "The thief has been arrested by the police.", "The thief had been arrested by the police."], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'She is reading a book.'", options: ["A book is read by her.", "A book was being read by her.", "A book is being read by her.", "A book has been read by her."], answer: 2 },
     { category: 'English', q: "Change to Passive Voice: 'They have completed the project.'", options: ["The project was completed by them.", "The project is completed by them.", "The project had been completed by them.", "The project has been completed by them."], answer: 3 },
     { category: 'English', q: "Change to Passive Voice: 'Did you write this letter?'", options: ["Is this letter written by you?", "Was this letter written by you?", "Has this letter been written by you?", "Had this letter been written by you?"], answer: 1 },
-    { category: 'English', q: "Change to Passive Voice: 'Open the door.'", options: ["The door should be opened.", "Let the door be opened.", "The door must be opened.", "Let the door opened."], answer: 1 },
+        { category: 'English', q: "Change to Passive Voice: 'Open the door.'", options: ["The door should be opened.", "Let the door be opened.", "The door must be opened.", "Let the door opened."], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'People speak English all over the world.'", options: ["English is spoken all over the world.", "English was spoken all over the world.", "English has been spoken all over the world.", "English had been spoken all over the world."], answer: 0 },
     { category: 'English', q: "Change to Passive Voice: 'Who broke the window?'", options: ["By whom the window broken?", "By whom was the window broken?", "By whom is the window broken?", "Whom was the window broken by?"], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'They will build a new bridge.'", options: ["A new bridge is built by them.", "A new bridge would be built by them.", "A new bridge will be built by them.", "A new bridge will have been built by them."], answer: 2 },
@@ -797,7 +813,7 @@
     { category: 'Vocab', q: "Meaning of 'Pivotal':", options: ["Crucial", "Trivial", "Minor", "Useless"], answer: 0 },
     { category: 'Vocab', q: "Synonym of 'Serene':", options: ["Noisy", "Calm", "Loud", "Chaotic"], answer: 1 },
     { category: 'Vocab', q: "Antonym of 'Lethargic':", options: ["Active", "Sluggish", "Lazy", "Tired"], answer: 0 },
-        { category: 'GAT', q: "Which isotope is primarily utilized in radiocarbon dating to determine the age of organic materials?", options: ["Carbon-12", "Carbon-13", "Carbon-14", "Carbon-15"], answer: 2 },
+    { category: 'GAT', q: "Which isotope is primarily utilized in radiocarbon dating to determine the age of organic materials?", options: ["Carbon-12", "Carbon-13", "Carbon-14", "Carbon-15"], answer: 2 },
     { category: 'GAT', q: "Which chemical process is used to convert liquid vegetable oils into solid fats?", options: ["Saponification", "Hydrogenation", "Oxidation", "Esterification"], answer: 1 },
     { category: 'GAT', q: "According to the Gibbs phase rule, what is the maximum number of phases that can coexist in thermodynamic phase equilibrium for a single-component system (like water at its triple point)?", options: ["1", "2", "3", "4"], answer: 2 },
     { category: 'GAT', q: "What is the common name for Sodium Bicarbonate?", options: ["Baking Soda", "Washing Soda", "Bleaching Powder", "Plaster of Paris"], answer: 0 },
@@ -813,7 +829,7 @@
     { category: 'GAT', q: "The filament of an electric bulb is made of:", options: ["Copper", "Aluminum", "Lead", "Tungsten"], answer: 3 },
     { category: 'GAT', q: "Which lens is used to correct Myopia (short-sightedness)?", options: ["Convex lens", "Concave lens", "Cylindrical lens", "Bifocal lens"], answer: 1 },
     { category: 'GAT', q: "The Article 32 of the Indian Constitution is related to:", options: ["Right to Equality", "Right to Constitutional Remedies", "Right to Freedom", "Right to Education"], answer: 1 },
-    { category: 'GAT', q: "Who was the first Governor-General of independent India?", options: ["C. Rajagopalachari", "Lord Mountbatten", "Rajendra Prasad", "Jawaharlal Nehru"], answer: 1 },
+        { category: 'GAT', q: "Who was the first Governor-General of independent India?", options: ["C. Rajagopalachari", "Lord Mountbatten", "Rajendra Prasad", "Jawaharlal Nehru"], answer: 1 },
     { category: 'GAT', q: "The Thar Desert, which extends through parts of Rajasthan, is also known as:", options: ["The Great Indian Desert", "The White Desert", "The Cold Desert", "The Deccan Desert"], answer: 0 },
     { category: 'GAT', city_context: "Bengaluru, India", q: "Which Indian city is known as the 'Silicon Valley of India'?", options: ["Hyderabad", "Pune", "Bengaluru", "Chennai"], answer: 2 },
     { category: 'GAT', q: "In the context of the Indian Premier League (IPL), which team won the inaugural season in 2008?", options: ["Chennai Super Kings", "Rajasthan Royals", "Mumbai Indians", "Kolkata Knight Riders"], answer: 1 },
@@ -871,8 +887,7 @@
   if(localStorage.getItem("qz_dark_mode") === "true") {
       document.getElementById('dark-mode-toggle').checked = true; toggleDarkTheme(true);
   }
-
-  function openAboutModal() { document.getElementById('about-us-modal').style.display = 'flex'; }
+    function openAboutModal() { document.getElementById('about-us-modal').style.display = 'flex'; }
   function closeAboutModal() { document.getElementById('about-us-modal').style.display = 'none'; }
 
   function updateProfileUI() {
@@ -1096,8 +1111,7 @@
         optionsHtml += `<button class="option ${extraClass}" id="opt-${i}" onclick="checkAnswer(${i}, this)"><div class="opt-letter">${labels[i]}</div><div class="opt-text">${opt}</div><div class="opt-icon">${iconHtml}</div></button>`; 
     }); document.getElementById('options-container').innerHTML = optionsHtml; 
   }
-
-  function startTimer() { 
+    function startTimer() { 
     timerInterval = setInterval(() => { 
         timeLeft--; updateTimerDisplay(); 
         if(timeLeft <= 0) { 
@@ -1108,7 +1122,8 @@
         } 
     }, 1000); 
   }
-    function updateTimerDisplay() { let maxT = timeTotal > timeLeft ? timeTotal : timeLeft; let secs = timeLeft < 10 ? '0'+timeLeft : timeLeft; document.getElementById('timer-text').innerText = `00:${secs}`; document.getElementById('timer-bar').style.width = Math.min((timeLeft / maxT) * 100, 100) + '%'; }
+  
+  function updateTimerDisplay() { let maxT = timeTotal > timeLeft ? timeTotal : timeLeft; let secs = timeLeft < 10 ? '0'+timeLeft : timeLeft; document.getElementById('timer-text').innerText = `00:${secs}`; document.getElementById('timer-bar').style.width = Math.min((timeLeft / maxT) * 100, 100) + '%'; }
   function use5050() { let btn = document.getElementById('ll-5050'); if (btn.classList.contains('used') || isLocked || count5050 <= 0) return; let correctIndex = currentQuiz[currentQIndex].answer; let wrongIndices = [0, 1, 2, 3].filter(i => i !== correctIndex).sort(() => 0.5 - Math.random()); document.getElementById(`opt-${wrongIndices[0]}`).classList.add('disabled'); document.getElementById(`opt-${wrongIndices[1]}`).classList.add('disabled'); count5050--; document.getElementById('txt-5050').innerText = count5050 + " Left"; if(count5050 === 0) btn.classList.add('used'); }
   function useAddTime() { let btn = document.getElementById('ll-time'); if (btn.classList.contains('used') || isLocked || countTime <= 0) return; timeLeft += 10; timeTotal = timeLeft; updateTimerDisplay(); countTime--; document.getElementById('txt-time').innerText = countTime + " Left"; if(countTime === 0) btn.classList.add('used'); }
   function useAudience() { let btn = document.getElementById('ll-audience'); if (btn.classList.contains('used') || isLocked) return; let correctIndex = currentQuiz[currentQIndex].answer; alert("👥 The audience thinks option " + labels[correctIndex] + " is correct!"); btn.classList.add('used'); }
