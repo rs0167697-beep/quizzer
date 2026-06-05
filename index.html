@@ -578,7 +578,7 @@
 <!-- FIREBASE SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -595,6 +595,17 @@
   const provider = new GoogleAuthProvider();
   
   provider.setCustomParameters({ prompt: 'select_account' }); 
+
+  // 1. CATCH THE USER WHEN THEY RETURN FROM THE GOOGLE REDIRECT
+  getRedirectResult(auth).then((result) => {
+      if (result) {
+          const authModal = document.getElementById('auth-modal');
+          if(authModal) authModal.style.display = 'none';
+      }
+  }).catch((error) => {
+      console.error("Login Catch Error:", error);
+      alert("Login Error: " + error.message);
+  });
 
   document.getElementById('btn-google-login').addEventListener('click', () => {
       signInWithRedirect(auth, provider);
@@ -674,6 +685,7 @@
       }
   });
 </script>
+
 <!-- APP LOGIC -->
 <script>
   const AudioContext = window.AudioContext || window.webkitAudioContext;
