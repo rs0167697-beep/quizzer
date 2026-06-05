@@ -574,11 +574,10 @@
   </div>
 
 </div>
-
 <!-- FIREBASE SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -596,8 +595,33 @@
   
   provider.setCustomParameters({ prompt: 'select_account' }); 
 
-  document.getElementById('btn-google-login').addEventListener('click', () => {
-      signInWithRedirect(auth, provider);
+  // FORCE LOCAL STORAGE SO DATA SURVIVES REDIRECTS
+  setPersistence(auth, browserLocalPersistence).then(() => {
+      // CHECK IF WE JUST CAME BACK FROM A REDIRECT
+      getRedirectResult(auth).then((result) => {
+          if (result && result.user) {
+              const authModal = document.getElementById('auth-modal');
+              if(authModal) authModal.style.display = 'none';
+          }
+      }).catch((error) => {
+          console.error("Redirect Error:", error);
+      });
+  });
+
+  // SMART LOGIN: Tries Popup first (best for Web), falls back to Redirect (best for APK)
+  document.getElementById('btn-google-login').addEventListener('click', async () => {
+      try {
+          await signInWithPopup(auth, provider);
+          const authModal = document.getElementById('auth-modal');
+          if(authModal) authModal.style.display = 'none';
+      } catch (error) {
+          if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+              // If popup is blocked by APK WebView, use redirect!
+              signInWithRedirect(auth, provider);
+          } else {
+              console.error("Login Error: ", error);
+          }
+      }
   });
 
   document.getElementById('btn-guest-continue').addEventListener('click', () => {
