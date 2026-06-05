@@ -28,9 +28,7 @@
     #app { max-width: 400px; height: 90vh; max-height: 850px; border-radius: 40px; border: 8px solid #111; box-shadow: 0 25px 50px rgba(0,0,0,0.2); } 
   }
 
-  /* =========================================
-     PREMIUM DARK MODE OVERRIDES
-     ========================================= */
+  /* PREMIUM DARK MODE OVERRIDES */
   #app.dark-theme { 
       --bg-gradient: linear-gradient(180deg, #0f0c29 0%, #111827 30%, #020617 100%); 
       --card-bg: #1e293b; 
@@ -66,7 +64,6 @@
   #app.dark-theme .game-card.blue-card { background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); border: 1px solid rgba(59, 130, 246, 0.3); }
   #app.dark-theme .game-card.green-card { background: linear-gradient(135deg, #14532d 0%, #0f172a 100%); border: 1px solid rgba(34, 197, 94, 0.3); }
   #app.dark-theme .play-pill { background: rgba(255,255,255,0.1); color: #f8fafc; }
-  #app.dark-theme .bottom-nav { border-top: 1px solid rgba(255,255,255,0.08); background: rgba(30, 41, 59, 0.95); }
   #app.dark-theme .category-btn span, #app.dark-theme .game-card h4, #app.dark-theme .stat-item h4, #app.dark-theme .section-title-left { color: #f8fafc; }
   #app.dark-theme .stat-item:not(:last-child)::after { background: rgba(255,255,255,0.1); }
   #app.dark-theme .menu-item { border-bottom: 1px solid rgba(255,255,255,0.08); }
@@ -82,12 +79,16 @@
       100% { opacity: 1; transform: scale(1) translateY(0); } 
   }
 
-  /* FIXED: HUGE PADDING BOTTOM ADDED SO NAV BAR NEVER BLOCKS SCROLL */
-  .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px 24px 120px 24px; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
+  /* NEW SCREEN SCROLLING FIX - Adjusted padding for sticky elements */
+  .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding: 0 24px; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
   .screen::-webkit-scrollbar { display: none; }
   .active-screen { display: flex; animation: screenTransition 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
+  .screen > * { flex-shrink: 0; }
   
-  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; margin-top: 15px;}
+  /* STICKY TOP HEADER */
+  .header { display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; background: rgba(248, 249, 252, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 20px 24px 15px 24px; margin: 0 -24px 25px -24px;}
+  #app.dark-theme .header { background: rgba(30, 41, 59, 0.85) !important; }
+  
   .profile { display: flex; align-items: center; gap: 12px; color: var(--text-dark); cursor: pointer;}
   .avatar-ring { padding: 3px; background: linear-gradient(135deg, #d946ef, #3b82f6); border-radius: 50%; box-shadow: 0 8px 15px rgba(124, 58, 237, 0.2);}
   .avatar { width: 50px; height: 50px; border-radius: 50%; background: #e2e8f0; border: 2.5px solid white; display:flex; justify-content:center; align-items:center; overflow:hidden; font-size: 28px; position:relative;}
@@ -138,7 +139,6 @@
   .play-pill { background: white; border: none; padding: 10px 0; width: 85%; border-radius: 20px; font-weight: 800; font-size: 13px; display: flex; justify-content: center; align-items: center; gap: 6px; margin: 0 auto; box-shadow: 0 6px 15px rgba(0,0,0,0.05); pointer-events: none;}
   .blue-card .play-pill { color: #3b82f6; } .green-card .play-pill { color: #22c55e; }
 
-  /* FIXED: Removed margin-bottom because screen padding-bottom handles it now */
   .stats-row { display: flex; justify-content: space-between; background: white; padding: 22px 15px; border-radius: 28px; box-shadow: 0 15px 35px rgba(0,0,0,0.03); }
   .stat-item { text-align: center; flex: 1; position: relative;}
   .stat-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 15%; height: 70%; width: 1px; background: #f1f5f9; }
@@ -147,7 +147,10 @@
   .stat-item h4 { font-weight: 900; font-size: 17px; margin-bottom: 3px; color: var(--text-dark); }
   .stat-item p { font-size: 9px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
 
-  .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-around; align-items: center; padding: 12px 10px 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.03); z-index: 10;}
+  /* STICKY BOTTOM NAV */
+  .bottom-nav { position: sticky; bottom: 0; left: 0; width: calc(100% + 48px); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid #f1f5f9; display: flex; justify-content: space-around; align-items: center; padding: 12px 10px 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.03); z-index: 100; margin: auto -24px 0 -24px;}
+  #app.dark-theme .bottom-nav { background: rgba(30, 41, 59, 0.95) !important; border-top: 1px solid rgba(255,255,255,0.08) !important; }
+  
   .nav-item { display: flex; flex-direction: column; align-items: center; color: #cbd5e1; font-size: 10px; gap: 6px; cursor: pointer; font-weight: 800; transition: 0.3s;}
   .nav-item.active { color: var(--primary); }
   .nav-icon { font-size: 24px; transition: 0.2s;}
@@ -155,7 +158,10 @@
 
   .icon-btn { width: 44px; height: 44px; background: white; color: var(--text-dark); border-radius: 16px; display:flex; justify-content:center; align-items:center; border: none; cursor: pointer; font-size: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.04);}
   .icon-btn:active { transform: scale(0.9); }
-  .quiz-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-dark); font-weight: 800; margin-bottom: 20px; margin-top: 15px;}
+    /* STICKY QUIZ HEADER */
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-dark); font-weight: 800; position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 15px 24px; margin: 0 -24px 20px -24px;}
+  #app.dark-theme .quiz-header { background: rgba(30, 41, 59, 0.85) !important; }
+
   .question-card { background: white; border-radius: 26px; padding: 30px 24px; text-align: center; color: var(--text-dark); font-size: 18px; font-weight: 800; margin-bottom: 25px; min-height: 140px; display:flex; align-items:center; justify-content:center; box-shadow: 0 15px 35px rgba(0,0,0,0.03); line-height: 1.4;}
   .timer-container { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; font-weight: 800; color: var(--orange);}
   .timer-bar-bg { flex: 1; height: 8px; background: rgba(245, 158, 11, 0.15); border-radius: 10px; overflow: hidden;}
@@ -252,8 +258,7 @@
   .r-correct { background: var(--correct-bg); color: var(--correct-text); border: 1px solid #bbf7d0;}
   .r-wrong { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;}
   .r-normal { background: #f8f9fc; color: var(--text-muted); border: 1px solid #e2e8f0; }
-  
-  .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 100;}
+    .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 100;}
   .avatar-modal-box { background: white; width: 90%; border-radius: 35px; padding: 35px 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);}
   .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;}
   .avatar-item { aspect-ratio: 1; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 38px; cursor: pointer; border: 3px solid transparent; transition: 0.2s;}
@@ -282,17 +287,18 @@
   .btn-splash { background: white; color: var(--primary); border: none; width: 90%; max-width: 300px; padding: 20px; border-radius: 24px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 40px;}
   .btn-splash:active { transform: scale(0.95); }
 </style>
+<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YS36PFXEH8"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-YS36PFXEH8'); 
-  </script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-YS36PFXEH8'); 
+</script>
 </head>
 <body>
 <div id="app">
-    <div id="splash-screen">
+  <div id="splash-screen">
     <div class="splash-content">
       <div class="splash-icon">🪷</div>
       <h1 class="splash-title">Quizzer<br>Master</h1>
@@ -300,7 +306,8 @@
     </div>
     <button class="btn-splash" onclick="closeSplashScreen()">Enter App ➔</button>
   </div>
-    <div id="home-screen" class="screen active-screen">
+
+  <div id="home-screen" class="screen active-screen">
     <div class="header">
       <div class="profile" onclick="showScreen('profile-screen')">
         <div class="avatar-ring">
@@ -416,8 +423,7 @@
       <button class="lifeline nav-btn" id="btn-next" onclick="nextQuestion()"><i>⏭️</i>Next / Skip</button>
     </div>
   </div>
-
-  <div id="result-screen" class="screen">
+    <div id="result-screen" class="screen">
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span id="res-header">Correct 0/0</span><div style="width:44px"></div></div>
     <div class="result-card">
       <div class="ribbon">
@@ -504,7 +510,8 @@
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span style="font-size: 18px;">Saved Questions</span><div style="width: 44px;"></div></div>
     <div id="saved-list-container" style="background: transparent; margin-top: 10px; display:flex; flex-direction:column; gap:12px;"></div>
   </div>
-    <div id="about-us-modal" class="modal-overlay">
+
+  <div id="about-us-modal" class="modal-overlay">
     <div id="about-box" class="pop-animation" style="background: var(--card-bg); color: var(--text-dark); width: 85%; border-radius: 30px; padding: 30px 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); text-align:center;">
        <h3 style="margin-bottom:12px; font-weight:900; font-size:22px;">About Quizzer</h3>
        <p style="font-size:14px; opacity:0.8; margin-bottom:25px; font-weight:700; line-height:1.6;">Quizzer Offline Master is a highly robust engineering study client. Designed to support comprehensive exam mock cycles flawlessly across competitive formats entirely localized offline.</p>
@@ -568,6 +575,7 @@
 
 </div>
 
+<!-- FIREBASE SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithRedirect, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -666,7 +674,7 @@
       }
   });
 </script>
-
+<!-- APP LOGIC -->
 <script>
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   let audioCtx;
@@ -702,7 +710,8 @@
       coins: storedCoins ? parseInt(storedCoins) : 0, 
       stats: storedStats || defaultStats
   };
-    if(myData.stats && !myData.stats.Vocab) myData.stats.Vocab = {p:0, c:0};
+  
+  if(myData.stats && !myData.stats.Vocab) myData.stats.Vocab = {p:0, c:0};
   
   function getRank(coins) {
       if(coins <= 1000) return "Bronze"; if(coins <= 3000) return "Silver";
@@ -814,8 +823,8 @@
     { category: 'English', q: "Change to Passive Voice: 'The police arrested the thief.'", options: ["The thief is arrested by the police.", "The thief was arrested by the police.", "The thief has been arrested by the police.", "The thief had been arrested by the police."], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'She is reading a book.'", options: ["A book is read by her.", "A book was being read by her.", "A book is being read by her.", "A book has been read by her."], answer: 2 },
     { category: 'English', q: "Change to Passive Voice: 'They have completed the project.'", options: ["The project was completed by them.", "The project is completed by them.", "The project had been completed by them.", "The project has been completed by them."], answer: 3 },
-    { category: 'English', q: "Change to Passive Voice: 'Did you write this letter?'", options: ["Is this letter written by you?", "Was this letter written by you?", "Has this letter been written by you?", "Had this letter been written by you?"], answer: 1 },
-        { category: 'English', q: "Change to Passive Voice: 'Open the door.'", options: ["The door should be opened.", "Let the door be opened.", "The door must be opened.", "Let the door opened."], answer: 1 },
+        { category: 'English', q: "Change to Passive Voice: 'Did you write this letter?'", options: ["Is this letter written by you?", "Was this letter written by you?", "Has this letter been written by you?", "Had this letter been written by you?"], answer: 1 },
+    { category: 'English', q: "Change to Passive Voice: 'Open the door.'", options: ["The door should be opened.", "Let the door be opened.", "The door must be opened.", "Let the door opened."], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'People speak English all over the world.'", options: ["English is spoken all over the world.", "English was spoken all over the world.", "English has been spoken all over the world.", "English had been spoken all over the world."], answer: 0 },
     { category: 'English', q: "Change to Passive Voice: 'Who broke the window?'", options: ["By whom the window broken?", "By whom was the window broken?", "By whom is the window broken?", "Whom was the window broken by?"], answer: 1 },
     { category: 'English', q: "Change to Passive Voice: 'They will build a new bridge.'", options: ["A new bridge is built by them.", "A new bridge would be built by them.", "A new bridge will be built by them.", "A new bridge will have been built by them."], answer: 2 },
@@ -829,7 +838,7 @@
     { category: 'English', q: "Change to Indirect Speech: He said, 'Alas! I am undone.'", options: ["He said alas he was undone.", "He exclaimed with sorrow that he was undone.", "He exclaimed that he is undone.", "He told with sorrow that he was undone."], answer: 1 },
     { category: 'English', q: "Change to Indirect Speech: The teacher said to the boys, 'Do not make a noise.'", options: ["The teacher forbade the boys to make a noise.", "The teacher asked the boys not to make noise.", "The teacher ordered the boys do not make a noise.", "The teacher told the boys to not make a noise."], answer: 0 },
     { category: 'English', q: "Change to Indirect Speech: She said, 'I have been waiting for two hours.'", options: ["She said that she has been waiting for two hours.", "She said that she had been waiting for two hours.", "She said that she was waiting for two hours.", "She told that she had been waiting for two hours."], answer: 1 },
-        { category: 'English', q: "Change to Indirect Speech: Ram said, 'I will play cricket tomorrow.'", options: ["Ram said that he would play cricket tomorrow.", "Ram said that he will play cricket the next day.", "Ram said that he would play cricket the next day.", "Ram said that he should play cricket tomorrow."], answer: 2 },
+    { category: 'English', q: "Change to Indirect Speech: Ram said, 'I will play cricket tomorrow.'", options: ["Ram said that he would play cricket tomorrow.", "Ram said that he will play cricket the next day.", "Ram said that he would play cricket the next day.", "Ram said that he should play cricket tomorrow."], answer: 2 },
     { category: 'English', q: "Change to Indirect Speech: Mother said to me, 'May you live long!'", options: ["Mother prayed that I might live long.", "Mother said that I may live long.", "Mother wished that you might live long.", "Mother prayed that I may live long."], answer: 0 },
     { category: 'English', q: "Fill in the blank: Either he or his friends ___ mistaken.", options: ["is", "are", "has", "have"], answer: 1 },
     { category: 'English', q: "Fill in the blank: The jury ___ divided in their opinion.", options: ["was", "were", "is", "has"], answer: 1 },
@@ -922,14 +931,14 @@
     { category: 'GAT', q: "If '+' means '-', '-' means '*', '*' means '/', and '/' means '+', what is the value of 10 * 5 / 3 - 2 + 3?", options: ["5", "11", "20", "10"], answer: 0 },
     { category: 'GAT', q: "Arrange the following in a logical sequence: 1. Application 2. Selection 3. Exam 4. Interview 5. Advertisement", options: ["5, 1, 3, 4, 2", "5, 1, 4, 3, 2", "1, 5, 3, 4, 2", "5, 3, 1, 4, 2"], answer: 0 },
     { category: 'GAT', q: "The HCF of two numbers is 11 and their LCM is 693. If one of the numbers is 77, find the other.", options: ["99", "66", "88", "110"], answer: 0 },
-    { category: 'GAT', q: "If 20% of A = 30% of B = 1/6 of C, then A : B : C is:", options: ["2 : 3 : 16", "3 : 2 : 16", "10 : 15 : 18", "15 : 10 : 18"], answer: 3 },
+        { category: 'GAT', q: "If 20% of A = 30% of B = 1/6 of C, then A : B : C is:", options: ["2 : 3 : 16", "3 : 2 : 16", "10 : 15 : 18", "15 : 10 : 18"], answer: 3 },
     { category: 'GAT', q: "A train 150 meters long is running at a speed of 90 km/h. How long will it take to cross a railway signal?", options: ["4 seconds", "5 seconds", "6 seconds", "8 seconds"], answer: 2 },
     { category: 'GAT', q: "The sum of the present ages of a father and his son is 60 years. Six years ago, father's age was five times the age of the son. After 6 years, son's age will be:", options: ["12 years", "14 years", "18 years", "20 years"], answer: 3 },
     { category: 'GAT', q: "A shopkeeper sells an article at a loss of 12.5%. Had he sold it for Rs. 51.80 more, he would have earned a profit of 6%. The cost price of the article is:", options: ["Rs. 280", "Rs. 300", "Rs. 380", "Rs. 400"], answer: 0 },
     { category: 'GAT', q: "If x + (1/x) = 4, find the value of x^2 + (1/x^2).", options: ["12", "14", "16", "18"], answer: 1 },
     { category: 'GAT', q: "The simple interest on a sum of money for 3 years at 8% per annum is half the compound interest on Rs. 4000 for 2 years at 10% per annum. The sum placed on simple interest is:", options: ["Rs. 1550", "Rs. 1650", "Rs. 1750", "Rs. 1850"], answer: 2 },
     { category: 'GAT', q: "A can do a piece of work in 12 days and B can do it in 15 days. They work together for 5 days and then B leaves. In how many days will A finish the remaining work?", options: ["3 days", "4 days", "5 days", "6 days"], answer: 0 },
-        { category: 'GAT', q: "The average of 5 consecutive odd numbers is 61. What is the difference between the highest and lowest numbers?", options: ["4", "6", "8", "10"], answer: 2 },
+    { category: 'GAT', q: "The average of 5 consecutive odd numbers is 61. What is the difference between the highest and lowest numbers?", options: ["4", "6", "8", "10"], answer: 2 },
     { category: 'GAT', q: "The radius of a cylinder is doubled and the height is halved. What is the ratio between the new volume and the previous volume?", options: ["1 : 1", "2 : 1", "1 : 2", "4 : 1"], answer: 1 }
   ];
 
@@ -1139,19 +1148,28 @@
       });
       document.getElementById('leader-list-container').innerHTML = listHtml;
   }
-    function showScreen(id) {
-    clearInterval(timerInterval); 
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen')); 
-    
-    setTimeout(() => {
-        document.getElementById(id).classList.add('active-screen');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        
-        if(id === 'home-screen') document.querySelectorAll('.nav-item:nth-child(1)').forEach(n=>n.classList.add('active'));
-        else if (id === 'leader-screen') { document.querySelectorAll('.nav-item:nth-child(2)').forEach(n=>n.classList.add('active')); renderLeaderboard(); }
-        else if (id === 'saved-screen') { document.querySelectorAll('.nav-item:nth-child(3)').forEach(n=>n.classList.add('active')); renderSavedQuestions(); }
-        else if (id === 'profile-screen') { document.querySelectorAll('.nav-item:nth-child(5)').forEach(n=>n.classList.add('active')); renderAnalytics(); }
-    }, 10);
+
+  function showScreen(id) {
+      clearInterval(timerInterval); 
+      
+      document.querySelectorAll('.screen').forEach(s => {
+          s.classList.remove('active-screen');
+      });
+
+      setTimeout(() => {
+          const screen = document.getElementById(id);
+          screen.classList.add('active-screen');
+          
+          // SCROLL TO TOP ON SCREEN CHANGE
+          screen.scrollTop = 0;
+
+          document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+          
+          if(id === 'home-screen') document.querySelectorAll('.nav-item:nth-child(1)').forEach(n=>n.classList.add('active'));
+          else if (id === 'leader-screen') { document.querySelectorAll('.nav-item:nth-child(2)').forEach(n=>n.classList.add('active')); renderLeaderboard(); }
+          else if (id === 'saved-screen') { document.querySelectorAll('.nav-item:nth-child(3)').forEach(n=>n.classList.add('active')); renderSavedQuestions(); }
+          else if (id === 'profile-screen') { document.querySelectorAll('.nav-item:nth-child(5)').forEach(n=>n.classList.add('active')); renderAnalytics(); }
+      }, 10);
   }
 
   function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
@@ -1184,10 +1202,11 @@
         if (q.selectedOption !== undefined) {
             if (i === q.answer) { extraClass = 'correct'; iconHtml = '✔'; } else if (i === q.selectedOption) { extraClass = 'wrong'; iconHtml = '✖'; } else { extraClass = 'disabled'; }
         }
-        optionsHtml += `<button class="option ${extraClass}" id="opt-${i}" onclick="checkAnswer(${i}, this)"><div class="opt-letter">${labels[i]}</div><div class="opt-text">${opt}</div><div class="opt-icon">${iconHtml}</div></button>`; 
+                optionsHtml += `<button class="option ${extraClass}" id="opt-${i}" onclick="checkAnswer(${i}, this)"><div class="opt-letter">${labels[i]}</div><div class="opt-text">${opt}</div><div class="opt-icon">${iconHtml}</div></button>`; 
     }); document.getElementById('options-container').innerHTML = optionsHtml; 
   }
-    function startTimer() { 
+
+  function startTimer() { 
     timerInterval = setInterval(() => { 
         timeLeft--; updateTimerDisplay(); 
         if(timeLeft <= 0) { 
