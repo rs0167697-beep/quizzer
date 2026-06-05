@@ -596,6 +596,85 @@
   
   provider.setCustomParameters({ prompt: 'select_account' }); 
 
+  document.getElementById('btn-google-login').addEventListener('click', () => {
+      signInWithRedirect(auth, provider);
+  });
+
+  document.getElementById('btn-guest-continue').addEventListener('click', () => {
+      const authModal = document.getElementById('auth-modal');
+      if(authModal) authModal.style.display = 'none';
+  });
+
+  document.getElementById('btn-google-logout').addEventListener('click', () => {
+      signOut(auth).then(() => {
+          myData.name = "Guest Player";
+          myData.avatarVal = "👨‍💼"; 
+          myData.coins = 0;
+          localStorage.setItem("qz_game_coins", 0); 
+          updateProfileUI();
+          alert("You have been securely signed out!");
+      }).catch((error) => {
+          alert("Error signing out: " + error.message);
+      });
+  });
+
+  window.syncToCloud = async function() {
+      if (auth.currentUser) {
+          const userDocRef = doc(db, "users", auth.currentUser.uid);
+          try {
+              await setDoc(userDocRef, {
+                  name: myData.name,
+                  avatarType: myData.avatarType || 'emoji',
+                  avatarVal: myData.avatarVal,
+                  coins: myData.coins
+              }, { merge: true });
+          } catch (error) {
+              console.error("Cloud Sync Failed: ", error);
+          }
+      }
+  };
+
+  onAuthStateChanged(auth, async (user) => {
+      const authModal = document.getElementById('auth-modal');
+      if (user) {
+          if(authModal) authModal.style.display = 'none';
+          try {
+              const userDocRef = doc(db, "users", user.uid);
+              const docSnap = await getDoc(userDocRef);
+
+              if (docSnap.exists()) {
+                  const dbData = docSnap.data();
+                  myData.coins = dbData.coins || 0;
+                  myData.name = dbData.name || user.displayName;
+                  myData.avatarVal = dbData.avatarVal || user.photoURL;
+                  myData.avatarType = dbData.avatarType || 'image';
+              } else {
+                  await setDoc(userDocRef, {
+                      name: user.displayName,
+                      avatarVal: user.photoURL,
+                      avatarType: 'image',
+                      coins: 0
+                  });
+                  myData.name = user.displayName;
+                  myData.avatarVal = user.photoURL;
+                  myData.avatarType = 'image';
+                  myData.coins = 0;
+              }
+              
+              localStorage.setItem("qz_game_coins", myData.coins);
+              localStorage.setItem("qz_avatar_type", myData.avatarType);
+              localStorage.setItem("qz_avatar_val", myData.avatarVal);
+              updateProfileUI(); 
+
+          } catch (error) {
+              console.error("Database Error:", error);
+          }
+      } else {
+          if(authModal) authModal.style.display = 'flex';
+      }
+  });
+</script>
+
   // 1. CATCH THE USER WHEN THEY RETURN FROM THE GOOGLE REDIRECT
   getRedirectResult(auth).then((result) => {
       if (result) {
