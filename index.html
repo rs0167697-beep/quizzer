@@ -675,8 +675,27 @@
   });
 </script>
 
-<!-- APP LOGIC -->
 <script>
+  // ==========================================
+  // KILL NATIVE PULL-TO-REFRESH ON ANDROID
+  // ==========================================
+  let _touchStartY = 0;
+  document.addEventListener('touchstart', e => { 
+      _touchStartY = e.touches[0].clientY; 
+  }, { passive: false });
+
+  document.addEventListener('touchmove', e => {
+      const screen = e.target.closest('.screen');
+      const touchY = e.touches[0].clientY;
+      const isSwipingDown = (touchY - _touchStartY) > 0;
+      
+      // If we are at the top of the container and swiping down, block the native refresh!
+      if (screen && screen.scrollTop <= 0 && isSwipingDown) {
+          e.preventDefault();
+      }
+  }, { passive: false });
+  // ==========================================
+
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   let audioCtx;
   function initAudio() { if(!audioCtx) { audioCtx = new AudioContext(); } }
