@@ -20,7 +20,6 @@
   
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
   
-  /* FIXED: Removed touch-action: pan-y and used safe overscroll-behavior */
   html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; background-color: #f8f9fc; display: flex; justify-content: center; align-items: center; overscroll-behavior-y: contain; }
   
   #app { width: 100%; max-width: 100%; height: 100%; background: var(--bg-gradient); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
@@ -83,8 +82,8 @@
       100% { opacity: 1; transform: scale(1) translateY(0); } 
   }
 
-  /* FIXED: Added -webkit-overflow-scrolling for smooth native scroll */
-  .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px 24px; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
+  /* FIXED: HUGE PADDING BOTTOM ADDED SO NAV BAR NEVER BLOCKS SCROLL */
+  .screen { width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; padding: 20px 24px 120px 24px; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
   .screen::-webkit-scrollbar { display: none; }
   .active-screen { display: flex; animation: screenTransition 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
   
@@ -139,7 +138,8 @@
   .play-pill { background: white; border: none; padding: 10px 0; width: 85%; border-radius: 20px; font-weight: 800; font-size: 13px; display: flex; justify-content: center; align-items: center; gap: 6px; margin: 0 auto; box-shadow: 0 6px 15px rgba(0,0,0,0.05); pointer-events: none;}
   .blue-card .play-pill { color: #3b82f6; } .green-card .play-pill { color: #22c55e; }
 
-  .stats-row { display: flex; justify-content: space-between; background: white; padding: 22px 15px; border-radius: 28px; box-shadow: 0 15px 35px rgba(0,0,0,0.03); margin-bottom: 100px; }
+  /* FIXED: Removed margin-bottom because screen padding-bottom handles it now */
+  .stats-row { display: flex; justify-content: space-between; background: white; padding: 22px 15px; border-radius: 28px; box-shadow: 0 15px 35px rgba(0,0,0,0.03); }
   .stat-item { text-align: center; flex: 1; position: relative;}
   .stat-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 15%; height: 70%; width: 1px; background: #f1f5f9; }
   .s-icon { font-size: 18px; display: flex; justify-content: center; align-items: center; width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 8px; }
@@ -291,7 +291,7 @@
   </script>
 </head>
 <body>
-  <div id="app">
+<div id="app">
     <div id="splash-screen">
     <div class="splash-content">
       <div class="splash-icon">🪷</div>
@@ -300,8 +300,7 @@
     </div>
     <button class="btn-splash" onclick="closeSplashScreen()">Enter App ➔</button>
   </div>
-
-  <div id="home-screen" class="screen active-screen">
+    <div id="home-screen" class="screen active-screen">
     <div class="header">
       <div class="profile" onclick="showScreen('profile-screen')">
         <div class="avatar-ring">
@@ -376,6 +375,7 @@
       </div>
     </div>
 
+    <!-- Stats Row -->
     <div class="stats-row">
         <div class="stat-item"><div class="s-icon si-1">✔️</div><h4 id="home-stat-played">0</h4><p>Quizzes Played</p></div>
         <div class="stat-item"><div class="s-icon si-2">🏆</div><h4>5</h4><p>Day Streak</p></div>
@@ -438,9 +438,10 @@
       <span style="font-size: 18px;">Quiz Review</span>
       <div style="width: 44px;"></div>
     </div>
-    <div id="review-container" style="padding-bottom: 20px;"></div>
+    <div id="review-container"></div>
   </div>
-    <div id="profile-screen" class="screen">
+
+  <div id="profile-screen" class="screen">
     <div class="profile-cover">
       <button class="icon-btn" onclick="saveProfile()" style="border:none; cursor:pointer; width:35px; height:35px; border-radius:50%; font-size:18px;">←</button>
     </div>
@@ -496,15 +497,14 @@
     <div class="lb-tabs"><div class="lb-tab active">Daily</div><div class="lb-tab">Monthly</div><div class="lb-tab">All time</div></div>
     <div class="podium-wrap" id="podium-container"></div>
     <div class="lb-list-header"><span style="flex: 0.5;">Rank</span><span style="flex: 2;">Player</span><span style="flex: 1; text-align:right;">Points</span></div>
-    <div id="leader-list-container" style="background: transparent; padding-bottom: 90px;"></div>
+    <div id="leader-list-container" style="background: transparent;"></div>
   </div>
 
   <div id="saved-screen" class="screen">
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span style="font-size: 18px;">Saved Questions</span><div style="width: 44px;"></div></div>
-    <div id="saved-list-container" style="background: transparent; margin-top: 10px; display:flex; flex-direction:column; gap:12px; padding-bottom: 90px;"></div>
+    <div id="saved-list-container" style="background: transparent; margin-top: 10px; display:flex; flex-direction:column; gap:12px;"></div>
   </div>
-
-  <div id="about-us-modal" class="modal-overlay">
+    <div id="about-us-modal" class="modal-overlay">
     <div id="about-box" class="pop-animation" style="background: var(--card-bg); color: var(--text-dark); width: 85%; border-radius: 30px; padding: 30px 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); text-align:center;">
        <h3 style="margin-bottom:12px; font-weight:900; font-size:22px;">About Quizzer</h3>
        <p style="font-size:14px; opacity:0.8; margin-bottom:25px; font-weight:700; line-height:1.6;">Quizzer Offline Master is a highly robust engineering study client. Designed to support comprehensive exam mock cycles flawlessly across competitive formats entirely localized offline.</p>
@@ -559,7 +559,8 @@
           <button class="btn-save-settings" id="btn-google-login" style="background: white; color: var(--text-dark); border: 2px solid #e2e8f0; margin-bottom: 15px; padding: 18px; border-radius: 20px; font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.04);">
               <span style="color: #4285F4; font-size: 20px; font-weight: 900;">G</span> Login with Google
           </button>
-                    <button class="btn-save-settings" id="btn-guest-continue" style="background: var(--primary); color: white; margin-bottom: 0px; padding: 18px; border-radius: 20px; font-weight: 800; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);">
+          
+          <button class="btn-save-settings" id="btn-guest-continue" style="background: var(--primary); color: white; margin-bottom: 0px; padding: 18px; border-radius: 20px; font-weight: 800; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);">
               Continue as Guest Player
           </button>
       </div>
@@ -701,8 +702,7 @@
       coins: storedCoins ? parseInt(storedCoins) : 0, 
       stats: storedStats || defaultStats
   };
-
-  if(myData.stats && !myData.stats.Vocab) myData.stats.Vocab = {p:0, c:0};
+    if(myData.stats && !myData.stats.Vocab) myData.stats.Vocab = {p:0, c:0};
   
   function getRank(coins) {
       if(coins <= 1000) return "Bronze"; if(coins <= 3000) return "Silver";
@@ -718,8 +718,7 @@
   let todayStr = new Date().toDateString(); let lastDailyDate = localStorage.getItem("qz_daily_date");
   let isDailyComplete = localStorage.getItem("qz_daily_completed") === "true"; let isDailyTaskMode = false;
   
-  if(lastDailyDate !== todayStr) { isDailyComplete = false;
-  localStorage.setItem("qz_daily_date", todayStr); localStorage.setItem("qz_daily_completed", "false"); }
+  if(lastDailyDate !== todayStr) { isDailyComplete = false; localStorage.setItem("qz_daily_date", todayStr); localStorage.setItem("qz_daily_completed", "false"); }
   
   const questionBank = [
     { category: 'Maths', q: "A sum of money doubles itself in 5 years at simple interest. What the rate of interest?", options: ["10%", "15%", "20%", "25%"], answer: 2 },
@@ -770,7 +769,7 @@
     { category: 'Maths', q: "The speed of a car is 54 km/h. Converted to meters per second, this is:", options: ["10 m/s", "12 m/s", "15 m/s", "18 m/s"], answer: 2 },
     { category: 'Maths', q: "What is the principal square root of 625?", options: ["15", "25", "35", "45"], answer: 1 },
     { category: 'Maths', q: "By selling an article for Rs 144, a man loses 10%. To gain 10%, he must sell it for:", options: ["Rs 158", "Rs 164", "Rs 176", "Rs 180"], answer: 2 },
-        { category: 'Maths', q: "At what rate of simple interest will a sum of money double itself in exactly 10 years?", options: ["5%", "8%", "10%", "12%"], answer: 2 },
+    { category: 'Maths', q: "At what rate of simple interest will a sum of money double itself in exactly 10 years?", options: ["5%", "8%", "10%", "12%"], answer: 2 },
     { category: 'Maths', q: "Solve for x: If 2^(x+3) = 32, then x equals:", options: ["1", "2", "3", "4"], answer: 1 },
     { category: 'Physics', q: "SI unit of force:", options: ["Joule", "Newton", "Watt", "Pascal"], answer: 1 },
     { category: 'Physics', q: "Speed = ?", options: ["Distance × Time", "Distance / Time", "Time / Distance", "Mass / Time"], answer: 1 },
@@ -830,13 +829,13 @@
     { category: 'English', q: "Change to Indirect Speech: He said, 'Alas! I am undone.'", options: ["He said alas he was undone.", "He exclaimed with sorrow that he was undone.", "He exclaimed that he is undone.", "He told with sorrow that he was undone."], answer: 1 },
     { category: 'English', q: "Change to Indirect Speech: The teacher said to the boys, 'Do not make a noise.'", options: ["The teacher forbade the boys to make a noise.", "The teacher asked the boys not to make noise.", "The teacher ordered the boys do not make a noise.", "The teacher told the boys to not make a noise."], answer: 0 },
     { category: 'English', q: "Change to Indirect Speech: She said, 'I have been waiting for two hours.'", options: ["She said that she has been waiting for two hours.", "She said that she had been waiting for two hours.", "She said that she was waiting for two hours.", "She told that she had been waiting for two hours."], answer: 1 },
-    { category: 'English', q: "Change to Indirect Speech: Ram said, 'I will play cricket tomorrow.'", options: ["Ram said that he would play cricket tomorrow.", "Ram said that he will play cricket the next day.", "Ram said that he would play cricket the next day.", "Ram said that he should play cricket tomorrow."], answer: 2 },
+        { category: 'English', q: "Change to Indirect Speech: Ram said, 'I will play cricket tomorrow.'", options: ["Ram said that he would play cricket tomorrow.", "Ram said that he will play cricket the next day.", "Ram said that he would play cricket the next day.", "Ram said that he should play cricket tomorrow."], answer: 2 },
     { category: 'English', q: "Change to Indirect Speech: Mother said to me, 'May you live long!'", options: ["Mother prayed that I might live long.", "Mother said that I may live long.", "Mother wished that you might live long.", "Mother prayed that I may live long."], answer: 0 },
     { category: 'English', q: "Fill in the blank: Either he or his friends ___ mistaken.", options: ["is", "are", "has", "have"], answer: 1 },
     { category: 'English', q: "Fill in the blank: The jury ___ divided in their opinion.", options: ["was", "were", "is", "has"], answer: 1 },
     { category: 'English', q: "Fill in the blank: Neither of the two boys ___ done it.", options: ["have", "has", "are", "were"], answer: 1 },
     { category: 'English', q: "Fill in the blank: I have been living here ___ 2015.", options: ["from", "since", "for", "till"], answer: 1 },
-        { category: 'English', q: "Fill in the blank: He is good ___ mathematics.", options: ["in", "at", "with", "on"], answer: 1 },
+    { category: 'English', q: "Fill in the blank: He is good ___ mathematics.", options: ["in", "at", "with", "on"], answer: 1 },
     { category: 'English', q: "Fill in the blank: She prefers tea ___ coffee.", options: ["than", "to", "over", "rather"], answer: 1 },
     { category: 'English', q: "Fill in the blank: Hardly had he left the house ___ it started raining.", options: ["than", "when", "then", "since"], answer: 1 },
     { category: 'English', q: "Fill in the blank: If I ___ a bird, I would fly.", options: ["am", "was", "were", "be"], answer: 2 },
@@ -1044,7 +1043,8 @@
   function closeAvatarSelector() { document.getElementById('avatar-modal').style.display = 'none'; }
   function selectAvatarPreset(el, str) { document.querySelectorAll('.avatar-item').forEach(e => e.classList.remove('selected')); el.classList.add('selected'); tempAvatarType = 'emoji'; tempAvatarVal = str; }
   function confirmAvatarSelection() { myData.avatarType = tempAvatarType; myData.avatarVal = tempAvatarVal; localStorage.setItem("qz_avatar_type", myData.avatarType); localStorage.setItem("qz_avatar_val", myData.avatarVal); updateProfileUI(); closeAvatarSelector(); }
-    function toggleSaveQuestion() {
+
+  function toggleSaveQuestion() {
     let q = currentQuiz[currentQIndex]; let index = savedQuestions.findIndex(sq => sq.q === q.q);
     let btn = document.getElementById('btn-save-q'); triggerBounce(btn);
     if(index > -1) { savedQuestions.splice(index, 1); btn.innerHTML = '🔖'; } else { savedQuestions.push(q); btn.innerHTML = '⭐'; }
@@ -1139,8 +1139,7 @@
       });
       document.getElementById('leader-list-container').innerHTML = listHtml;
   }
-
-  function showScreen(id) {
+    function showScreen(id) {
     clearInterval(timerInterval); 
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen')); 
     
@@ -1204,7 +1203,8 @@
   function use5050() { let btn = document.getElementById('ll-5050'); if (btn.classList.contains('used') || isLocked || count5050 <= 0) return; let correctIndex = currentQuiz[currentQIndex].answer; let wrongIndices = [0, 1, 2, 3].filter(i => i !== correctIndex).sort(() => 0.5 - Math.random()); document.getElementById(`opt-${wrongIndices[0]}`).classList.add('disabled'); document.getElementById(`opt-${wrongIndices[1]}`).classList.add('disabled'); count5050--; document.getElementById('txt-5050').innerText = count5050 + " Left"; if(count5050 === 0) btn.classList.add('used'); }
   function useAddTime() { let btn = document.getElementById('ll-time'); if (btn.classList.contains('used') || isLocked || countTime <= 0) return; timeLeft += 10; timeTotal = timeLeft; updateTimerDisplay(); countTime--; document.getElementById('txt-time').innerText = countTime + " Left"; if(countTime === 0) btn.classList.add('used'); }
   function useAudience() { let btn = document.getElementById('ll-audience'); if (btn.classList.contains('used') || isLocked) return; let correctIndex = currentQuiz[currentQIndex].answer; alert("👥 The audience thinks option " + labels[correctIndex] + " is correct!"); btn.classList.add('used'); }
-    function checkAnswer(selectedIndex, btnElement) {
+
+  function checkAnswer(selectedIndex, btnElement) {
     if(isLocked) return; triggerBounce(btnElement); isLocked = true; clearInterval(timerInterval); 
     let q = currentQuiz[currentQIndex]; let correctIndex = q.answer; q.selectedOption = selectedIndex; let allBtns = document.querySelectorAll('.option');
     if(selectedIndex === correctIndex) { playSound('correct'); btnElement.classList.add('correct'); btnElement.querySelector('.opt-icon').innerHTML = '✔'; } 
