@@ -497,14 +497,19 @@
   <div id="leader-screen" class="screen">
     <div class="quiz-header" style="margin-top: 5px;">
       <button class="icon-btn" style="box-shadow:none; background:transparent;" onclick="showScreen('home-screen')">←</button>
-      <span style="font-size: 20px;">Leaderboard</span>
+      <span style="font-size: 20px;">Global Leaderboard</span>
       <button class="icon-btn" style="box-shadow:none; background:transparent; font-size: 20px;">🔍</button>
     </div>
-    <div class="lb-tabs"><div class="lb-tab active">Daily</div><div class="lb-tab">Monthly</div><div class="lb-tab">All time</div></div>
-    <div class="podium-wrap" id="podium-container"></div>
+
+    <div class="podium-wrap" id="leaderboard-podium" style="min-height: 180px;">
+      </div>
+
     <div class="lb-list-header"><span style="flex: 0.5;">Rank</span><span style="flex: 2;">Player</span><span style="flex: 1; text-align:right;">Points</span></div>
-    <div id="leader-list-container" style="background: transparent;"></div>
+    
+    <div id="leaderboard-list" style="display: flex; flex-direction: column; gap: 10px; padding-bottom: 90px;">
+      </div>
   </div>
+
 
   <div id="saved-screen" class="screen">
     <div class="quiz-header"><button class="icon-btn" onclick="showScreen('home-screen')">←</button><span style="font-size: 18px;">Saved Questions</span><div style="width: 44px;"></div></div>
@@ -578,7 +583,8 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 
   const firebaseConfig = {
       apiKey: "AIzaSyC8p8CLrr81dg3rMfEQRBH1bnDSHZu1WGk",
@@ -607,6 +613,82 @@
           console.error("Redirect Error:", error);
       });
   });
+// LIVE LEADERBOARD FUNCTION
+function setupLiveLeaderboard() {
+    const usersRef = collection(db, "users");
+    // Top 10 players sorted by highest coins
+    const q = query(usersRef, orderBy("coins", "desc"), limit(10));
+
+    // onSnapshot listens to database changes in real-time!
+    onSnapshot(q, (snapshot) => {
+        const podiumContainer = document.getElementById('leaderboard-podium');
+        const listContainer = document.getElementById('leaderboard-list');
+        
+        if(!podiumContainer || !listContainer) return;
+
+        podiumContainer.innerHTML = "";
+        listContainer.innerHTML = "";
+
+        let players = [];
+        snapshot.forEach((doc) => {
+            players.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Arrange Top 3 for visual Podium layout (2nd, 1st, 3rd)
+        let top3 = players.slice(0, 3);
+        let podiumOrder = [];
+        if (top3[1]) podiumOrder.push({ p: top3[1], rank: 2 }); // Rank 2 on Left
+        if (top3[0]) podiumOrder.push({ p: top3[0], rank: 1 }); // Rank 1 in Center
+        if (top3[2]) podiumOrder.push({ p: top3[2], rank: 3 }); // Rank 3 on Right
+
+        // Render Podium
+        podiumOrder.forEach((item) => {
+            const player = item.p;
+            const rank = item.rank;
+            const isCurrentUser = auth.currentUser && auth.currentUser.uid === player.id;
+            
+            let height = rank === 1 ? '150px' : rank === 2 ? '130px' : '110px';
+            let color = rank === 1 ? '#fbbf24' : rank === 2 ? '#cbd5e1' : '#d97706'; // Gold, Silver, Bronze
+            let avatarHtml = player.avatarType === 'image' ? `<img src="${player.avatarVal}" style="width:45px; height:45px; border-radius:50%; border: 2px solid ${color};">` : `<span style="font-size:30px;">${player.avatarVal || '👨‍💼'}</span>`;
+
+            podiumContainer.innerHTML += `
+                <div style="display: flex; flex-direction: column; align-items: center; width: 85px;">
+                    ${avatarHtml}
+                    <div style="background: ${isCurrentUser ? 'var(--primary)' : 'white'}; width: 100%; height: ${height}; border-radius: 15px 15px 0 0; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px solid ${color};">
+                        <span style="font-size: 20px; font-weight: 900; color: ${isCurrentUser ? 'white' : color};">#${rank}</span>
+                        <span style="font-size: 11px; font-weight: 700; color: ${isCurrentUser ? '#fff' : 'var(--text-dark)'}; text-align: center; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top:5px;">${player.name.split(' ')[0]}</span>
+                        <span style="font-size: 10px; font-weight: 800; color: ${isCurrentUser ? '#ddd' : 'var(--orange)'};">🪙${player.coins}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Render remaining players (Rank 4+)
+        for (let i = 3; i < players.length; i++) {
+            const player = players[i];
+            const isCurrentUser = auth.currentUser && auth.currentUser.uid === player.id;
+            let avatarHtml = player.avatarType === 'image' ? `<img src="${player.avatarVal}" style="width:35px; height:35px; border-radius:50%;">` : `<span style="font-size:24px;">${player.avatarVal || '👨‍💼'}</span>`;
+
+            listContainer.innerHTML += `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; background: ${isCurrentUser ? '#f3e8ff' : '#f8f9fc'}; border-radius: 12px; border: ${isCurrentUser ? '1.5px solid var(--primary)' : 'none'};">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 14px; font-weight: 800; color: var(--text-muted); width: 20px;">#${i + 1}</span>
+                        ${avatarHtml}
+                        <span style="font-size: 14px; font-weight: 700; color: var(--text-dark);">${player.name}</span>
+                    </div>
+                    <span style="font-size: 14px; font-weight: 800; color: var(--orange);">🪙${player.coins}</span>
+                </div>
+            `;
+        }
+    });
+}
+
+// Automatically trigger this once auth state is ready
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        setupLiveLeaderboard();
+    }
+});
 
   // SMART LOGIN: Tries Popup first (best for Web), falls back to Redirect (best for APK)
   document.getElementById('btn-google-login').addEventListener('click', async () => {
