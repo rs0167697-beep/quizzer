@@ -76,6 +76,10 @@
   #app.dark-theme .btn-skip { background: rgba(255,255,255,0.1); color: #f8fafc; }
   #app.dark-theme #view-all-modal button { background: rgba(255,255,255,0.1) !important; color: white !important; }
   #app.dark-theme #btn-google-login { background: #0f172a !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.2) !important; }
+  /* Result screen components override for dark mode */
+  #app.dark-theme #result-screen .primary-btn[style*="background: #f1f5f9"] { background: #0f172a !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+  #app.dark-theme #result-screen .quiz-header .icon-btn { color: #ffffff !important; }
+  #app.dark-theme .icon-btn { background: #1e293b !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.1) !important; box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important; }
 
   @keyframes screenTransition { 
       0% { opacity: 0; transform: scale(0.97) translateY(10px); } 
@@ -564,6 +568,45 @@
         <div class="avatar-item c-8" onclick="selectAvatarPreset(this, '👽')">👽</div>
       </div>
       <div class="modal-actions"><button class="btn-skip" onclick="closeAvatarSelector()">Cancel</button><button class="btn-submit" onclick="confirmAvatarSelection()">Select</button></div>
+    </div>
+  </div>
+  <!-- PREMIUM AUDIENCE POLL MODAL -->
+  <div id="audience-modal" class="modal-overlay" style="z-index: 2600; display: none;">
+    <div class="pop-animation" style="background: #0b1120; width: 90%; max-width: 380px; border-radius: 24px; padding: 35px 20px; box-shadow: 0 0 30px rgba(59, 130, 246, 0.3), inset 0 0 0 1px rgba(255,255,255,0.05); text-align: center; position: relative; overflow: hidden;">
+        
+        <!-- Glowing background effect -->
+        <div style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 150px; height: 150px; background: rgba(59, 130, 246, 0.3); filter: blur(50px); border-radius: 50%; pointer-events: none;"></div>
+
+        <!-- Neon Icon -->
+        <div style="width: 80px; height: 80px; border-radius: 50%; background: #0f172a; border: 3px solid #3b82f6; display: flex; justify-content: center; align-items: center; font-size: 40px; margin: 0 auto 15px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.4); position: relative; z-index: 2;">👥</div>
+
+        <!-- Title -->
+        <h2 style="color: #60a5fa; font-weight: 900; font-size: 24px; letter-spacing: 1px; margin-bottom: 8px; text-shadow: 0 0 15px rgba(96, 165, 250, 0.6); text-transform: uppercase;">Audience Poll</h2>
+        
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 25px;">
+            <div style="height: 1px; width: 30px; background: rgba(148, 163, 184, 0.3);"></div>
+            <p style="color: #94a3b8; font-size: 15px; font-weight: 700; margin: 0;">The audience thinks...</p>
+            <div style="height: 1px; width: 30px; background: rgba(148, 163, 184, 0.3);"></div>
+        </div>
+
+        <!-- Answer Box -->
+        <div style="background: rgba(22, 163, 74, 0.05); border: 2px solid #22c55e; border-radius: 16px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; box-shadow: 0 0 20px rgba(34, 197, 94, 0.15), inset 0 0 10px rgba(34, 197, 94, 0.1);">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div id="aud-opt-letter" style="width: 40px; height: 40px; background: #22c55e; color: white; font-weight: 900; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 18px; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);">D</div>
+                <div id="aud-opt-text" style="color: white; font-weight: 800; font-size: 18px; text-align: left;">of</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; color: #4ade80; font-weight: 900; font-size: 22px;">
+                <span style="font-size: 20px;">✔</span> <span id="aud-opt-pct">78%</span>
+            </div>
+        </div>
+
+        <!-- Badge -->
+        <div style="background: rgba(34, 197, 94, 0.15); color: #4ade80; display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 800; margin-bottom: 30px; border: 1px solid rgba(34, 197, 94, 0.3);">
+            <span style="font-size: 14px;">🛡️</span> Most people chose this option!
+        </div>
+
+        <!-- Action Button -->
+        <button onclick="closeAudienceModal()" style="background: linear-gradient(90deg, #2563eb, #8b5cf6); color: white; border: none; width: 100%; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 900; cursor: pointer; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;">Continue</button>
     </div>
   </div>
 
@@ -1221,17 +1264,121 @@ onAuthStateChanged(auth, (user) => {
       });
       document.getElementById('review-container').innerHTML = html; showScreen('review-screen');
   }
-
   function renderAnalytics() {
-      let html = '';
-      for(let cat in myData.stats) {
-          let d = myData.stats[cat]; let percent = d.p > 0 ? Math.round((d.c / d.p) * 100) : 0;
-          html += `<div class="stat-row">
-              <div class="stat-header"><span>${cat}</span><span>${percent}% (${d.c}/${d.p})</span></div>
-              <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${percent}%;"></div></div>
-          </div>`;
-      }
-      document.getElementById('analytics-container').innerHTML = html;
+      const container = document.getElementById('analytics-container');
+      if(!container) return;
+
+      const categories = Object.keys(myData.stats);
+      const numPoints = categories.length;
+      
+      // Adjusted coordinates for a tighter, better-sized chart
+      const cx = 150;
+      const cy = 125; 
+      const R = 80;   
+
+      let targetPoints = "";
+      let userPoints = "";
+      let labelsHtml = "";
+      let gridLines = "";
+      let webLines = "";
+
+      let lowestCat = '';
+      let lowestPct = 100;
+
+      // 1. Generate concentric background webs (added 1.0 for the outer edge)
+      [0.2, 0.4, 0.6, 0.8, 1.0].forEach(scale => {
+          let r = R * scale;
+          let pts = "";
+          for(let i = 0; i < numPoints; i++) {
+              let angle = (Math.PI * 2 * i) / numPoints - (Math.PI / 2);
+              pts += `${cx + r * Math.cos(angle)},${cy + r * Math.sin(angle)} `;
+          }
+          webLines += `<polygon points="${pts}" fill="none" stroke="rgba(150,150,150,0.15)" stroke-width="1" />`;
+      });
+
+      // 2. Map data points for axes, targets, and user performance
+      categories.forEach((cat, i) => {
+          let d = myData.stats[cat];
+          let pct = d.p > 0 ? Math.round((d.c / d.p) * 100) : 0;
+
+          // Track weakest subject for the insight box
+          if(d.p > 0 && pct < lowestPct) {
+              lowestPct = pct;
+              lowestCat = cat;
+          }
+
+          let angle = (Math.PI * 2 * i) / numPoints - (Math.PI / 2);
+
+          // Target point (100% outer edge)
+          let tx = cx + R * Math.cos(angle);
+          let ty = cy + R * Math.sin(angle);
+          targetPoints += `${tx},${ty} `;
+
+          // User performance point
+          let rUser = R * (pct / 100);
+          let ux = cx + rUser * Math.cos(angle);
+          let uy = cy + rUser * Math.sin(angle);
+          userPoints += `${ux},${uy} `;
+
+          // Radial grid line from center to edge
+          gridLines += `<line x1="${cx}" y1="${cy}" x2="${tx}" y2="${ty}" stroke="rgba(150,150,150,0.2)" stroke-width="1" stroke-dasharray="3,3" />`;
+
+          // Smart label positioning (tucked in slightly)
+          let lx = cx + (R + 22) * Math.cos(angle);
+          let ly = cy + (R + 22) * Math.sin(angle);
+          let anchor = "middle";
+          
+          if (Math.abs(Math.cos(angle)) > 0.1) {
+              anchor = Math.cos(angle) > 0 ? "start" : "end";
+              lx = cx + (R + 12) * Math.cos(angle);
+          }
+          if (Math.sin(angle) < -0.3) ly -= 5;
+          if (Math.sin(angle) > 0.3) ly += 12;
+
+          labelsHtml += `
+              <g transform="translate(${lx}, ${ly})" text-anchor="${anchor}">
+                  <text y="-4" fill="var(--text-dark)" font-size="11" font-weight="800">${cat}</text>
+                  <text y="12" fill="var(--primary)" font-size="14" font-weight="900">${pct}%</text>
+                  <text y="26" fill="var(--text-muted)" font-size="10" font-weight="700">(${d.c}/${d.p})</text>
+              </g>
+              <circle cx="${ux}" cy="${uy}" r="4.5" fill="var(--card-bg)" stroke="var(--primary)" stroke-width="1.5" />
+          `;
+      });
+
+      if(lowestCat === '') lowestCat = 'any subject';
+
+      // 3. Construct Final HTML (Removed duplicate header, reduced height to 250)
+      let html = `
+          <div style="position: relative; width: 100%; display: flex; justify-content: center; margin-bottom: 5px;">
+              <svg width="100%" height="250" viewBox="0 0 300 250" style="overflow: visible;">
+                  ${webLines}
+                  ${gridLines}
+                  <polygon points="${targetPoints}" fill="none" stroke="rgba(124, 58, 237, 0.3)" stroke-width="1.5" stroke-dasharray="4,4" />
+                  <polygon points="${userPoints}" fill="rgba(124, 58, 237, 0.2)" stroke="var(--primary)" stroke-width="2.5" stroke-linejoin="round" />
+                  ${labelsHtml}
+              </svg>
+          </div>
+
+          <div style="display: flex; justify-content: space-around; align-items: center; margin-top: 5px; background: rgba(150,150,150,0.05); padding: 12px; border-radius: 16px; border: 1px solid rgba(150,150,150,0.1);">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px rgba(124, 58, 237, 0.5);"></div>
+                  <span style="font-size: 12px; font-weight: 800; color: var(--text-dark);">Your Performance</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; border-radius: 50%; border: 1.5px dashed rgba(124, 58, 237, 0.5);"></div>
+                  <span style="font-size: 12px; font-weight: 800; color: var(--text-dark);">Target (100%)</span>
+              </div>
+          </div>
+
+          <div style="margin-top: 15px; background: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.1); border-radius: 16px; padding: 15px; display: flex; align-items: flex-start; gap: 12px; text-align: left;">
+              <div style="font-size: 24px; line-height: 1; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));">💡</div>
+              <div>
+                  <h4 style="color: var(--primary); font-size: 14px; font-weight: 900; margin-bottom: 4px;">Keep Going!</h4>
+                  <p style="color: var(--text-muted); font-size: 12px; font-weight: 700; line-height: 1.4; margin: 0;">Focus more on <b style="color:var(--text-dark);">${lowestCat}</b> to improve your overall performance.</p>
+              </div>
+          </div>
+      `;
+      container.innerHTML = html;
   }
 
   function renderLeaderboard() {
@@ -1352,7 +1499,34 @@ onAuthStateChanged(auth, (user) => {
   function updateTimerDisplay() { let maxT = timeTotal > timeLeft ? timeTotal : timeLeft; let secs = timeLeft < 10 ? '0'+timeLeft : timeLeft; document.getElementById('timer-text').innerText = `00:${secs}`; document.getElementById('timer-bar').style.width = Math.min((timeLeft / maxT) * 100, 100) + '%'; }
   function use5050() { let btn = document.getElementById('ll-5050'); if (btn.classList.contains('used') || isLocked || count5050 <= 0) return; let correctIndex = currentQuiz[currentQIndex].answer; let wrongIndices = [0, 1, 2, 3].filter(i => i !== correctIndex).sort(() => 0.5 - Math.random()); document.getElementById(`opt-${wrongIndices[0]}`).classList.add('disabled'); document.getElementById(`opt-${wrongIndices[1]}`).classList.add('disabled'); count5050--; document.getElementById('txt-5050').innerText = count5050 + " Left"; if(count5050 === 0) btn.classList.add('used'); }
   function useAddTime() { let btn = document.getElementById('ll-time'); if (btn.classList.contains('used') || isLocked || countTime <= 0) return; timeLeft += 10; timeTotal = timeLeft; updateTimerDisplay(); countTime--; document.getElementById('txt-time').innerText = countTime + " Left"; if(countTime === 0) btn.classList.add('used'); }
-  function useAudience() { let btn = document.getElementById('ll-audience'); if (btn.classList.contains('used') || isLocked) return; let correctIndex = currentQuiz[currentQIndex].answer; alert("👥 The audience thinks option " + labels[correctIndex] + " is correct!"); btn.classList.add('used'); }
+  function useAudience() { 
+      let btn = document.getElementById('ll-audience'); 
+      if (btn.classList.contains('used') || isLocked) return; 
+      
+      // Get the correct answer data
+      let correctIndex = currentQuiz[currentQIndex].answer; 
+      let correctOptionText = currentQuiz[currentQIndex].options[correctIndex];
+      
+      // Generate a believable random percentage between 75% and 96%
+      let randomPct = Math.floor(Math.random() * (96 - 75 + 1)) + 75;
+      
+      // Inject the data into the modal
+      document.getElementById('aud-opt-letter').innerText = labels[correctIndex];
+      document.getElementById('aud-opt-text').innerText = correctOptionText;
+      document.getElementById('aud-opt-pct').innerText = randomPct + "%";
+      
+      // Show the modal
+      let modal = document.getElementById('audience-modal');
+      modal.style.display = 'flex';
+      modal.querySelector('.pop-animation').style.animation = 'none';
+      setTimeout(() => modal.querySelector('.pop-animation').style.animation = '', 10);
+      
+      btn.classList.add('used'); 
+  }
+
+  function closeAudienceModal() {
+      document.getElementById('audience-modal').style.display = 'none';
+  }
 
   function checkAnswer(selectedIndex, btnElement) {
     if(isLocked) return; triggerBounce(btnElement); isLocked = true; clearInterval(timerInterval); 
