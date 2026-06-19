@@ -473,6 +473,9 @@
           <div class="input-group"><label>Name</label><input type="text" id="inp-name" placeholder="Guest Player"></div>
           <div class="input-group"><label>Username</label><input type="text" id="inp-username" placeholder="guest_user"></div>
           
+          <button class="btn-save-settings" id="btn-profile-login" style="background: var(--primary); display: none; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);">
+              Log in to Sync Progress
+          </button>
           <button class="btn-save-settings" id="btn-google-logout">
               Sign Out
           </button>
@@ -754,10 +757,12 @@ onAuthStateChanged(auth, (user) => {
       }
   });
 
-  document.getElementById('btn-guest-continue').addEventListener('click', () => {
+  // Opens the auth modal from the profile screen if playing as guest
+  document.getElementById('btn-profile-login').addEventListener('click', () => {
       const authModal = document.getElementById('auth-modal');
-      if(authModal) authModal.style.display = 'none';
+      if(authModal) authModal.style.display = 'flex';
   });
+
 
   document.getElementById('btn-google-logout').addEventListener('click', () => {
       signOut(auth).then(() => {
@@ -792,6 +797,9 @@ onAuthStateChanged(auth, (user) => {
       const authModal = document.getElementById('auth-modal');
       if (user) {
           if(authModal) authModal.style.display = 'none';
+                    document.getElementById('btn-google-logout').style.display = 'block';
+          document.getElementById('btn-profile-login').style.display = 'none';
+
           try {
               const userDocRef = doc(db, "users", user.uid);
               const docSnap = await getDoc(userDocRef);
@@ -824,9 +832,11 @@ onAuthStateChanged(auth, (user) => {
               console.error("Database Error:", error);
           }
       } else {
+          document.getElementById('btn-google-logout').style.display = 'none';
+          document.getElementById('btn-profile-login').style.display = 'block';
           if(authModal) authModal.style.display = 'flex';
       }
-  });
+
 </script>
 
 <script>
