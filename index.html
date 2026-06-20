@@ -137,6 +137,30 @@
   .category-btn .c-icon { font-size: 42px; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.08)); line-height: 1;}
   .category-btn span { font-weight: 800; color: var(--text-dark); font-size: 14px;}
   .c-dash { width: 22px; height: 4px; border-radius: 2px; }
+  /* QUICK ACTION CARDS (Premium UI Fix) */
+  .action-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
+  
+  /* Light Mode - Soft Pastel Look (Matches Language/Exam Cards) */
+  .action-card { border-radius: 20px; padding: 18px 15px; display: flex; align-items: center; gap: 12px; color: var(--text-dark); box-shadow: 0 10px 25px rgba(0,0,0,0.04); cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; border: none; }
+  .action-card:active { transform: scale(0.96); }
+  .ac-icon { width: 42px; height: 42px; border-radius: 50%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: 900; flex-shrink: 0; }
+  .ac-text { font-weight: 900; font-size: 15px; text-transform: capitalize; }
+
+  /* Light Mode Gradients */
+  .ac-1 { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); } /* Soft Violet */
+  .ac-2 { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); } /* Soft Sky Blue */
+  .ac-3 { background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%); } /* Soft Teal */
+  .ac-4 { background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%); } /* Soft Orange */
+
+  /* Dark Mode Overrides - Deep Fade & Glowing Borders (Matches Language/Exam Cards) */
+  #app.dark-theme .action-card { color: #f8fafc; }
+  #app.dark-theme .ac-icon { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); box-shadow: none; }
+  
+  #app.dark-theme .ac-1 { background: linear-gradient(135deg, #4c1d95 0%, #0f172a 100%); border: 1px solid rgba(139, 92, 246, 0.3); }
+  #app.dark-theme .ac-2 { background: linear-gradient(135deg, #0369a1 0%, #0f172a 100%); border: 1px solid rgba(14, 165, 233, 0.3); }
+  #app.dark-theme .ac-3 { background: linear-gradient(135deg, #0f766e 0%, #0f172a 100%); border: 1px solid rgba(20, 184, 166, 0.3); }
+  #app.dark-theme .ac-4 { background: linear-gradient(135deg, #c2410c 0%, #0f172a 100%); border: 1px solid rgba(249, 115, 22, 0.3); }
+
 
   .more-games { display: flex; gap: 15px; margin-bottom: 30px;}
   .game-card { flex: 1; border-radius: 26px; padding: 25px 15px 20px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 12px 30px rgba(0,0,0,0.04); position: relative; overflow: hidden;}
@@ -397,7 +421,6 @@
     
     <div class="section-title">
         <div class="section-title-left"><span style="color:#a855f7; font-size:22px;">🎮</span> More Games</div>
-        <div class="section-title-right" onclick="openViewAllModal()">View All ></div>
     </div>
     <div class="more-games">
       <div class="game-card blue-card" onclick="triggerBounce(this); startQuiz('English', 50)">
@@ -411,6 +434,25 @@
           <h4>Exam Quiz</h4>
           <p>50 Questions</p>
           <button class="play-pill">Play Now ▶</button>
+      </div>
+    </div>
+    <div class="action-grid">
+<div class="action-card ac-1" onclick="triggerBounce(this); startQuiz('Articles', 50)">
+    <div class="ac-icon">📄</div>
+    <div class="ac-text">Articles</div>
+</div>
+
+      <div class="action-card ac-2" onclick="triggerBounce(this)">
+          <div class="ac-icon">XYZ</div>
+          <div class="ac-text">xyz</div>
+      </div>
+      <div class="action-card ac-3" onclick="triggerBounce(this)">
+          <div class="ac-icon">ABC</div>
+          <div class="ac-text">abc</div>
+      </div>
+      <div class="action-card ac-4" onclick="triggerBounce(this)">
+          <div class="ac-icon">PQR</div>
+          <div class="ac-text">pqr</div>
       </div>
     </div>
 
@@ -1182,7 +1224,59 @@ onAuthStateChanged(auth, (user) => {
     { category: 'GAT', q: "The simple interest on a sum of money for 3 years at 8% per annum is half the compound interest on Rs. 4000 for 2 years at 10% per annum. The sum placed on simple interest is:", options: ["Rs. 1550", "Rs. 1650", "Rs. 1750", "Rs. 1850"], answer: 2 },
     { category: 'GAT', q: "A can do a piece of work in 12 days and B can do it in 15 days. They work together for 5 days and then B leaves. In how many days will A finish the remaining work?", options: ["3 days", "4 days", "5 days", "6 days"], answer: 0 },
     { category: 'GAT', q: "The average of 5 consecutive odd numbers is 61. What is the difference between the highest and lowest numbers?", options: ["4", "6", "8", "10"], answer: 2 },
-    { category: 'GAT', q: "The radius of a cylinder is doubled and the height is halved. What is the ratio between the new volume and the previous volume?", options: ["1 : 1", "2 : 1", "1 : 2", "4 : 1"], answer: 1 }
+    { category: 'GAT', q: "The radius of a cylinder is doubled and the height is halved. What is the ratio between the new volume and the previous volume?", options: ["1 : 1", "2 : 1", "1 : 2", "4 : 1"], answer: 1 },
+        // --- PART: INDIAN CONSTITUTION ARTICLES ---
+    { category: 'Articles', q: "Which Article describes India, that is Bharat, as a 'Union of States'?", options: ["Article 1", "Article 2", "Article 3", "Article 4"], answer: 0 },
+    { category: 'Articles', q: "Equality before the law and equal protection of laws is guaranteed under:", options: ["Article 13", "Article 14", "Article 15", "Article 16"], answer: 1 },
+    { category: 'Articles', q: "Which Article prohibits discrimination on grounds of religion, race, caste, sex or place of birth?", options: ["Article 14", "Article 15", "Article 16", "Article 17"], answer: 1 },
+    { category: 'Articles', q: "Equality of opportunity in matters of public employment is mentioned in:", options: ["Article 15", "Article 16", "Article 18", "Article 19"], answer: 1 },
+    { category: 'Articles', q: "Which Article of the Indian Constitution abolishes 'Untouchability'?", options: ["Article 16", "Article 17", "Article 18", "Article 19"], answer: 1 },
+    { category: 'Articles', q: "Abolition of Titles (except military and academic) is provisioned under:", options: ["Article 17", "Article 18", "Article 19", "Article 20"], answer: 1 },
+    { category: 'Articles', q: "Protection of 6 rights regarding freedom of speech, assembly, etc. comes under:", options: ["Article 19", "Article 20", "Article 21", "Article 22"], answer: 0 },
+    { category: 'Articles', q: "Protection of Life and Personal Liberty is guaranteed under:", options: ["Article 20", "Article 21", "Article 22", "Article 23"], answer: 1 },
+    { category: 'Articles', q: "Right to Education (Free and compulsory education for children aged 6 to 14) is in:", options: ["Article 21", "Article 21A", "Article 24", "Article 45"], answer: 1 },
+    { category: 'Articles', q: "Which Article prohibits the employment of children in factories and mines?", options: ["Article 23", "Article 24", "Article 25", "Article 26"], answer: 1 },
+    { category: 'Articles', q: "Dr. B.R. Ambedkar called which Article the 'Heart and Soul' of the Constitution?", options: ["Article 19", "Article 21", "Article 32", "Article 226"], answer: 2 },
+    { category: 'Articles', q: "Which Article directs the State to organize Village Panchayats?", options: ["Article 39", "Article 40", "Article 44", "Article 50"], answer: 1 },
+    { category: 'Articles', q: "Uniform Civil Code (UCC) for the citizens is mentioned in which Article?", options: ["Article 40", "Article 43", "Article 44", "Article 45"], answer: 2 },
+    { category: 'Articles', q: "Separation of judiciary from executive is directed under:", options: ["Article 48", "Article 49", "Article 50", "Article 51"], answer: 2 },
+    { category: 'Articles', q: "Promotion of international peace and security is mentioned in:", options: ["Article 49", "Article 50", "Article 51", "Article 51A"], answer: 2 },
+    { category: 'Articles', q: "Fundamental Duties of the citizens were added in which Article?", options: ["Article 50A", "Article 51", "Article 51A", "Article 52"], answer: 2 },
+    { category: 'Articles', q: "Which Article states that 'There shall be a President of India'?", options: ["Article 52", "Article 53", "Article 54", "Article 55"], answer: 0 },
+    { category: 'Articles', q: "Which Article contains the provisions for the Impeachment of the President?", options: ["Article 59", "Article 60", "Article 61", "Article 62"], answer: 2 },
+    { category: 'Articles', q: "The Pardoning Power of the President is granted under:", options: ["Article 71", "Article 72", "Article 73", "Article 74"], answer: 1 },
+    { category: 'Articles', q: "Council of Ministers to aid and advise the President is mentioned in:", options: ["Article 72", "Article 73", "Article 74", "Article 75"], answer: 2 },
+    { category: 'Articles', q: "Which Article deals with the appointment of the Attorney-General for India?", options: ["Article 74", "Article 75", "Article 76", "Article 77"], answer: 2 },
+    { category: 'Articles', q: "Joint sitting of both Houses of Parliament is summoned under:", options: ["Article 105", "Article 108", "Article 110", "Article 112"], answer: 1 },
+    { category: 'Articles', q: "Which Article defines a 'Money Bill'?", options: ["Article 108", "Article 109", "Article 110", "Article 112"], answer: 2 },
+    { category: 'Articles', q: "Annual Financial Statement (Budget) is laid out in:", options: ["Article 110", "Article 111", "Article 112", "Article 114"], answer: 2 },
+    { category: 'Articles', q: "Power of the President to promulgate Ordinances during recess of Parliament:", options: ["Article 121", "Article 122", "Article 123", "Article 124"], answer: 2 },
+    { category: 'Articles', q: "Establishment and constitution of the Supreme Court is under:", options: ["Article 123", "Article 124", "Article 125", "Article 126"], answer: 1 },
+    { category: 'Articles', q: "Power of the President to consult the Supreme Court is mentioned in:", options: ["Article 141", "Article 142", "Article 143", "Article 144"], answer: 2 },
+    { category: 'Articles', q: "Comptroller and Auditor-General of India (CAG) is appointed under:", options: ["Article 148", "Article 149", "Article 150", "Article 151"], answer: 0 },
+    { category: 'Articles', q: "Which Article states that there shall be a Governor for each state?", options: ["Article 152", "Article 153", "Article 154", "Article 155"], answer: 1 },
+    { category: 'Articles', q: "Pardoning powers of the Governor are defined in:", options: ["Article 160", "Article 161", "Article 162", "Article 163"], answer: 1 },
+    { category: 'Articles', q: "Who is appointed as the Advocate-General for the State under Article 165?", options: ["By President", "By Chief Justice of HC", "By Governor", "By Chief Minister"], answer: 2 },
+    { category: 'Articles', q: "Power of the Governor to promulgate Ordinances is in:", options: ["Article 211", "Article 212", "Article 213", "Article 214"], answer: 2 },
+    { category: 'Articles', q: "Which Article states that there shall be a High Court for each State?", options: ["Article 214", "Article 215", "Article 216", "Article 217"], answer: 0 },
+    { category: 'Articles', q: "Power of High Courts to issue certain writs (like Habeas Corpus) is under:", options: ["Article 32", "Article 225", "Article 226", "Article 227"], answer: 2 },
+    { category: 'Articles', q: "Special provisions with respect to Delhi (making it NCT) were added in:", options: ["Article 239A", "Article 239AA", "Article 239AB", "Article 239B"], answer: 1 },
+    { category: 'Articles', q: "The constitution of Panchayats is mandated under which Article?", options: ["Article 243A", "Article 243B", "Article 243C", "Article 243D"], answer: 1 },
+    { category: 'Articles', q: "Adjudication of disputes relating to waters of inter-State rivers is in:", options: ["Article 260", "Article 261", "Article 262", "Article 263"], answer: 2 },
+    { category: 'Articles', q: "Consolidated Funds and Public Accounts of India and of the States are mentioned in:", options: ["Article 265", "Article 266", "Article 267", "Article 268"], answer: 1 },
+    { category: 'Articles', q: "Which Article deals with the establishment of the Finance Commission?", options: ["Article 275", "Article 280", "Article 282", "Article 293"], answer: 1 },
+    { category: 'Articles', q: "Right to Property, which was moved from Fundamental Rights, is now a legal right under:", options: ["Article 300", "Article 300A", "Article 301", "Article 302"], answer: 1 },
+    { category: 'Articles', q: "Creation of one or more All India Services (like IAS, IPS) is authorized by:", options: ["Article 310", "Article 311", "Article 312", "Article 315"], answer: 2 },
+    { category: 'Articles', q: "Public Service Commissions for the Union and for the States (UPSC/SPSC) is under:", options: ["Article 312", "Article 315", "Article 320", "Article 324"], answer: 1 },
+    { category: 'Articles', q: "Superintendence, direction and control of elections vested in an Election Commission:", options: ["Article 323", "Article 324", "Article 325", "Article 326"], answer: 1 },
+    { category: 'Articles', q: "National Commission for Scheduled Castes (SC) is established under:", options: ["Article 338", "Article 338A", "Article 338B", "Article 340"], answer: 0 },
+    { category: 'Articles', q: "Which Article declares Hindi in Devanagari script as the official language of the Union?", options: ["Article 343", "Article 344", "Article 345", "Article 348"], answer: 0 },
+    { category: 'Articles', q: "Which Article empowers the President to declare a 'National Emergency' (War, External Aggression)?", options: ["Article 352", "Article 356", "Article 360", "Article 365"], answer: 0 },
+    { category: 'Articles', q: "President's Rule in a State due to failure of constitutional machinery is imposed under:", options: ["Article 352", "Article 355", "Article 356", "Article 360"], answer: 2 },
+    { category: 'Articles', q: "Provisions relating to 'Financial Emergency' are given in:", options: ["Article 356", "Article 358", "Article 359", "Article 360"], answer: 3 },
+    { category: 'Articles', q: "The power of Parliament to amend the Constitution and its procedure is laid down in:", options: ["Article 366", "Article 368", "Article 370", "Article 371"], answer: 1 },
+    { category: 'Articles', q: "Which Article (now abrogated) gave special status to the state of Jammu and Kashmir?", options: ["Article 368", "Article 369", "Article 370", "Article 371A"], answer: 2 }
+
   ];
 
   function helperSetAvatarContent(element, imageVal, type) {
