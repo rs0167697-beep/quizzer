@@ -300,6 +300,23 @@
   .splash-text { font-size: 16px; font-weight: 700; opacity: 0.9; line-height: 1.5; }
   .btn-splash { background: white; color: var(--primary); border: none; width: 90%; max-width: 300px; padding: 20px; border-radius: 24px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 40px;}
   .btn-splash:active { transform: scale(0.95); }
+
+  /* BADGES SCREEN STYLES */
+  #badges-screen { padding-top: 10px; }
+  .badge-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding-bottom: 90px; margin-top: 15px; }
+  .badge-card { background: white; border-radius: 22px; padding: 25px 15px 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; border: 2px solid transparent; transition: 0.3s; }
+  .badge-locked { filter: grayscale(100%); opacity: 0.5; }
+  .badge-unlocked { border-color: var(--primary); background: linear-gradient(135deg, rgba(124,58,237,0.03) 0%, rgba(124,58,237,0.08) 100%); box-shadow: 0 15px 35px rgba(124,58,237,0.15); animation: popUp 0.4s ease; }
+  .badge-icon-wrap { width: 55px; height: 55px; border-radius: 50%; background: #f1f5f9; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-bottom: 12px; transition: 0.3s; }
+  .badge-unlocked .badge-icon-wrap { background: var(--primary); color: white; box-shadow: 0 8px 20px rgba(124,58,237,0.4); transform: scale(1.1); }
+  .badge-title { font-weight: 900; color: var(--text-dark); font-size: 14px; margin-bottom: 5px; }
+  .badge-desc { font-weight: 800; color: var(--text-muted); font-size: 10px; line-height: 1.3; }
+
+  /* Dark Mode support for Badges */
+  #app.dark-theme .badge-card { background: var(--card-bg); }
+  #app.dark-theme .badge-unlocked { border-color: #a855f7; background: rgba(168, 85, 247, 0.1); }
+  #app.dark-theme .badge-locked .badge-icon-wrap { background: #0f172a; }
+
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YS36PFXEH8"></script>
@@ -409,9 +426,27 @@
       <div class="nav-item active" onclick="showScreen('home-screen')"><div class="nav-icon">🏠</div>Home</div>
       <div class="nav-item" onclick="showScreen('leader-screen')"><div class="nav-icon">🏆</div>Leader</div>
       <div class="nav-item" onclick="showScreen('saved-screen')"><div class="nav-icon">🔖</div>Saved</div>
-      <div class="nav-item" onclick="showScreen('home-screen')"><div class="nav-icon">🛡️</div>Badges</div>
+      <div class="nav-item" onclick="showScreen('badges-screen')"><div class="nav-icon">🛡️</div>Badges</div>
       <div class="nav-item" onclick="showScreen('profile-screen')"><div class="nav-icon">⚙️</div>Settings</div>
     </div>
+  </div>
+  <div id="badges-screen" class="screen">
+    <div class="quiz-header">
+      <button class="icon-btn" onclick="showScreen('home-screen')">←</button>
+      <span style="font-size: 20px;">My Achievements</span>
+      <div style="width: 44px;"></div>
+    </div>
+    
+    <div style="background: var(--card-bg); border-radius: 24px; padding: 20px; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid rgba(124, 58, 237, 0.1);">
+        <div style="font-size: 35px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));">🏆</div>
+        <div>
+            <h3 style="color: var(--text-dark); font-weight: 900; font-size: 18px; margin-bottom: 2px;">Unlock Badges!</h3>
+            <p style="color: var(--text-muted); font-weight: 700; font-size: 12px; line-height: 1.4;">Play quizzes, maintain accuracy, and level up to unlock these exclusive badges.</p>
+        </div>
+    </div>
+
+
+    <div class="badge-grid" id="badge-grid-container"></div>
   </div>
 
   <div id="quiz-screen" class="screen">
@@ -1480,6 +1515,7 @@ onAuthStateChanged(auth, (user) => {
           if(id === 'home-screen') document.querySelectorAll('.nav-item:nth-child(1)').forEach(n=>n.classList.add('active'));
           else if (id === 'leader-screen') { document.querySelectorAll('.nav-item:nth-child(2)').forEach(n=>n.classList.add('active')); renderLeaderboard(); }
           else if (id === 'saved-screen') { document.querySelectorAll('.nav-item:nth-child(3)').forEach(n=>n.classList.add('active')); renderSavedQuestions(); }
+          else if (id === 'badges-screen') { document.querySelectorAll('.nav-item:nth-child(4)').forEach(n=>n.classList.add('active')); renderBadges(); }
           else if (id === 'profile-screen') { document.querySelectorAll('.nav-item:nth-child(5)').forEach(n=>n.classList.add('active')); renderAnalytics(); }
       }, 10);
   }
@@ -1604,6 +1640,39 @@ onAuthStateChanged(auth, (user) => {
   } else {
       localStorage.setItem("qz_last_welcome", todayStr);
   }
+  function renderBadges() {
+      let totalP = 0; let totalC = 0;
+      let chemC = myData.stats['Chemistry'] ? myData.stats['Chemistry'].c : 0;
+      
+      for(let cat in myData.stats) { 
+          totalP += myData.stats[cat].p; 
+          totalC += myData.stats[cat].c; 
+      }
+      
+      // Our Custom Achievements Logic
+      const badges = [
+          { id: 'b1', name: "First Blood", desc: "Play your very first quiz.", icon: "🔰", unlocked: totalP >= 1 },
+          { id: 'b2', name: "Coin Collector", desc: "Earn a total of 1,000 coins.", icon: "💰", unlocked: myData.coins >= 1000 },
+          { id: 'b3', name: "Phase Equilibria", desc: "Answer 10 Chemistry questions correctly.", icon: "⚗️", unlocked: chemC >= 10 },
+          { id: 'b4', name: "Quiz Master", desc: "Play 50 total quizzes.", icon: "👑", unlocked: totalP >= 50 },
+          { id: 'b5', name: "Headshot Accuracy", desc: "Maintain over 80% overall accuracy.", icon: "🎯", unlocked: totalP >= 5 && (totalC/totalP) >= 0.8 },
+          { id: 'b6', name: "Heroic Tier", desc: "Reach the Heroic rank (10k+ points).", icon: "🛡️", unlocked: myData.coins >= 10000 }
+      ];
+
+      let html = '';
+      badges.forEach(b => {
+          let statusClass = b.unlocked ? 'badge-unlocked' : 'badge-locked';
+          html += `
+              <div class="badge-card ${statusClass}">
+                  <div class="badge-icon-wrap">${b.icon}</div>
+                  <div class="badge-title">${b.name}</div>
+                  <div class="badge-desc">${b.desc}</div>
+              </div>
+          `;
+      });
+      document.getElementById('badge-grid-container').innerHTML = html;
+  }
+
 </script>
 </body>
 </html>
