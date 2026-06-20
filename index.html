@@ -24,9 +24,6 @@
   
   #app { width: 100%; max-width: 100%; height: 100%; background: var(--bg-gradient); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
   
-  @media (min-width: 600px) and (min-height: 750px) { 
-    #app { max-width: 400px; height: 90vh; max-height: 850px; border-radius: 40px; border: 8px solid #111; box-shadow: 0 25px 50px rgba(0,0,0,0.2); } 
-  }
 
   /* PREMIUM DARK MODE OVERRIDES */
   #app.dark-theme { 
@@ -93,7 +90,8 @@
   .screen > * { flex-shrink: 0; }
   
   /* STICKY TOP HEADER */
-  .header { display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; background: rgba(248, 249, 252, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 20px 24px 15px 24px; margin: 0 -24px 25px -24px;}
+  .header { display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; background: rgba(248, 249, 252, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 20px 24px 30px 24px; margin: 0 -24px 10px -24px; -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%); mask-image: linear-gradient(to bottom, black 65%, transparent 100%); }
+
   #app.dark-theme .header { background: rgba(30, 41, 59, 0.85) !important; }
   
   .profile { display: flex; align-items: center; gap: 12px; color: var(--text-dark); cursor: pointer;}
@@ -127,7 +125,12 @@
   .section-title-left { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 18px; color: var(--text-dark); letter-spacing: -0.3px;}
   .section-title-right { font-size: 12px; color: var(--primary); font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px;}
   
-  .categories { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px; scroll-snap-type: x mandatory;}
+  .categories { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px; scroll-snap-type: x mandatory; margin-left: -24px; margin-right: -24px; padding-left: 24px; scroll-padding-left: 24px; }
+  .categories::-webkit-scrollbar { display: none; }
+  .categories::after { content: ''; flex: 0 0 10px; }
+  .category-btn { scroll-snap-align: start; min-width: 90px; background: white; border-radius: 24px; padding: 22px 10px 18px; display: flex; flex-direction: column; align-items: center; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.03); transition: 0.2s; gap: 12px; }
+
+
   .categories::-webkit-scrollbar { display: none; }
   .category-btn { scroll-snap-align: start; min-width: 90px; background: white; border-radius: 24px; padding: 22px 10px 18px; display: flex; flex-direction: column; align-items: center; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.03); transition: 0.2s; gap: 12px;}
   .category-btn:active { transform: scale(0.92); }
@@ -155,7 +158,8 @@
   .stat-item p { font-size: 9px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;}
 
   /* STICKY BOTTOM NAV */
-  .bottom-nav { position: sticky; bottom: 0; left: 0; width: calc(100% + 48px); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid #f1f5f9; display: flex; justify-content: space-around; align-items: center; padding: 12px 10px 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.03); z-index: 100; margin: auto -24px 0 -24px;}
+  .bottom-nav { position: sticky; bottom: 0; left: 0; width: calc(100% + 48px); background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: none; box-shadow: none; display: flex; justify-content: space-around; align-items: center; padding: 30px 10px 25px; z-index: 100; margin: auto -24px 0 -24px; -webkit-mask-image: linear-gradient(to top, black 70%, transparent 100%); mask-image: linear-gradient(to top, black 70%, transparent 100%); }
+
   #app.dark-theme .bottom-nav { background: rgba(30, 41, 59, 0.95) !important; border-top: 1px solid rgba(255,255,255,0.08) !important; }
   
   .nav-item { display: flex; flex-direction: column; align-items: center; color: #cbd5e1; font-size: 10px; gap: 6px; cursor: pointer; font-weight: 800; transition: 0.3s;}
@@ -166,7 +170,8 @@
   .icon-btn { width: 44px; height: 44px; background: white; color: var(--text-dark); border-radius: 16px; display:flex; justify-content:center; align-items:center; border: none; cursor: pointer; font-size: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.04);}
   .icon-btn:active { transform: scale(0.9); }
     /* STICKY QUIZ HEADER */
-  .quiz-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-dark); font-weight: 800; position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 15px 24px; margin: 0 -24px 20px -24px;}
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-dark); font-weight: 800; position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 15px 24px 30px 24px; margin: 0 -24px 5px -24px; -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%); mask-image: linear-gradient(to bottom, black 60%, transparent 100%); }
+
   #app.dark-theme .quiz-header { background: rgba(30, 41, 59, 0.85) !important; }
 
   .question-card { background: white; border-radius: 26px; padding: 30px 24px; text-align: center; color: var(--text-dark); font-size: 18px; font-weight: 800; margin-bottom: 25px; min-height: 140px; display:flex; align-items:center; justify-content:center; box-shadow: 0 15px 35px rgba(0,0,0,0.03); line-height: 1.4;}
@@ -358,29 +363,30 @@
         <div class="section-title-right" onclick="openViewAllModal()">View All ></div>
     </div>
     <div class="categories">
-      <button class="category-btn" onclick="triggerBounce(this); startQuiz('Chemistry', 15)">
-          <div class="c-icon">🧪</div><span>Chem</span><div class="c-dash" style="background:#22c55e;"></div>
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('Maths', 25)">
+          <div class="c-icon">🧮</div><span>Maths</span><div class="c-dash" style="background:#3b82f6;"></div>
       </button>
-      <button class="category-btn" onclick="triggerBounce(this); startQuiz('English', 15)">
-          <div class="c-icon">📖</div><span>English</span><div class="c-dash" style="background:#ef4444;"></div>
-      </button>
-      <button class="category-btn" onclick="triggerBounce(this); startQuiz('Vocab', 15)">
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('Vocab', 25)">
           <div class="c-icon">📝</div><span>Vocab</span><div class="c-dash" style="background:#f59e0b;"></div>
       </button>
-      <button class="category-btn" onclick="triggerBounce(this); startQuiz('GAT', 15)">
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('GAT', 25)">
           <div class="c-icon">🧠</div><span>GAT</span><div class="c-dash" style="background:#a855f7;"></div>
       </button>
+      <button class="category-btn" onclick="triggerBounce(this); startQuiz('Physics', 25)">
+          <div class="c-icon">⚛️</div><span>Physics</span><div class="c-dash" style="background:#22c55e;"></div>
+      </button>
     </div>
+
     
     <div class="section-title">
         <div class="section-title-left"><span style="color:#a855f7; font-size:22px;">🎮</span> More Games</div>
         <div class="section-title-right" onclick="openViewAllModal()">View All ></div>
     </div>
     <div class="more-games">
-      <div class="game-card blue-card" onclick="triggerBounce(this); startQuiz('English', 10)">
+      <div class="game-card blue-card" onclick="triggerBounce(this); startQuiz('English', 50)">
           <div class="game-icon">⚔️</div>
           <h4>Language</h4>
-          <p>10 Questions</p>
+          <p>50 Questions</p>
           <button class="play-pill">Play Now ▶</button>
       </div>
       <div class="game-card green-card" onclick="triggerBounce(this); startExamQuiz()">
@@ -473,12 +479,14 @@
           <div class="input-group"><label>Name</label><input type="text" id="inp-name" placeholder="Guest Player"></div>
           <div class="input-group"><label>Username</label><input type="text" id="inp-username" placeholder="guest_user"></div>
           
-          <button class="btn-save-settings" id="btn-profile-login" style="background: var(--primary); display: none; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);">
+          <button class="btn-save-settings" id="btn-profile-login" style="background: var(--primary); margin-bottom: 15px; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);">
               Log in to Sync Progress
           </button>
+          
           <button class="btn-save-settings" id="btn-google-logout">
               Sign Out
           </button>
+
       </div>
 
       <div class="form-header" style="margin-top: 0; margin-bottom:15px;">App Configurations</div>
@@ -679,11 +687,24 @@ function setupLiveLeaderboard() {
 
         podiumContainer.innerHTML = "";
         listContainer.innerHTML = "";
-
         let players = [];
         snapshot.forEach((doc) => {
-            players.push({ id: doc.id, ...doc.data() });
+            let data = doc.data();
+            
+            // 1. Skip completely broken records (like if the name is accidentally a URL)
+            if (data.name && data.name.startsWith("http")) return; 
+            
+            // 2. Give a default name to anyone who has a blank name
+            if (!data.name || data.name.trim() === "") data.name = "Unknown Player";
+            
+            // 3. Auto-fix the avatar bug! If the avatar is a Google link, force it to render as an image.
+            if (data.avatarVal && data.avatarVal.startsWith("http")) {
+                data.avatarType = "image";
+            }
+            
+            players.push({ id: doc.id, ...data });
         });
+
 
         // Arrange Top 3 for visual Podium layout (2nd, 1st, 3rd)
         let top3 = players.slice(0, 3);
@@ -692,7 +713,7 @@ function setupLiveLeaderboard() {
         if (top3[0]) podiumOrder.push({ p: top3[0], rank: 1 }); // Rank 1 in Center
         if (top3[2]) podiumOrder.push({ p: top3[2], rank: 3 }); // Rank 3 on Right
 
-        // Render Podium
+         // Render Podium
         podiumOrder.forEach((item) => {
             const player = item.p;
             const rank = item.rank;
@@ -700,12 +721,12 @@ function setupLiveLeaderboard() {
             
             let height = rank === 1 ? '150px' : rank === 2 ? '130px' : '110px';
             let color = rank === 1 ? '#fbbf24' : rank === 2 ? '#cbd5e1' : '#d97706'; // Gold, Silver, Bronze
-            let avatarHtml = player.avatarType === 'image' ? `<img src="${player.avatarVal}" style="width:45px; height:45px; border-radius:50%; border: 2px solid ${color};">` : `<span style="font-size:30px;">${player.avatarVal || '👨‍💼'}</span>`;
+            let avatarHtml = player.avatarType === 'image' ? `<img src="${player.avatarVal}" style="width:45px; height:45px; border-radius:50%; border: 2px solid ${color}; object-fit: cover;">` : `<span style="font-size:30px;">${player.avatarVal || '👨‍💼'}</span>`;
 
             podiumContainer.innerHTML += `
                 <div style="display: flex; flex-direction: column; align-items: center; width: 85px;">
                     ${avatarHtml}
-                    <div style="background: ${isCurrentUser ? 'var(--primary)' : 'white'}; width: 100%; height: ${height}; border-radius: 15px 15px 0 0; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px solid ${color};">
+                    <div style="background: ${isCurrentUser ? 'var(--primary)' : 'var(--card-bg)'}; width: 100%; height: ${height}; border-radius: 15px 15px 0 0; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px solid ${color};">
                         <span style="font-size: 20px; font-weight: 900; color: ${isCurrentUser ? 'white' : color};">#${rank}</span>
                         <span style="font-size: 11px; font-weight: 700; color: ${isCurrentUser ? '#fff' : 'var(--text-dark)'}; text-align: center; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top:5px;">${player.name.split(' ')[0]}</span>
                         <span style="font-size: 10px; font-weight: 800; color: ${isCurrentUser ? '#ddd' : 'var(--orange)'};">🪙${player.coins}</span>
@@ -718,19 +739,19 @@ function setupLiveLeaderboard() {
         for (let i = 3; i < players.length; i++) {
             const player = players[i];
             const isCurrentUser = auth.currentUser && auth.currentUser.uid === player.id;
-            let avatarHtml = player.avatarType === 'image' ? `<img src="${player.avatarVal}" style="width:35px; height:35px; border-radius:50%;">` : `<span style="font-size:24px;">${player.avatarVal || '👨‍💼'}</span>`;
+            let activeClass = isCurrentUser ? 'active' : '';
+            let avatarHtml = player.avatarType === 'image' ? `<img src="${player.avatarVal}">` : `<span>${player.avatarVal || '👨‍💼'}</span>`;
 
             listContainer.innerHTML += `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; background: ${isCurrentUser ? '#f3e8ff' : '#f8f9fc'}; border-radius: 12px; border: ${isCurrentUser ? '1.5px solid var(--primary)' : 'none'};">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="font-size: 14px; font-weight: 800; color: var(--text-muted); width: 20px;">#${i + 1}</span>
-                        ${avatarHtml}
-                        <span style="font-size: 14px; font-weight: 700; color: var(--text-dark);">${player.name}</span>
-                    </div>
-                    <span style="font-size: 14px; font-weight: 800; color: var(--orange);">🪙${player.coins}</span>
+                <div class="lb-item ${activeClass}">
+                    <div class="lb-rank">#${i + 1}</div>
+                    <div class="lb-avatar-small">${avatarHtml}</div>
+                    <div class="lb-name">${player.name}</div>
+                    <div class="lb-pts">🪙${player.coins}</div>
                 </div>
             `;
         }
+
     });
 }
 
@@ -761,6 +782,11 @@ onAuthStateChanged(auth, (user) => {
   document.getElementById('btn-profile-login').addEventListener('click', () => {
       const authModal = document.getElementById('auth-modal');
       if(authModal) authModal.style.display = 'flex';
+  });
+  // Closes the auth modal when clicking Continue as Guest
+  document.getElementById('btn-guest-continue').addEventListener('click', () => {
+      const authModal = document.getElementById('auth-modal');
+      if(authModal) authModal.style.display = 'none';
   });
 
 
@@ -797,8 +823,6 @@ onAuthStateChanged(auth, (user) => {
       const authModal = document.getElementById('auth-modal');
       if (user) {
           if(authModal) authModal.style.display = 'none';
-                    document.getElementById('btn-google-logout').style.display = 'block';
-          document.getElementById('btn-profile-login').style.display = 'none';
 
           try {
               const userDocRef = doc(db, "users", user.uid);
@@ -832,8 +856,7 @@ onAuthStateChanged(auth, (user) => {
               console.error("Database Error:", error);
           }
       } else {
-          document.getElementById('btn-google-logout').style.display = 'none';
-          document.getElementById('btn-profile-login').style.display = 'block';
+
           if(authModal) authModal.style.display = 'flex';
       }
   });
